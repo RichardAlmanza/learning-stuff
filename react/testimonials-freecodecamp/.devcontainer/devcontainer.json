@@ -21,7 +21,9 @@
 			"extensions": [
 				"dbaeumer.vscode-eslint",
 				"streetsidesoftware.code-spell-checker",
-				"eamodio.gitlens"
+				"eamodio.gitlens",
+				"christian-kohler.path-intellisense",
+				"dsznajder.es7-react-js-snippets"
 			]
 		}
 	},
