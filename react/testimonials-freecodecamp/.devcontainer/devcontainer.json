@@ -36,7 +36,7 @@
 	// Use 'portsAttributes' to set default properties for specific forwarded ports
 	"portsAttributes": {
 		"3000": {
-			"label": "band-page",
+			"label": "react-app",
 			"onAutoForward": "notify"
 		}
 	},
