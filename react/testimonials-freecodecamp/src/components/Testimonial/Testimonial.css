@@ -1,0 +1,38 @@
+.testimonial-container {
+  width: 1170px;
+  height: 360px;
+  margin: 10px 10px 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  box-shadow: 0 3px 13px 1px rgba(0, 0, 0, 0.09);
+}
+
+.testimonial-image {
+	height: 100%;
+	width: auto;
+}
+
+.testimonial-text-container {
+	text-align: center;
+	padding: 40px;
+	font-family: Lato, sans-serif;
+	font-weight: 400;
+	line-height: 1.5rem;
+}
+
+.testimonial-name {
+	font-size: 1.3em;
+}
+
+.testimonial-role {
+	font-size: 1.3em;
+	margin-top: 15px;
+	padding-bottom: 30px;
+}
+
+.testimonial-text {
+	font-size: 1.1em;
+	text-align: justify;
+}

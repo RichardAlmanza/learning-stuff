@@ -1,3 +1,5 @@
+import "./Testimonial.css";
+
 const EmmaImage = require("../../images/testimonial-emma.png");
 
 function Testimonial() {
