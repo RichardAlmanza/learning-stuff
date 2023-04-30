@@ -1,13 +1,19 @@
-import PropTypes from "prop-types";
 import "./Testimonial.css";
+import PropTypes from "prop-types";
+import LoadImage from "../../utils/Hooks";
 
 function Testimonial({ name, role, country, company, testimonial, image }) {
-  // eslint-disable-next-line import/no-dynamic-require, global-require
-  const tImage = require(`../../assets/images/testimonial-${image}.png`);
+  const [isImageReady, srcImage, srcDefaultImage] = LoadImage(
+    `testimonial-${image}.png`
+  );
 
   return (
     <div className="testimonial-container">
-      <img className="testimonial-image" src={tImage} alt={image} />
+      <img
+        className="testimonial-image"
+        src={isImageReady ? srcImage : srcDefaultImage}
+        alt={image}
+      />
       <div className="testimonial-text-container">
         <p className="testimonial-name">
           <strong>{name}</strong> in {country}
