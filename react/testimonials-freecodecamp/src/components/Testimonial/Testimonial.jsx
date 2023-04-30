@@ -1,20 +1,21 @@
 import PropTypes from "prop-types";
 import "./Testimonial.css";
 
-const EmmaImage = require("../../images/testimonial-emma.png");
+function Testimonial({ name, role, country, company, testimonial, image }) {
+  // eslint-disable-next-line import/no-dynamic-require, global-require
+  const tImage = require(`../../assets/images/testimonial-${image}.png`);
 
-function Testimonial({ name, role, country, company, testimonial }) {
   return (
     <div className="testimonial-container">
-      <img className="testimonial-image" src={EmmaImage} alt="emma" />
+      <img className="testimonial-image" src={tImage} alt={image} />
       <div className="testimonial-text-container">
         <p className="testimonial-name">
-          {name} in {country}
+          <strong>{name}</strong> in {country}
         </p>
         <p className="testimonial-role">
-          {role} at {company}
+          {role} at <strong>{company}</strong>
         </p>
-        <p className="testimonial-text">{testimonial}</p>
+        <p className="testimonial-text">&quot;{testimonial}&quot;</p>
       </div>
     </div>
   );
@@ -26,6 +27,7 @@ Testimonial.propTypes = {
   country: PropTypes.string.isRequired,
   company: PropTypes.string.isRequired,
   testimonial: PropTypes.string.isRequired,
+  image: PropTypes.string.isRequired,
 };
 
 export default Testimonial;
