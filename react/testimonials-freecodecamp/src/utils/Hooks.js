@@ -1,14 +1,18 @@
 import { useState } from "react";
-import defaultImage from "../assets/images/testimonial-emma.png";
 
-function LoadImage({ image }) {
-  const [loaded, setLoaded] = useState(false);
-  const srcImage = import(`../assets/images/${image}`).then((module) => {
-    setLoaded(true);
-    return module.default;
+function LoadImage(image) {
+  const [srcImage, setSrcImage] = useState({
+    name: "placeholder",
+    src: "",
   });
 
-  return [loaded, srcImage, defaultImage];
+  import(`../assets/images/${image}`)
+    .then((module) => module.default)
+    .then((src) => {
+      setSrcImage({ name: image, src });
+    });
+
+  return srcImage;
 }
 
 export default LoadImage;

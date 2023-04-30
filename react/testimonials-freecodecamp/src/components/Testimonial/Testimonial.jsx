@@ -3,15 +3,14 @@ import PropTypes from "prop-types";
 import LoadImage from "../../utils/Hooks";
 
 function Testimonial({ name, role, country, company, testimonial, image }) {
-  const [isImageReady, srcImage, srcDefaultImage] = LoadImage(
-    `testimonial-${image}.png`
-  );
+  const srcImage = LoadImage(`testimonial-${image}.png`);
 
   return (
     <div className="testimonial-container">
       <img
         className="testimonial-image"
-        src={isImageReady ? srcImage : srcDefaultImage}
+        key={srcImage.name}
+        src={srcImage.src}
         alt={image}
       />
       <div className="testimonial-text-container">
