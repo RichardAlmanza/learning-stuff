@@ -20,7 +20,10 @@ function Testimonial({ name, role, country, company, testimonial, image }) {
         <p className="testimonial-role">
           {role} at <strong>{company}</strong>
         </p>
-        <p className="testimonial-text">&quot;{testimonial}&quot;</p>
+        <p
+          className="testimonial-text"
+          dangerouslySetInnerHTML={{ __html: testimonial }}
+        />
       </div>
     </div>
   );
