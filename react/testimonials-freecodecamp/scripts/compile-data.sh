@@ -11,4 +11,5 @@ files=$(find $data_path -type f \( -iname "*.yaml" -o -iname "*.yml" \))
 # *d -> Deep Merge, the order is important
 yq eval-all '. as $item ireduce ({}; . *d $item )' \
     $files --colors --output-format=json \
-    | tee $data_path/data.json
+    | tee /dev/tty \
+    | sed 's/\x1B\[[0-9;]\+[A-Za-z]//g' > $data_path/data.json
