@@ -1,5 +1,6 @@
 import reactLogo from "./assets/logo.svg";
 import Button from "./components/Button/Button";
+import Counter from "./components/Counter/Counter";
 import "./App.css";
 
 function App() {
@@ -12,11 +13,12 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <div className="React-logo-container">
+    <div className="app">
+      <div className="react-logo-container">
         <img src={reactLogo} className="React-logo" alt="logo" />
       </div>
       <div className="click-counter-container">
+        <Counter clickCounter={5} />
         <Button text="Click" eventHandler={addClick} />
         <Button
           text="Reset"
