@@ -1,12 +1,13 @@
-import logo from "./logo.svg";
+import reactLogo from "./assets/logo.svg";
 import "./App.css";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-      </header>
+      <div className="React-logo-container">
+        <img src={reactLogo} className="React-logo" alt="logo" />
+      </div>
+      <div className="click-counter-container" />
     </div>
   );
 }
