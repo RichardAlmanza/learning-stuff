@@ -1,0 +1,60 @@
+// For format details, see https://containers.dev/implementors/json_reference/.
+{
+	"name": "React devcontainer",
+	"build": {
+		"dockerfile": "../../.dockerfiles/node.Dockerfile",
+		"args": {
+			"DOCKER_IMAGE_TAG": "18.16-alpine3.17",
+			"GIT_VERSION": "2.38.5-r0",
+			"YQ_VERSION": "4.33.3",
+			"ZSH_VERSION": "5.9"
+		}
+	},
+	// Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			// Set *default* container specific settings.json values on container create.
+			"settings": {
+				"[javascriptreact][javascript]": {
+					"editor.tabSize": 2,
+					"editor.defaultFormatter": "esbenp.prettier-vscode",
+					"editor.formatOnSave": true,
+					"editor.formatOnPaste": true,
+					"editor.codeActionsOnSave": {
+						"source.fixAll.eslint": true
+					}
+				}
+			},
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": [
+				"dbaeumer.vscode-eslint",
+				"streetsidesoftware.code-spell-checker",
+				"eamodio.gitlens",
+				"christian-kohler.path-intellisense",
+				"dsznajder.es7-react-js-snippets",
+				"esbenp.prettier-vscode",
+				"redhat.vscode-yaml"
+			]
+		}
+	},
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [
+		3000
+	],
+	// Use 'portsAttributes' to set default properties for specific forwarded ports
+	"portsAttributes": {
+		"3000": {
+			"label": "react-app",
+			"onAutoForward": "notify"
+		}
+	},
+	// Use 'otherPortsAttributes' to configure any ports that aren't configured using 'portsAttributes'.
+	// "otherPortsAttributes": {
+	// 		"onAutoForward": "silent"
+	// },
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "yarn global add create-react-app",
+	// Comment out connect as root instead.
+	"remoteUser": "node"
+}
