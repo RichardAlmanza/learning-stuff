@@ -1,5 +1,6 @@
 import logo from "./logo.svg";
 import "./App.css";
+import Calculator from "./components/Calculator/Calculator";
 
 function App() {
   return (
@@ -7,16 +8,7 @@ function App() {
       <div className="app-logo-container">
         <img src={logo} className="app-logo" alt="logo" />
       </div>
-      <div className="calculator-container">
-        <div className="row" />
-        <div className="row" />
-        <div className="row" />
-        <div className="row" />
-        <div className="row" />
-        <div className="row" />
-        <div className="row" />
-        <div className="row" />
-      </div>
+      <Calculator />
     </div>
   );
 }
