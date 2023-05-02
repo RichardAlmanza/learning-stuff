@@ -7,6 +7,16 @@ function App() {
       <div className="app-logo-container">
         <img src={logo} className="app-logo" alt="logo" />
       </div>
+      <div className="calculator-container">
+        <div className="row" />
+        <div className="row" />
+        <div className="row" />
+        <div className="row" />
+        <div className="row" />
+        <div className="row" />
+        <div className="row" />
+        <div className="row" />
+      </div>
     </div>
   );
 }
