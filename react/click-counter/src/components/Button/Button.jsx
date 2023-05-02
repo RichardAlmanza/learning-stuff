@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import "./Button.css";
 
 function Button({ text, eventHandler, isClickButton }) {
   return (
