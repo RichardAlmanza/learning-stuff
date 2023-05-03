@@ -28,3 +28,11 @@
 .operator:hover {
     background-color: #ff6600;
 }
+
+.clear {
+    background-color: #ac0246;
+}
+
+.clear:hover {
+    background-color: #ebb000;
+}
