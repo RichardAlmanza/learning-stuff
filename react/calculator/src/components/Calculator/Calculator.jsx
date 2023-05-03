@@ -31,7 +31,7 @@ function Calculator() {
         <Button value="*" setState={setInput} type={buttonTypes.Operator} />
       </div>
       <div className="row">
-        <Button value="=" setState={setInput} />
+        <Button value="=" setState={setInput} type={buttonTypes.Result} />
         <Button value="0" setState={setInput} />
         <Button value="." setState={setInput} />
         <Button value="/" setState={setInput} type={buttonTypes.Operator} />
