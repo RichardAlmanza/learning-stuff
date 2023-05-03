@@ -1,9 +1,13 @@
 import "./Calculator.css";
 import Button from "../Button/Button";
+import Screen from "../Screen/Screen";
 
 function Calculator() {
   return (
     <div className="calculator-container">
+      <div className="row">
+        <Screen input={0.1} />
+      </div>
       <div className="row">
         <Button value={1} />
         <Button value={2} />
