@@ -6,11 +6,7 @@ function Screen({ input }) {
 }
 
 Screen.propTypes = {
-  input: PropTypes.number,
-};
-
-Screen.defaultProps = {
-  input: "",
+  input: PropTypes.string.isRequired,
 };
 
 export default Screen;
