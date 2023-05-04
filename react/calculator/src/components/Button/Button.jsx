@@ -6,13 +6,31 @@ import buttonTypes, { buttonTypesConfig } from "./Button.types";
 function getAction(value, setState, type) {
   if (type === buttonTypes.Number || type === buttonTypes.Operator) {
     return () => {
-      setState((text) => text + value);
+      setState((text) => {
+        const isSpecial = (t) => ["*", "-", "+", "/", "."].includes(t);
+
+        let newText;
+
+        if (isSpecial(text.charAt(text.length - 1)) && isSpecial(value)) {
+          newText = text.slice(0, -1) + value;
+        } else {
+          newText = text + value;
+        }
+
+        return newText;
+      });
     };
   }
 
   if (type === buttonTypes.Result) {
     return () => {
-      setState((text) => evaluate(text || "0"));
+      setState((text) => {
+        try {
+          return String(evaluate(text || "0"));
+        } catch (error) {
+          return "Error";
+        }
+      });
     };
   }
 
