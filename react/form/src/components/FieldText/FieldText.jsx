@@ -10,7 +10,7 @@ function FieldText({ name, type, setState, state }) {
   return (
     <>
       <label htmlFor={forId}>{name}</label>
-      <input type={type} onChange={handler} value={state} />
+      <input id={forId} type={type} onChange={handler} value={state} />
     </>
   );
 }

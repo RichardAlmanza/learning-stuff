@@ -21,7 +21,7 @@ function FieldSelector({ name, options, setState, state }) {
   return (
     <>
       <label htmlFor={forId}>{name}</label>
-      <select name={name} id={forId} onChange={handler} value={state}>
+      <select id={forId} onChange={handler} value={state}>
         <option value="">Select {name}</option>
         {rOptions}
       </select>
