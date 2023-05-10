@@ -25,7 +25,8 @@ form label {
 
 form input,
 button,
-select {
+select,
+textarea {
   font-size: 1em;
   font-weight: bold;
   text-align: center;
@@ -36,6 +37,29 @@ select {
   min-height: 40px;
   border-radius: 12px;
   width: 80%;
+}
+
+form *:focus {
+  outline-offset: 3px;
+  outline: #5a1c7b solid 2px;
+}
+
+form textarea {
+  width: 80%;
+  min-height: 100px;
+  text-align: left;
+  padding: 20px;
+  resize: vertical;
+}
+
+form textarea::-webkit-scrollbar {
+  width: 5px;
+}
+
+form textarea::-webkit-scrollbar-thumb {
+  background-color: rgb(126, 126, 126);
+  outline: 1px solid slategrey;
+  border-radius: 3px;
 }
 
 form select {

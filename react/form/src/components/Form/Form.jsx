@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import { useState } from "react";
 import "./Form.css";
 import FieldSelector from "../FieldSelector/FieldSelector";
@@ -39,17 +40,19 @@ function Form() {
         setState={logChange(setPassword)}
         state={password}
       />
-      <FieldText
-        name="Description"
-        type="text"
-        setState={logChange(setDescription)}
-        state={description}
-      />
       <FieldSelector
         name="Gender"
         options={genderOptions}
         setState={logChange(setGender)}
         state={gender}
+      />
+      <label htmlFor="description">Description</label>
+      <textarea
+        onChange={(event) => {
+          logChange(setDescription)(event.target.value);
+        }}
+        id="description"
+        maxLength="3000"
       />
       <button type="submit">Submit</button>
     </form>
