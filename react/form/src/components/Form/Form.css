@@ -26,6 +26,8 @@ form label {
 form input,
 button,
 select {
+  font-size: 1em;
+  font-weight: bold;
   text-align: center;
   color: antiquewhite;
   background-color: #5a1c7b57;
@@ -36,7 +38,17 @@ select {
   width: 80%;
 }
 
+form select {
+  cursor: pointer;
+}
+
+form select option {
+  font-size: 1.1em;
+  background: #5a1c7b;
+}
+
 form button {
   width: 50%;
   margin-top: 20px;
+  cursor: pointer;
 }
