@@ -14,14 +14,10 @@ function FieldSelector({ name, options, setState, state }) {
     );
   });
 
-  const handler = (event) => {
-    setState(event.target.value);
-  };
-
   return (
     <>
       <label htmlFor={forId}>{name}</label>
-      <select id={forId} onChange={handler} value={state}>
+      <select id={forId} onChange={setState} value={state}>
         <option value="">Select {name}</option>
         {rOptions}
       </select>

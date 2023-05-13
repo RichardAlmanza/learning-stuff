@@ -3,54 +3,54 @@ import { useState } from "react";
 import "./Form.css";
 import FieldSelector from "../FieldSelector/FieldSelector";
 import FieldText from "../FieldText/FieldText";
+import logFunc from "../../utils/log";
 
 function Form() {
   const genderOptions = ["Male", "Female", "Other"];
+
   const [gender, setGender] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [description, setDescription] = useState("");
 
-  const logChange = (setter) => {
-    return (val) => {
-      console.log(val);
-      setter(val);
-    };
+  const handlerEvent = (f) => {
+    return (event) => f(event.target.value);
+  };
+
+  const handleDescription = handlerEvent(logFunc(setDescription));
+  const handleEmail = handlerEvent(logFunc(setEmail));
+  const handlePassword = handlerEvent(logFunc(setPassword));
+  const handleGender = handlerEvent(logFunc(setGender));
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const a = { email, password, gender, description };
+    console.log(a);
   };
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-
-        const a = { email, password, gender, description };
-
-        console.log(a);
-      }}
-    >
+    <form onSubmit={handleSubmit}>
       <FieldText
         name="Email"
         type="email"
-        setState={logChange(setEmail)}
+        setState={handleEmail}
         state={email}
       />
       <FieldText
         name="Password"
         type="password"
-        setState={logChange(setPassword)}
+        setState={handlePassword}
         state={password}
       />
       <FieldSelector
         name="Gender"
         options={genderOptions}
-        setState={logChange(setGender)}
+        setState={handleGender}
         state={gender}
       />
       <label htmlFor="description">Description</label>
       <textarea
-        onChange={(event) => {
-          logChange(setDescription)(event.target.value);
-        }}
+        onChange={handleDescription}
         id="description"
         maxLength="3000"
       />

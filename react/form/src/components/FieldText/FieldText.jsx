@@ -3,14 +3,10 @@ import PropTypes from "prop-types";
 function FieldText({ name, type, setState, state }) {
   const forId = name.toLowerCase();
 
-  const handler = (event) => {
-    setState(event.target.value);
-  };
-
   return (
     <>
       <label htmlFor={forId}>{name}</label>
-      <input id={forId} type={type} onChange={handler} value={state} />
+      <input id={forId} type={type} onChange={setState} value={state} />
     </>
   );
 }
