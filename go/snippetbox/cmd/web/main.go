@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 )
 
 type application struct {
@@ -25,44 +24,14 @@ func main() {
 		infoLog: infoLog,
 	}
 
-	mux := http.NewServeMux()
-
-	fileserver := http.FileServer(neuteredFileSystem{http.Dir("./ui/static/")})
-	mux.Handle("/static", http.NotFoundHandler())
-	mux.Handle("/static/", http.StripPrefix("/static", fileserver))
-
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("/snippet/view", app.snippetView)
-	mux.HandleFunc("/snippet/create", app.snippetCreate)
+	srv := &http.Server{
+		Addr: *addr,
+		ErrorLog: errorLog,
+		Handler: app.routes(),
+	}
 
 	infoLog.Printf("Starting server on %s", *addr)
-	err := http.ListenAndServe(*addr, mux)
+	err := srv.ListenAndServe()
 	errorLog.Fatal(err)
 }
 
-type neuteredFileSystem struct {
-	fs http.FileSystem
-}
-
-func (nfs neuteredFileSystem) Open(path string) (http.File, error) {
-	file, err := nfs.fs.Open(path)
-	if err != nil {
-		return nil, err
-	}
-
-	stats, _ := file.Stat()
-	if stats.IsDir() {
-		index := filepath.Join(path, "index.html")
-		_, err := nfs.fs.Open(index)
-		if err != nil {
-			closeErr := file.Close()
-			if closeErr != nil {
-				return nil, closeErr
-			}
-
-			return nil, err
-		}
-	}
-
-	return file, nil
-}
