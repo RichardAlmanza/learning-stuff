@@ -11,3 +11,5 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
   - [Calculator](react/calculator)
 - [Go](go)
   - [SnippetBox](go/snippetbox/)
+- [Godot](godot)
+  - [Megaman Zero](godot/megaman-zero)
