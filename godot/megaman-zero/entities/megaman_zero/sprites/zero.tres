@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=51 format=3 uid="uid://cx8pk5e12niqy"]
+[gd_resource type="SpriteFrames" load_steps=59 format=3 uid="uid://cx8pk5e12niqy"]
 
 [ext_resource type="Texture2D" uid="uid://cn7hj4tuk1wbh" path="res://entities/megaman_zero/sprites/zero_z3standardframes.png" id="1_6o10f"]
 [ext_resource type="Texture2D" uid="uid://cgpe5utbsgpv6" path="res://entities/megaman_zero/sprites/Game Boy Advance - Mega Man Zero 3 - Zero.png" id="1_ds7fk"]
@@ -192,6 +192,38 @@ region = Rect2(1406, 1096, 72, 72)
 atlas = ExtResource("1_ds7fk")
 region = Rect2(1234, 1096, 72, 72)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_hawwg"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(2094, 1888, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bsefq"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(1922, 1888, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_df4jk"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(1750, 1888, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3elv6"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(1578, 1888, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m8i70"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(1406, 1888, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_is0u1"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(1234, 1888, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0qoge"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(1062, 1888, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jg5pa"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(890, 1888, 72, 72)
+
 [resource]
 animations = [{
 "frames": [{
@@ -381,7 +413,36 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_fpdm2")
 }],
-"loop": true,
+"loop": false,
 "name": &"ZBusterStandBy",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hawwg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bsefq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_df4jk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3elv6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m8i70")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_is0u1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0qoge")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jg5pa")
+}],
+"loop": false,
+"name": &"ZSaberStandBy",
 "speed": 12.0
 }]

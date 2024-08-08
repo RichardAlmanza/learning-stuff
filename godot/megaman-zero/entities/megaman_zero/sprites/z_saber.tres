@@ -1,0 +1,63 @@
+[gd_resource type="SpriteFrames" load_steps=7 format=3 uid="uid://crbqnjiug3f8x"]
+
+[ext_resource type="Texture2D" uid="uid://cgpe5utbsgpv6" path="res://entities/megaman_zero/sprites/Game Boy Advance - Mega Man Zero 3 - Zero.png" id="1_n5dax"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fri7g"]
+atlas = ExtResource("1_n5dax")
+region = Rect2(2088, 11642, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kob2c"]
+atlas = ExtResource("1_n5dax")
+region = Rect2(1916, 11642, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_prlui"]
+atlas = ExtResource("1_n5dax")
+region = Rect2(1744, 11642, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hudv0"]
+atlas = ExtResource("1_n5dax")
+region = Rect2(1572, 11642, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3jqb8"]
+atlas = ExtResource("1_n5dax")
+region = Rect2(1400, 11642, 100, 100)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": null
+}, {
+"duration": 1.0,
+"texture": null
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fri7g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kob2c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_prlui")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hudv0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3jqb8")
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": false,
+"name": &"ZSaberStandBy",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": null
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]

@@ -12,6 +12,7 @@
     - [Fall](#fall)
     - [Death](#death)
     - [Z-Buster Stand by (Simple shoot)](#z-buster-stand-by-simple-shoot)
+    - [Z-Saber Stand by (Simple slice)](#z-saber-stand-by-simple-slice)
 
 ## Settings per animation
 
@@ -119,6 +120,24 @@ Detailed
 - size: 72px - 72px
 - separation: 100px - 60px
 - offset: 30px - 40px
-- frames: 8
+- frames: 6
 
 > Note: This is a well made SpriteSheet, there is no need for fixes in this animation.
+
+### Z-Saber Stand by (Simple slice)
+
+- source: [Game Boy Advance - Mega Man Zero 3 - Zero.png](Game%20Boy%20Advance%20-%20Mega%20Man%20Zero%203%20-%20Zero.png)
+- size: 72px - 72px
+- separation: 100px - 60px
+- offset: 30px - 40px
+- frames: 8
+
+> Note: The afterimage of the Z-Saber I added in a different AnimatedSprite2D
+
+- source: [Game Boy Advance - Mega Man Zero 3 - Zero.png](Game%20Boy%20Advance%20-%20Mega%20Man%20Zero%203%20-%20Zero.png)
+- size: 100px - 100px
+- separation: 72px - 38px
+- offset: 30px - 50px
+- frames: 5
+
+> Note: I added two empty Sprites at the start and one at the end to sync with the Zero animation
