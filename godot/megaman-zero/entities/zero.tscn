@@ -6,15 +6,16 @@
 size = Vector2(10, 36)
 
 [node name="Zero" type="CharacterBody2D"]
-metadata/_edit_vertical_guides_ = [6.0, -3.0]
+metadata/_edit_vertical_guides_ = [3.0]
+metadata/_edit_horizontal_guides_ = [6.0]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = ExtResource("1_pkywa")
 animation = &"Walk"
 autoplay = "Walk"
-frame_progress = 0.606943
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 position = Vector2(1, 2)
 shape = SubResource("RectangleShape2D_yr4j7")
 
