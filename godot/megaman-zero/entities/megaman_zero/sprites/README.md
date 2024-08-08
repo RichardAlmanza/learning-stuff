@@ -9,6 +9,7 @@
     - [Run](#run)
     - [Idle](#idle)
     - [Jump](#jump)
+    - [Fall](#fall)
 
 ## Settings per animation
 
@@ -80,25 +81,22 @@ Detailed
 
 ### Jump
 
-- source: [zero_z1standardframes.png](zero_z1standardframes.png)
-- size: 40px - 48px
-- separation: 0px - 0px
-- offset: 86px - 5px
-- frames: 5
+- source: [Game Boy Advance - Mega Man Zero 3 - Zero.png](Game%20Boy%20Advance%20-%20Mega%20Man%20Zero%203%20-%20Zero.png)
+- size: 72px - 72px
+- separation: 100px - 60px
+- offset: 32px - 38px
+- frames: 6
 - the frame 0 and 1 are a transition from floor to jump
 
-Detailed
+> Note: This is a well made SpriteSheet, there is no need for fixes in this animation.
 
-- frame: 0
-- frame: 1
-  - size: 34px - 56px
-  - offset: 93px - 38px
-- frame: 2
-  - size: 34px - 56px
-  - offset: 93px - 39px
-- frame: 3
-  - size: 36px - 56px
-  - offset: 87px -39px
-- frame: 4
-  - size: 36px - 56px
-  - offset: 88px - 39px
+### Fall
+
+- source: [Game Boy Advance - Mega Man Zero 3 - Zero.png](Game%20Boy%20Advance%20-%20Mega%20Man%20Zero%203%20-%20Zero.png)
+- size: 72px - 72px
+- separation: 100px - 60px
+- offset: 32px - 38px
+- frames: 4
+- the frame 0 and 1 are a transition from jump to fall
+
+> Note: This is a well made SpriteSheet, there is no need for fixes in this animation.
