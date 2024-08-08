@@ -8,6 +8,7 @@
     - [Walk](#walk)
     - [Run](#run)
     - [Idle](#idle)
+    - [Jump](#jump)
 
 ## Settings per animation
 
@@ -76,3 +77,28 @@ Detailed
   - offset: 193px - 0px
 - frame: 5
   - offset: 192px - 0px
+
+### Jump
+
+- source: [zero_z1standardframes.png](zero_z1standardframes.png)
+- size: 40px - 48px
+- separation: 0px - 0px
+- offset: 86px - 5px
+- frames: 5
+- the frame 0 and 1 are a transition from floor to jump
+
+Detailed
+
+- frame: 0
+- frame: 1
+  - size: 34px - 56px
+  - offset: 93px - 38px
+- frame: 2
+  - size: 34px - 56px
+  - offset: 93px - 39px
+- frame: 3
+  - size: 36px - 56px
+  - offset: 87px -39px
+- frame: 4
+  - size: 36px - 56px
+  - offset: 88px - 39px
