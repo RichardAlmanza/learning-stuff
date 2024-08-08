@@ -1,6 +1,17 @@
-# Settings per animations
+# Sprite animations
 
-## Walk
+## Content
+
+- [Sprite animations](#sprite-animations)
+  - [Content](#content)
+  - [Settings per animation](#settings-per-animation)
+    - [Walk](#walk)
+    - [Run](#run)
+    - [Idle](#idle)
+
+## Settings per animation
+
+### Walk
 
 - source: [zero_z3standardframes.png](zero_z3standardframes.png)
 - size: 32px - 48px
@@ -18,7 +29,7 @@ Detailed
 - frame: 5
   - offset: 177px - 2px
 
-## Run
+### Run
 
 - source: [zero_z1standardframes.png](zero_z1standardframes.png)
 - size: 42px - 48px
@@ -47,3 +58,21 @@ Detailed
   - offset: 88px - 0px
 - frame: 10
   - offset: 92px - 0px
+
+### Idle
+
+- source: [zero_z1standardframes.png](zero_z1standardframes.png)
+- size: 42px - 48px
+- separation: 1px - 0px
+- offset: 188px - 0px
+- frames: 6
+
+Detailed
+
+- frame: 0 - 1
+- frame: 2
+  - offset: 190px - 0px
+- frame: 3 - 4
+  - offset: 193px - 0px
+- frame: 5
+  - offset: 192px - 0px
