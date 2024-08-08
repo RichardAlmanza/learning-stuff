@@ -10,6 +10,7 @@
     - [Idle](#idle)
     - [Jump](#jump)
     - [Fall](#fall)
+    - [Death](#death)
 
 ## Settings per animation
 
@@ -98,5 +99,15 @@ Detailed
 - offset: 32px - 38px
 - frames: 4
 - the frame 0 and 1 are a transition from jump to fall
+
+> Note: This is a well made SpriteSheet, there is no need for fixes in this animation.
+
+### Death
+
+- source: [Game Boy Advance - Mega Man Zero 3 - Zero.png](Game%20Boy%20Advance%20-%20Mega%20Man%20Zero%203%20-%20Zero.png)
+- size: 72px - 72px
+- separation: 100px - 60px
+- offset: 30px - 40px
+- frames: 8
 
 > Note: This is a well made SpriteSheet, there is no need for fixes in this animation.

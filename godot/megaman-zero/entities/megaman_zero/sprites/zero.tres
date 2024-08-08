@@ -1,8 +1,40 @@
-[gd_resource type="SpriteFrames" load_steps=37 format=3 uid="uid://cx8pk5e12niqy"]
+[gd_resource type="SpriteFrames" load_steps=45 format=3 uid="uid://cx8pk5e12niqy"]
 
 [ext_resource type="Texture2D" uid="uid://cn7hj4tuk1wbh" path="res://entities/megaman_zero/sprites/zero_z3standardframes.png" id="1_6o10f"]
 [ext_resource type="Texture2D" uid="uid://cgpe5utbsgpv6" path="res://entities/megaman_zero/sprites/Game Boy Advance - Mega Man Zero 3 - Zero.png" id="1_ds7fk"]
 [ext_resource type="Texture2D" uid="uid://f0vo1bapcerc" path="res://entities/megaman_zero/sprites/zero_z1standardframes.png" id="2_v5wx8"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ckbpp"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(2094, 7036, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a47oe"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(1922, 7036, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4ow8o"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(1750, 7036, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m5uho"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(1578, 7036, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tmb6p"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(1406, 7036, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0x80c"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(1234, 7036, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m18kc"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(1062, 7036, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g22yg"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(890, 7036, 72, 72)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_idccy"]
 atlas = ExtResource("1_ds7fk")
@@ -138,6 +170,35 @@ region = Rect2(347, 2, 32, 48)
 
 [resource]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ckbpp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a47oe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4ow8o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m5uho")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tmb6p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0x80c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m18kc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g22yg")
+}],
+"loop": false,
+"name": &"Death",
+"speed": 12.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_idccy")
