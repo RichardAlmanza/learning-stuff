@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://cc3k0i1dhvfmr"]
+
+[ext_resource type="SpriteFrames" uid="uid://cx8pk5e12niqy" path="res://entities/megaman_zero/sprites/zero.tres" id="1_pkywa"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yr4j7"]
+size = Vector2(10, 36)
+
+[node name="Zero" type="CharacterBody2D"]
+metadata/_edit_vertical_guides_ = [6.0, -3.0]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("1_pkywa")
+animation = &"Walk"
+autoplay = "Walk"
+frame_progress = 0.606943
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(1, 2)
+shape = SubResource("RectangleShape2D_yr4j7")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+offset = Vector2(0, -40)
+zoom = Vector2(3, 3)
