@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=45 format=3 uid="uid://cx8pk5e12niqy"]
+[gd_resource type="SpriteFrames" load_steps=51 format=3 uid="uid://cx8pk5e12niqy"]
 
 [ext_resource type="Texture2D" uid="uid://cn7hj4tuk1wbh" path="res://entities/megaman_zero/sprites/zero_z3standardframes.png" id="1_6o10f"]
 [ext_resource type="Texture2D" uid="uid://cgpe5utbsgpv6" path="res://entities/megaman_zero/sprites/Game Boy Advance - Mega Man Zero 3 - Zero.png" id="1_ds7fk"]
@@ -167,6 +167,30 @@ region = Rect2(312, 2, 32, 48)
 [sub_resource type="AtlasTexture" id="AtlasTexture_wo3ds"]
 atlas = ExtResource("1_6o10f")
 region = Rect2(347, 2, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_083pg"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(2094, 1096, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o4d3r"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(1922, 1096, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bi37h"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(1750, 1096, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pfq80"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(1578, 1096, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wdlo0"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(1406, 1096, 72, 72)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fpdm2"]
+atlas = ExtResource("1_ds7fk")
+region = Rect2(1234, 1096, 72, 72)
 
 [resource]
 animations = [{
@@ -337,4 +361,27 @@ animations = [{
 "loop": true,
 "name": &"Walk",
 "speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_083pg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o4d3r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bi37h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pfq80")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wdlo0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fpdm2")
+}],
+"loop": true,
+"name": &"ZBusterStandBy",
+"speed": 12.0
 }]
