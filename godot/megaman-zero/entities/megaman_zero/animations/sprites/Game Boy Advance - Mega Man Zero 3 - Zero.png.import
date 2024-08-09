@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://f0vo1bapcerc"
-path="res://.godot/imported/zero_z1standardframes.png-c64eee4e368f8d18a7b26bc5f7808edb.ctex"
+uid="uid://cgpe5utbsgpv6"
+path="res://.godot/imported/Game Boy Advance - Mega Man Zero 3 - Zero.png-77fed7629fe368f96c1f01555cb82be6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://entities/megaman_zero/sprites/zero_z1standardframes.png"
-dest_files=["res://.godot/imported/zero_z1standardframes.png-c64eee4e368f8d18a7b26bc5f7808edb.ctex"]
+source_file="res://entities/megaman_zero/animations/sprites/Game Boy Advance - Mega Man Zero 3 - Zero.png"
+dest_files=["res://.godot/imported/Game Boy Advance - Mega Man Zero 3 - Zero.png-77fed7629fe368f96c1f01555cb82be6.ctex"]
 
 [params]
 

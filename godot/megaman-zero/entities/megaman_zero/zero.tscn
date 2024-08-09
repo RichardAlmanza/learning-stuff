@@ -1,0 +1,52 @@
+[gd_scene load_steps=6 format=3 uid="uid://cc3k0i1dhvfmr"]
+
+[ext_resource type="SpriteFrames" uid="uid://cx8pk5e12niqy" path="res://entities/megaman_zero/animations/sprites/zero.tres" id="1_pkywa"]
+[ext_resource type="SpriteFrames" uid="uid://crbqnjiug3f8x" path="res://entities/megaman_zero/animations/sprites/z_saber.tres" id="2_xlmhj"]
+[ext_resource type="AnimationNodeStateMachine" uid="uid://b6g3tpasvwwqb" path="res://entities/megaman_zero/animations/animation_tree.tres" id="3_7crlw"]
+[ext_resource type="AnimationLibrary" uid="uid://j2cwogktk7tp" path="res://entities/megaman_zero/animations/animations.res" id="3_aqib4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yr4j7"]
+size = Vector2(10, 36)
+
+[node name="Zero" type="CharacterBody2D"]
+metadata/_edit_vertical_guides_ = [3.0]
+metadata/_edit_horizontal_guides_ = [6.0, 19.0]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("1_pkywa")
+animation = &"Idle"
+autoplay = "Idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(1, 2)
+shape = SubResource("RectangleShape2D_yr4j7")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+offset = Vector2(0, -40)
+zoom = Vector2(3, 3)
+
+[node name="ZSword" type="AnimatedSprite2D" parent="."]
+position = Vector2(9, 1)
+sprite_frames = ExtResource("2_xlmhj")
+animation = &"ZSaberStandBy"
+autoplay = "default"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": ExtResource("3_aqib4")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = ExtResource("3_7crlw")
+anim_player = NodePath("../AnimationPlayer")
+parameters/Death/TimeScale/scale = 1.2
+parameters/Fall/TimeScale/scale = 2.4
+parameters/FloorJump/TimeScale/scale = 8.0
+parameters/Idle/TimeScale/scale = 1.5
+parameters/IdleRun/TimeScale/scale = 16.0
+parameters/Jump/TimeScale/scale = 2.0
+parameters/JumpFall/TimeScale/scale = 8.0
+parameters/Run/TimeScale/scale = 1.5
+parameters/Walk/TimeScale/scale = 1.2
+parameters/ZBusterStandBy/TimeScale/scale = 2.4
+parameters/ZSaberStandBy/TimeScale/scale = 1.8

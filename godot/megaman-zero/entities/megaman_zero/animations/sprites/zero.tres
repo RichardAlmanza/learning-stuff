@@ -1,8 +1,8 @@
 [gd_resource type="SpriteFrames" load_steps=59 format=3 uid="uid://cx8pk5e12niqy"]
 
-[ext_resource type="Texture2D" uid="uid://cn7hj4tuk1wbh" path="res://entities/megaman_zero/sprites/zero_z3standardframes.png" id="1_6o10f"]
-[ext_resource type="Texture2D" uid="uid://cgpe5utbsgpv6" path="res://entities/megaman_zero/sprites/Game Boy Advance - Mega Man Zero 3 - Zero.png" id="1_ds7fk"]
-[ext_resource type="Texture2D" uid="uid://f0vo1bapcerc" path="res://entities/megaman_zero/sprites/zero_z1standardframes.png" id="2_v5wx8"]
+[ext_resource type="Texture2D" uid="uid://cn7hj4tuk1wbh" path="res://entities/megaman_zero/animations/sprites/zero_z3standardframes.png" id="1_6o10f"]
+[ext_resource type="Texture2D" uid="uid://cgpe5utbsgpv6" path="res://entities/megaman_zero/animations/sprites/Game Boy Advance - Mega Man Zero 3 - Zero.png" id="1_ds7fk"]
+[ext_resource type="Texture2D" uid="uid://f0vo1bapcerc" path="res://entities/megaman_zero/animations/sprites/zero_z1standardframes.png" id="2_v5wx8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ckbpp"]
 atlas = ExtResource("1_ds7fk")
