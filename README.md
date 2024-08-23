@@ -13,3 +13,5 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
   - [SnippetBox](go/snippetbox/)
 - [Godot](godot)
   - [Megaman Zero](godot/megaman-zero)
+- [Terraform](terraform)
+  - [0-intro]
