@@ -39,4 +39,4 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
   - [Click Counter](react/click-counter)
   - [Calculator](react/calculator)
 - [Terraform](terraform)
-  - [0-intro]
+  - [0-intro](terraform/0-basics)
