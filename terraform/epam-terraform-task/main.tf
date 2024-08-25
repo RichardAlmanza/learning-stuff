@@ -16,17 +16,27 @@ provider "aws" {
 
 data "aws_availability_zones" "aws_region_azs" {
   state = "available"
+
+  lifecycle {
+    precondition {
+      condition     = parseint(split("/", var.cidr_block)[1], 10) + local.newbits <= 28
+      error_message = "The current cidr block cannot support ${var.number_az * local.number_subnets_by_az} subnets"
+    }
+
+    postcondition {
+      condition     = length(self.names) >= var.number_az
+      error_message = "There are less AZs available than requested"
+    }
+  }
 }
 
 locals {
-  number_az            = 2
   number_subnets_by_az = 2
-  newbits              = log(local.number_az * local.number_subnets_by_az, 2)
+  newbits              = ceil(log(var.number_az * local.number_subnets_by_az, 2))
 
-  base_tags = {
-    Project     = "${var.project_name}"
-    Environment = "Temporal"
-  }
+  base_tags = merge({
+    Project = "${var.project_name}"
+  }, var.base_tags)
 }
 
 resource "aws_vpc" "vpc" {
@@ -78,7 +88,7 @@ resource "aws_route_table" "private_table" {
 }
 
 resource "aws_subnet" "public_subnets" {
-  count  = local.number_az
+  count  = var.number_az
   vpc_id = aws_vpc.vpc.id
 
   availability_zone = data.aws_availability_zones.aws_region_azs.names[count.index]
@@ -91,7 +101,7 @@ resource "aws_subnet" "public_subnets" {
 }
 
 resource "aws_subnet" "private_subnets" {
-  count  = local.number_az
+  count  = var.number_az
   vpc_id = aws_vpc.vpc.id
 
   availability_zone = data.aws_availability_zones.aws_region_azs.names[count.index]
@@ -104,14 +114,14 @@ resource "aws_subnet" "private_subnets" {
 }
 
 resource "aws_route_table_association" "public_table_association" {
-  count = local.number_az
+  count = var.number_az
 
   route_table_id = aws_route_table.public_table.id
   subnet_id      = aws_subnet.public_subnets[count.index].id
 }
 
 resource "aws_route_table_association" "private_table_association" {
-  count = local.number_az
+  count = var.number_az
 
   route_table_id = aws_route_table.private_table.id
   subnet_id      = aws_subnet.private_subnets[count.index].id
