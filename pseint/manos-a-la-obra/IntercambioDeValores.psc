@@ -1,11 +1,9 @@
-// Escribe un programa que calcule el precio promedio de un producto.
-// El precio promedio se debe calcular a partir del precio del mismo producto en tres establecimientos distintos.
+// Escribe un programa que permita al usuario ingresar el valor de dos variables numï¿½ricas de tipo entero.
+// Posteriormente, el programa debe intercambiar los valores de ambas variables y mostrar el resultado final por pantalla.
 
-// Nota: Asegúrate de solicitar al usuario que ingrese tres valores del producto, 
-// los cuales serán almacenados en tres variables previamente definidas.
+// Por ejemplo, si el usuario ingresa los valores num1 = 9 y num2 = 3, la salida a del programa deberï¿½ mostrar: num1 = 3 y num2 = 9.
 
-// Posteriormente, podrás llevar a cabo la operación correspondiente.
-// Recuerda nombrar y guardar tu algoritmo.
+// Ayuda: Para intercambiar los valores de dos variables se debe utilizar una variable auxiliar.
 
 Algoritmo IntercambioDeValores
 	Definir num1, num2, auxiliar Como Entero
