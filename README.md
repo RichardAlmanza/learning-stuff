@@ -17,6 +17,7 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
   - [Ejercicios Complementarios 2](pseint/ejercicios-complementarios-2)
   - [Condicional Múltiple](pseint/condicional-multiple)
   - [Condicionales anidados](pseint/condicionales-anidados)
+  - [Ejercicios Complementarios 3](pseint/ejercicios-complementarios-3)
 - [React](react)
   - [Brand Page](react/band-page)
   - [Testimonials FreeCodeCamp](react/testimonials-freecodecamp)
