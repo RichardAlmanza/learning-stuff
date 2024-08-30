@@ -8,7 +8,7 @@
 
 Algoritmo Credenciales
 	Definir CODIGO, CONTRASENIA Como Entero
-	Definir  codigoUsuario, contraseniaUsuario Como Entero
+	Definir codigoUsuario, contraseniaUsuario Como Entero
 	
 	CODIGO = 1024
 	CONTRASENIA = 4567
@@ -17,13 +17,13 @@ Algoritmo Credenciales
 		Repetir
 			Escribir "Ingresar su código de usuario (un número entero mayor que cero)."
 			Leer codigoUsuario
-		Mientras Que codigoUsuario <= 0
+		Hasta Que codigoUsuario > 0
 		
 		Repetir
 			Escribir "Ingresar su contraseña numérica (otro número entero positivo)."
 			Leer contraseniaUsuario
-		Mientras Que contraseniaUsuario <= 0
-	Mientras Que NO (codigoUsuario == CODIGO Y contraseniaUsuario == contraseniaUsuario)
+		Hasta Que contraseniaUsuario > 0
+	Hasta Que codigoUsuario == CODIGO Y contraseniaUsuario == CONTRASENIA
 	
 	Escribir "Usted ha ingresado... tal vez a fuerza bruta"
 FinAlgoritmo

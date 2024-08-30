@@ -19,13 +19,12 @@ Algoritmo Eureka
 	intentos = 0
 	autenticado = Falso
 	
-	Repetir		
+	Repetir	
+		Escribir "Intentos ", intentos + 1, " de ", MAXIMOS_INTENTOS
 		Escribir "Ingrese la clave para ingresar"
 		Leer claveUsuario
 		
-		Si claveUsuario == CLAVE Entonces
-			autenticado = Verdadero	
-		FinSi
+		autenticado = claveUsuario == CLAVE
 		
 		intentos = intentos + 1
 	Mientras Que intentos < MAXIMOS_INTENTOS Y NO autenticado

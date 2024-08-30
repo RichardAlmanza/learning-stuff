@@ -20,7 +20,7 @@ Algoritmo SumatoriaInfinita
 		Repetir
 			Escribir "Ingresar un numero entero positivo para sumar"
 			Leer nuevoNumero
-		Mientras Que nuevoNumero <= 0
+		Hasta Que nuevoNumero > 0
 		
 		sumatoria = sumatoria + nuevoNumero
 		
@@ -29,7 +29,7 @@ Algoritmo SumatoriaInfinita
 			Leer eleccionUsuario
 			
 			eleccionUsuario = Mayusculas(eleccionUsuario)
-		Mientras Que NO (eleccionUsuario == "N" O eleccionUsuario == "NO" O eleccionUsuario == "S" O eleccionUsuario == "SI")
+		Hasta Que eleccionUsuario == "N" O eleccionUsuario == "NO" O eleccionUsuario == "S" O eleccionUsuario == "SI"
 		
 		Si eleccionUsuario == "NO" O eleccionUsuario == "N" Entonces
 			continuar = Falso
