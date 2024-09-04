@@ -29,6 +29,8 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
     - [Estructuras Anidadas 2.0](pseint/estructura-anidadas-2.0)
     - [Ejercicios Complementarios 5](pseint/ejercicios-complementario-5)
     - [Desafíos integradores](pseint/desafios-integradores)
+    - [Introducción a Funciones](pseint/introduccion-a-funciones)
+    - [Ejercicios Complementarios 6](pseint/ejercicios-complementario-6)
 
   </details>
 - [React](react)
