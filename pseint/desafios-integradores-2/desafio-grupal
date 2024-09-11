@@ -1,0 +1,48 @@
+# Desafío integrador Grupal
+
+> 🚀 RECUERDEN: Antes de comenzar, asegúrense de leer todo el enunciado para comprender el alcance completo de la actividad.
+---
+> 💡 Para empezar, les recomendamos ordenar el diagrama de flujo de las acciones necesarias que deben cubrir. Pueden utilizar herramientas como compartir pantalla o pizarras compartidas, como Jamboard o Excalidraw, para facilitar esta tarea.
+---
+> 🔍 Es importante reconocer qué variables serán necesarias y de qué tipo deben ser definidas para llevar a cabo la actividad de manera eficiente.
+
+## Calculadora de materiales de construcción
+
+Deberán programar una calculadora de materiales para la construcción.  El algoritmo principal solo debe llamar al subprograma "menu()". Cada subprograma puede subdividirse, si es necesario, en otros subprogramas, según la creatividad del programador.
+
+El menú principal debe presentarse de la siguiente manera:
+
+1. ⚒️ Calcular muro de ladrillo
+2. ⛏️ Calcular viga de hormigón
+3. 🏗️ Calcular columnas de hormigón
+4. 🏠 Calcular contrapisos
+5. 🛠️ Calcular techo
+6. 🏡 Calcular pisos
+7. 🎨 Calcular pintura
+8. 💡 Calcular iluminación
+9. 🚪 Salir  (Hasta que el usuario no elija esta opción, después de calcular algún material, el programa debe regresar al menú principal)
+
+### Subprogramas sugeridos:
+
+1. **calcularSuperficie y calcularVolumen**. Ambos se utilizarán dentro de los otros subprogramas. El usuario no podrá acceder a ellos.
+
+2. "**calcularMuro**": Este subprograma solicitará al usuario seleccionar si el muro tendrá un espesor de 20 o 30 cm. Luego, se pedirá el largo y el alto. Con estos datos, se mostrará al usuario la superficie del muro y la cantidad de materiales necesarios para su construcción. Si el muro tiene 30 cm de espesor, se necesitarán 15.2 kg de cemento, 0.115 m3 de arena y 120 ladrillos por metro cuadrado. Si es de 20 cm, se necesitarán 10.9 kg de cemento, 0.09 m3 de arena y 90 ladrillos por metro cuadrado. Mostrar el resultado por pantalla.
+
+3. "**calcularViga**": Este subprograma pedirá al usuario ingresar el largo de la viga. Se calcularán los materiales necesarios para una viga de 1 metro lineal, incluyendo 9 kg de cemento, 0.02 m3 de arena, 0.02 m2 de piedra, 4 m de hierro del 8 y 3 m de hierro del 4. Mostrar el resultado por pantalla.
+
+4. "**calcularColumna**": Se solicitará al usuario ingresar el largo de la columna. Se calcularán los materiales necesarios para una columna de 1 metro lineal, incluyendo 7.5 kg de cemento, 0.016 m3 de arena, 0.016 m2 de piedra, 6 m de hierro del 10 y 3 m de hierro del 4. Mostrar el resultado por pantalla.
+
+5. "**calcularContrapisos**": Se pedirá al usuario ingresar el espesor, ancho y largo del contrapiso. Se calcularán los materiales necesarios por metro cúbico, incluyendo 105 kg de cemento, 0.45 m3 de arena y 0.9 m3 de piedra. Mostrar el resultado por pantalla.
+
+6. "**calcularTecho**": Se solicitará al usuario ingresar el espesor, ancho y largo del techo. Se calcularán los materiales necesarios por metro cuadrado, incluyendo 33 kg de cemento, 0.072 m3 de arena, 0.072 m3 de piedra, 7 m de hierro del 8 y 4 m de hierro del 6. Mostrar el resultado por pantalla.
+
+
+7. "**calcularPisos**": Se pedirá al usuario ingresar el ancho y largo del paño de piso. Se calculará la superficie y se añadirá un 10% extra por recortes. El resultado se mostrará en metros cuadrados. Mostrar el resultado por pantalla.
+
+8. "**calcularPintura**": Se solicitará al usuario ingresar la superficie del muro. Se calculará la cantidad de pintura necesaria, considerando que rinde 6 m2 por litro. Mostrar el resultado por pantalla.
+
+9.  "**calcularIluminacion**": Se pedirá al usuario ingresar la superficie de la habitación. La iluminación se calculará multiplicando la superficie por 0.20. Se mostrará el resultado correspondiente a la cantidad mínima de superficie para la iluminación natural, como ventanas y puertas de vidrio. Mostrar el resultado por pantalla.
+
+Si lo desean, pueden incorporar alguna otra funcionalidad o validación que consideren que optimizará el funcionamiento de su sistema. A su vez, les recomendamos dividir las tareas dentro del equipo.
+
+> 🤝Aunque no hayan logrado completar todos los puntos de las actividades en equipo, cada integrante puede luego terminarlas de manera individual. Esta experiencia colaborativa les permitirá afianzar los conocimientos adquiridos, desarrollar habilidades de pensamiento lógico y creativo, así como también fomentar la cooperación entre los miembros del equipo. Además, al trabajar juntos, tendrán la oportunidad de enriquecerse académicamente al compartir y discutir diversas opiniones y perspectivas. Si bien el resultado final es importante, el proceso de trabajo en equipo es igualmente valioso para el aprendizaje y el crecimiento personal.

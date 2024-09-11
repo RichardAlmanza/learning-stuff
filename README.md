@@ -15,7 +15,7 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
 
     - [Primeros Algoritmos](pseint/primeros-algoritmos)
     - [¡Manos a la obra!](pseint/manos-a-la-obra)
-    - [Ejercicios Complementarios](pseint/ejercicios-complementarios-1)
+    - [Ejercicios Complementarios 1](pseint/ejercicios-complementarios-1)
     - [Condicional Simple](pseint/condicional-simple)
     - [Condicional Doble](pseint/condicional-doble)
     - [Ejercicios Complementarios 2](pseint/ejercicios-complementarios-2)
@@ -28,12 +28,13 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
     - [Esctructura Para](pseint/estructura-para)
     - [Estructuras Anidadas 2.0](pseint/estructura-anidadas-2.0)
     - [Ejercicios Complementarios 5](pseint/ejercicios-complementarios-5)
-    - [Desafíos integradores](pseint/desafios-integradores)
+    - [Desafíos integradores 1](pseint/desafios-integradores-1)
     - [Introducción a Funciones](pseint/introduccion-a-funciones)
     - [Ejercicios Complementarios 6](pseint/ejercicios-complementarios-6)
     - [Introducción a Procedimientos](pseint/introduccion-a-procedimientos)
     - [Recursividad](pseint/recursividad)
     - [Ejercicios Complementarios 7](pseint/ejercicios-complementarios-7)
+    - [Desafíos integradores 2](pseint/desafios-integradores-2)
 
   </details>
 - [React](react)
