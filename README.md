@@ -35,6 +35,8 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
     - [Recursividad](pseint/recursividad)
     - [Ejercicios Complementarios 7](pseint/ejercicios-complementarios-7)
     - [Desafíos integradores 2](pseint/desafios-integradores-2)
+    - [Introducción a Arreglos unidimensionales: Vectores](pseint/introduccion-a-arreglos-unidimensionales)
+    - [Ejercicios Complementarios 8](pseint/ejercicios-complementarios-8)
 
   </details>
 - [React](react)
