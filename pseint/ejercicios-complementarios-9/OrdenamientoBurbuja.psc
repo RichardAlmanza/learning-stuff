@@ -34,11 +34,14 @@ Algoritmo OrdenamientoBurbuja
 FinAlgoritmo
 
 SubProceso ordenarVectorPorBurbuja(vector, tamano)
-	Definir indice, posicionNuevoMaximo Como Entero
+	Definir indice, indiceComprobacion Como Entero
 	
-	Para indice = tamano - 1 Hasta 0 Con Paso -1 Hacer
-		posicionNuevoMaximo = obtenerPosicionMaximo(vector, indice + 1)
-		intercambiarNumeros(vector[posicionNuevoMaximo], vector[indice])
+	Para indice = 0 Hasta tamano - 1 Con Paso 1 Hacer
+		Para indiceComprobacion = 1 Hasta tamano - 1 Con Paso 1 Hacer
+			Si vector[indiceComprobacion - 1] > vector[indiceComprobacion] Entonces
+				intercambiarNumeros(vector[indiceComprobacion - 1], vector[indiceComprobacion])
+			FinSi
+		FinPara
 	FinPara
 FinSubProceso
 
@@ -49,19 +52,6 @@ SubProceso intercambiarNumeros(numeroA Por Referencia, numeroB Por Referencia)
 	numeroA = numeroB
 	numeroB = auxiliar	
 FinSubProceso
-
-Funcion posMaximo <- obtenerPosicionMaximo(vector, tamano)
-	Definir indice Como Entero
-	Definir posMaximo Como Real
-	
-	posMaximo = 0
-	
-	Para indice = 0 Hasta tamano - 1 Con Paso 1 Hacer
-		Si vector[indice] > vector[posMaximo] Entonces
-			posMaximo = indice
-		FinSi
-	FinPara
-FinFuncion
 
 SubProceso llenarVectorAleatoriamenteEnteros(vector, tamano, limiteInferior, limiteSuperior)
 	Definir indice Como Entero
