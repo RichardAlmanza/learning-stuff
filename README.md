@@ -37,6 +37,8 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
     - [Desafíos integradores 2](pseint/desafios-integradores-2)
     - [Introducción a Arreglos unidimensionales: Vectores](pseint/introduccion-a-arreglos-unidimensionales)
     - [Ejercicios Complementarios 8](pseint/ejercicios-complementarios-8)
+    - [Práctica Avanzada Vectores: Ejercicios Prácticos](pseint/ejercicios-practicos)
+    - [Ejercicios Complementarios 9](pseint/ejercicios-complementarios-9)
 
   </details>
 - [React](react)
