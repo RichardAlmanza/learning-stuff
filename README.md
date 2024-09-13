@@ -39,6 +39,8 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
     - [Ejercicios Complementarios 8](pseint/ejercicios-complementarios-8)
     - [Práctica Avanzada Vectores: Ejercicios Prácticos](pseint/ejercicios-practicos)
     - [Ejercicios Complementarios 9](pseint/ejercicios-complementarios-9)
+    - [Introducción a Arreglos bidimensionales: Matrices](pseint/introduccion-a-arreglos-bidimensionales)
+    - [Ejercicios Complementarios 10](pseint/ejercicios-complementarios-10)
 
   </details>
 - [React](react)
