@@ -23,13 +23,40 @@ module "vpc" {
   base_tags    = var.base_tags
 }
 
+module "nat_instance" {
+  depends_on = [module.vpc]
+  source     = "./fck-nat"
+
+  vpc_id              = module.vpc.vpc_id
+  cidr_block          = module.vpc.cidr_block
+  public_subnet_id    = module.vpc.public_subnets_ids[0]
+  private_route_table = module.vpc.private_table_id
+}
+
+module "ssh_server" {
+  source = "./ssh-bridge"
+
+  vpc_id           = module.vpc.vpc_id
+  public_subnet_id = module.vpc.public_subnets_ids[0]
+  cidr_block       = module.vpc.cidr_block
+}
+
 resource "aws_vpc_security_group_ingress_rule" "allows_ipv4_http" {
   security_group_id = aws_security_group.backend_server.id
 
-  cidr_ipv4   = "0.0.0.0/0" #module.vpc.cidr_block
+  cidr_ipv4   = module.vpc.cidr_block
   ip_protocol = "tcp"
   from_port   = 80
   to_port     = 80
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allows_ipv4_icmp" {
+  security_group_id = aws_security_group.backend_server.id
+
+  cidr_ipv4   = module.vpc.cidr_block
+  ip_protocol = "icmp"
+  from_port   = -1
+  to_port     = -1
 }
 
 resource "aws_vpc_security_group_egress_rule" "allows_all_tcp" {
@@ -51,14 +78,14 @@ resource "aws_security_group" "backend_server" {
 }
 
 resource "aws_instance" "backend_server" {
-  count = length(module.vpc.public_subnets_ids)
+  # count = length(module.vpc.public_subnets_ids)
 
-  subnet_id                   = module.vpc.public_subnets_ids[count.index]
-  ami                         = "ami-066784287e358dad1"
-  instance_type               = "t2.micro"
-  security_groups             = [aws_security_group.backend_server.id]
-  associate_public_ip_address = true
-  user_data                   = <<-END
+  subnet_id              = module.vpc.private_subnets_ids[0]
+  ami                    = "ami-066784287e358dad1"
+  instance_type          = "t2.micro"
+  vpc_security_group_ids = [aws_security_group.backend_server.id, module.ssh_server.ssh_server_sg_id]
+  key_name               = "deployer-key" #Debugging
+  user_data              = <<-END
           #! /bin/bash
           dnf -y update
           dnf -y install nginx

@@ -44,28 +44,20 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_route_table" "public_table" {
   vpc_id = aws_vpc.vpc.id
 
-  route {
-    cidr_block = var.cidr_block
-    gateway_id = "local"
-  }
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
-  }
-
   tags = merge({
     Name = "${var.project_name}-public-rtb"
   }, local.base_tags)
 }
 
+resource "aws_route" "internet_gateway" {
+  route_table_id = aws_route_table.public_table.id
+
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id = aws_internet_gateway.igw.id
+}
+
 resource "aws_route_table" "private_table" {
   vpc_id = aws_vpc.vpc.id
-
-  route {
-    cidr_block = var.cidr_block
-    gateway_id = "local"
-  }
 
   tags = merge({
     Name = "${var.project_name}-private-rtb"

@@ -7,13 +7,31 @@ resource "aws_vpc_security_group_ingress_rule" "allows_ipv4_ssh" {
   to_port     = 22
 }
 
- resource "aws_vpc_security_group_egress_rule" "allows_all_tcp" {
+resource "aws_vpc_security_group_ingress_rule" "allows_internal_ipv4_ssh" {
+  security_group_id = aws_security_group.ssh_server.id
+
+  cidr_ipv4   = var.cidr_block
+  ip_protocol = "tcp"
+  from_port   = 22
+  to_port     = 22
+}
+
+resource "aws_vpc_security_group_egress_rule" "allows_all_tcp" {
   security_group_id = aws_security_group.ssh_server.id
 
   cidr_ipv4   = "0.0.0.0/0"
   ip_protocol = "tcp"
   from_port   = 0
   to_port     = 65535
+}
+
+resource "aws_vpc_security_group_egress_rule" "allows_all_icmp" {
+  security_group_id = aws_security_group.ssh_server.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  ip_protocol = "icmp"
+  from_port   = -1
+  to_port     = -1
 }
 
 resource "aws_key_pair" "deployer" {
@@ -31,11 +49,11 @@ resource "aws_security_group" "ssh_server" {
 }
 
 resource "aws_instance" "ssh_server" {
-  subnet_id       = var.public_subnet_id
-  ami             = "ami-066784287e358dad1"
-  security_groups = [aws_security_group.ssh_server.id]
-  instance_type   = "t2.micro"
-  key_name        = aws_key_pair.deployer.key_name
+  subnet_id              = var.public_subnet_id
+  ami                    = "ami-066784287e358dad1"
+  vpc_security_group_ids = [aws_security_group.ssh_server.id]
+  instance_type          = "t2.micro"
+  key_name               = aws_key_pair.deployer.key_name
 
   associate_public_ip_address = true
 
