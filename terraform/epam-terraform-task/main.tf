@@ -33,12 +33,12 @@ resource "aws_vpc_security_group_ingress_rule" "allows_ipv4_http" {
 }
 
 resource "aws_vpc_security_group_egress_rule" "allows_all_tcp" {
-  security_group_id = aws_instance.backend_server.id
+  security_group_id = aws_security_group.backend_server.id
 
-  cidr_ipv4 = "0.0.0.0/0"
+  cidr_ipv4   = "0.0.0.0/0"
   ip_protocol = "tcp"
-  from_port = 0
-  to_port = 65535
+  from_port   = 0
+  to_port     = 65535
 }
 
 resource "aws_security_group" "backend_server" {
@@ -51,11 +51,13 @@ resource "aws_security_group" "backend_server" {
 }
 
 resource "aws_instance" "backend_server" {
-  subnet_id                   = module.vpc.public_subnets_ids[0]
+  count = length(module.vpc.public_subnets_ids)
+
+  subnet_id                   = module.vpc.public_subnets_ids[count.index]
   ami                         = "ami-066784287e358dad1"
   instance_type               = "t2.micro"
   security_groups             = [aws_security_group.backend_server.id]
-  associate_public_ip_address = true #remove after testing!!!
+  associate_public_ip_address = true
   user_data                   = <<-END
           #! /bin/bash
           dnf -y update
