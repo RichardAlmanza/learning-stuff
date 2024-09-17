@@ -40,7 +40,6 @@ FinAlgoritmo
 
 Funcion encontrado <- buscarEnMatriz2D(elementoBuscado, matrizABuscar, matrizPosiciones, tamanoFila, tamanoColumna, tamanoPosiciones Por Referencia)
 	Definir fila, columna Como Entero
-	Definir indice Como Entero
 	Definir encontrado Como Logico
 	
 	encontrado = Falso
