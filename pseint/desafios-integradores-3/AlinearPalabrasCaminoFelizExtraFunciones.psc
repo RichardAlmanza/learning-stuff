@@ -35,22 +35,13 @@ FinAlgoritmo
 
 
 SubProceso acomodarPalabra(matriz, tamanoFila, tamanoColumna)
-	Definir fila, iter, maxPosicion, posicionR Como Entero
+	Definir fila, maxPosicion, posicionR Como Entero
 	
 	maxPosicion = maxPosicionRDeLasFilas(matriz, tamanoFila)
 	
 	Para fila = 0 Hasta tamanoFila - 1 Con Paso 1 Hacer
 		posicionR = buscarR(matriz, fila)
-		
-		Si posicionR < maxPosicion Entonces	
-			Para iter = 1 Hasta maxPosicion - posicionR Con Paso 1 Hacer
-				rotarColumnas(matriz, tamanoColumna, fila)
-				
-				Limpiar Pantalla
-				imprimirMatriz(matriz, tamanoFila, tamanoColumna)
-				Esperar 300 Milisegundos
-			FinPara
-		FinSi
+		rotarColumnasNPosicionesALaDerecha(matriz, tamanoFila, tamanoColumna, fila, maxPosicion - posicionR)
 		
 		esperarTeclaLimpiar()
 	FinPara
@@ -77,6 +68,19 @@ Funcion maxPosicionR <- maxPosicionRDeLasFilas(matriz, tamanoFila)
 		FinSi
 	FinPara
 FinFuncion
+
+/// Si numeroPosiciones <= 0 Entonces no se movera
+SubProceso rotarColumnasNPosicionesALaDerecha(matriz, tamanoFila, tamanoColumna, fila, numeroPosiciones)
+	Definir iter Como Entero
+	
+	Para iter = 1 Hasta numeroPosiciones Con Paso 1 Hacer
+		rotarColumnas(matriz, tamanoColumna, fila)
+		
+		Limpiar Pantalla
+		imprimirMatriz(matriz, tamanoFila, tamanoColumna)
+		Esperar 300 Milisegundos
+	FinPara
+FinSubProceso
 
 
 /// Rota una sola columna

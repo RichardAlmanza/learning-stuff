@@ -20,6 +20,7 @@ Algoritmo AlinearPalabrasCaminoFeliz
 	palabras[8] = "MIENTRAS"
 	
 	inicializarMatriz(matriz, FILAS, COLUMNAS)
+	Escribir "Se inicializo la matriz ", FILAS, "x", COLUMNAS
 	imprimirMatriz(matriz, FILAS, COLUMNAS)
 	
 	Para fila = 0 Hasta FILAS - 1 Con Paso 1 Hacer
@@ -28,6 +29,7 @@ Algoritmo AlinearPalabrasCaminoFeliz
 		Limpiar Pantalla
 		
 		agregarPalabra(matriz, fila, palabras[fila])
+		Escribir "Se agrego la palabra ", palabras[fila], " en la fila ", fila
 		imprimirMatriz(matriz, FILAS, COLUMNAS)
 	FinPara
 	
@@ -64,6 +66,7 @@ SubProceso acomodarPalabra(matriz, tamanoFila, tamanoColumna)
 				FinPara
 				
 				Limpiar Pantalla
+				Escribir "Se esta moviendo/rotando la palabra de la fila ", fila
 				imprimirMatriz(matriz, tamanoFila, tamanoColumna)
 				Esperar 500 Milisegundos
 			FinPara
