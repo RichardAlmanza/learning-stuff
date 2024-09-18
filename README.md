@@ -43,6 +43,7 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
     - [Ejercicios Complementarios 10](pseint/ejercicios-complementarios-10)
     - [Práctica Avanzada matrices: Ejercicios Prácticos](pseint/ejercicios-practicos-2)
     - [Ejercicios Complementarios 11](pseint/ejercicios-complementarios-11)
+    - [Desafíos integradores 3](pseint/desafios-integradores-3)
 
   </details>
 - [React](react)
