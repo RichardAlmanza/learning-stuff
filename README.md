@@ -14,6 +14,7 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
     <summary>Java/Egg Content</summary>
 
     - [Primeros pasos con Java](java/egg/primeros-pasos-con-java)
+    - [Clase Scanner y Operadores](java/egg/clase-scanner-y-operadores)
 
   </details>
 
