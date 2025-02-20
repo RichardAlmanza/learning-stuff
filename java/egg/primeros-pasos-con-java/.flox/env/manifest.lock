@@ -1,0 +1,149 @@
+{
+  "lockfile-version": 1,
+  "manifest": {
+    "version": 1,
+    "install": {
+      "openjdk20": {
+        "pkg-path": "openjdk20"
+      }
+    },
+    "hook": {},
+    "profile": {},
+    "options": {
+      "systems": [
+        "aarch64-darwin",
+        "aarch64-linux",
+        "x86_64-darwin",
+        "x86_64-linux"
+      ],
+      "allow": {
+        "licenses": []
+      },
+      "semver": {}
+    }
+  },
+  "packages": [
+    {
+      "attr_path": "openjdk20",
+      "broken": false,
+      "derivation": "/nix/store/8jkz4wax83f7ayp41x4i6rvs94k0wkgj-zulu-ca-jdk-20.0.2.drv",
+      "description": "Certified builds of OpenJDK",
+      "install_id": "openjdk20",
+      "license": "GPL-2.0-only",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=bfb7a882678e518398ce9a31a881538679f6f092",
+      "name": "zulu-ca-jdk-20.0.2",
+      "pname": "openjdk20",
+      "rev": "bfb7a882678e518398ce9a31a881538679f6f092",
+      "rev_count": 630835,
+      "rev_date": "2024-05-24T00:06:08Z",
+      "scrape_date": "2024-06-13T21:16:20Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "20.0.2",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/90lwig9198ag0r1jqnq1wm0diwlrpskh-zulu-ca-jdk-20.0.2"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "openjdk20",
+      "broken": false,
+      "derivation": "/nix/store/mmyc76m1i12acbdnfa586gh65mj8yc4k-openjdk-20+36.drv",
+      "description": "The open-source Java Development Kit",
+      "install_id": "openjdk20",
+      "license": "GPL-2.0-only",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=bfb7a882678e518398ce9a31a881538679f6f092",
+      "name": "openjdk-20+36",
+      "pname": "openjdk20",
+      "rev": "bfb7a882678e518398ce9a31a881538679f6f092",
+      "rev_count": 630835,
+      "rev_date": "2024-05-24T00:06:08Z",
+      "scrape_date": "2024-06-13T21:16:20Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "20+36",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "debug": "/nix/store/rcv396sb9rsazr7n3rq0pkpwhjb0bnwk-openjdk-20+36-debug",
+        "out": "/nix/store/10y7nchllc5avvsbyv00pyzrb1kqi0fc-openjdk-20+36"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "openjdk20",
+      "broken": false,
+      "derivation": "/nix/store/7q6nkn484z7inzrs0dl7b0dikc03bglc-zulu-ca-jdk-20.0.2.drv",
+      "description": "Certified builds of OpenJDK",
+      "install_id": "openjdk20",
+      "license": "GPL-2.0-only",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=bfb7a882678e518398ce9a31a881538679f6f092",
+      "name": "zulu-ca-jdk-20.0.2",
+      "pname": "openjdk20",
+      "rev": "bfb7a882678e518398ce9a31a881538679f6f092",
+      "rev_count": 630835,
+      "rev_date": "2024-05-24T00:06:08Z",
+      "scrape_date": "2024-06-13T21:16:20Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "20.0.2",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/bsyq6jyxaw8dhkhsqmay9qc984b6cm7l-zulu-ca-jdk-20.0.2"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "openjdk20",
+      "broken": false,
+      "derivation": "/nix/store/y7yxw1lc4fha1r9h2cy5j17rcz94z01g-openjdk-20+36.drv",
+      "description": "The open-source Java Development Kit",
+      "install_id": "openjdk20",
+      "license": "GPL-2.0-only",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=bfb7a882678e518398ce9a31a881538679f6f092",
+      "name": "openjdk-20+36",
+      "pname": "openjdk20",
+      "rev": "bfb7a882678e518398ce9a31a881538679f6f092",
+      "rev_count": 630835,
+      "rev_date": "2024-05-24T00:06:08Z",
+      "scrape_date": "2024-06-13T21:16:20Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "20+36",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "debug": "/nix/store/gf2cnfmh0mxgvppq8nx5nas1d95qvjsw-openjdk-20+36-debug",
+        "out": "/nix/store/vss5vsmpv9mc3py16w3nzk52qrl3v1a9-openjdk-20+36"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    }
+  ]
+}

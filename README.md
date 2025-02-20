@@ -8,6 +8,15 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
   - [SnippetBox](go/snippetbox)
 - [Godot](godot)
   - [Megaman Zero](godot/megaman-zero)
+- [Java](java)
+
+  <details>
+    <summary>Java/Egg Content</summary>
+
+    - [Primeros pasos con Java](java/egg/primeros-pasos-con-java)
+
+  </details>
+
 - [PSeInt](pseint)
 
   <details>
