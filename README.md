@@ -15,6 +15,7 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
 
     - [Primeros pasos con Java](java/egg/primeros-pasos-con-java)
     - [Clase Scanner y Operadores](java/egg/clase-scanner-y-operadores)
+    - [Actividad integradora 1](java/egg/actividad-integradora-1)
 
   </details>
 
