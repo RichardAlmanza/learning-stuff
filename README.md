@@ -17,6 +17,7 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
     - [Clase Scanner y Operadores](java/egg/clase-scanner-y-operadores)
     - [Actividad integradora 1](java/egg/actividad-integradora-1)
     - [Estructuras de control 1](java/egg/estructuras-de-control-1)
+    - [Estructuras de control 2](java/egg/estructuras-de-control-2)
 
   </details>
 
