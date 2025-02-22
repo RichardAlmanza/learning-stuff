@@ -23,6 +23,7 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
     - [Clase Math](java/egg/clase-math)
     - [Actividad integradora 2](java/egg/actividad-integradora-2)
     - [Arrays](java/egg/arrays)
+    - [Bucles 1](java/egg/bucles-1)
   </details>
 
 - [PSeInt](pseint)
