@@ -21,7 +21,7 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
     - [Estructuras de control 3](java/egg/estructuras-de-control-3)
     - [Clase String](java/egg/clase-string)
     - [Clase Math](java/egg/clase-math)
-
+    - [Actividad integradora 2](java/egg/actividad-integradora-2)
   </details>
 
 - [PSeInt](pseint)
