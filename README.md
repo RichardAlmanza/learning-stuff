@@ -24,6 +24,7 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
     - [Actividad integradora 2](java/egg/actividad-integradora-2)
     - [Arrays](java/egg/arrays)
     - [Bucles 1](java/egg/bucles-1)
+    - [Bucles 2](java/egg/bucles-2)
   </details>
 
 - [PSeInt](pseint)
