@@ -28,6 +28,7 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
     - [Clase Arrays](java/egg/clase-arrays)
     - [Wrappers](java/egg/wrappers)
     - [Actividad integradora 3](java/egg/actividad-integradora-3)
+    - [Actividad integradora 4](java/egg/actividad-integradora-4)
   </details>
 
 - [PSeInt](pseint)
