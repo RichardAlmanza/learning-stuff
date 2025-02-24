@@ -27,6 +27,7 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
     - [Bucles 2](java/egg/bucles-2)
     - [Clase Arrays](java/egg/clase-arrays)
     - [Wrappers](java/egg/wrappers)
+    - [Actividad integradora 3](java/egg/actividad-integradora-3)
   </details>
 
 - [PSeInt](pseint)
