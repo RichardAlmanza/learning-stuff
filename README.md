@@ -29,6 +29,7 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
     - [Wrappers](java/egg/wrappers)
     - [Actividad integradora 3](java/egg/actividad-integradora-3)
     - [Actividad integradora 4](java/egg/actividad-integradora-4)
+    - [Actividad integradora 5](java/egg/actividad-integradora-5)
   </details>
 
 - [PSeInt](pseint)
