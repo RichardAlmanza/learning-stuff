@@ -32,6 +32,7 @@ This is a repository to pack a bunch of minor projects to practice, for now, the
     - [Actividad integradora 5](java/egg/actividad-integradora-5)
     - [Actividad integradora 6](java/egg/actividad-integradora-6)
     - [Metodos 1](java/egg/metodos-1)
+    - [Metodos 2](java/egg/metodos-2)
   </details>
 
 - [PSeInt](pseint)
