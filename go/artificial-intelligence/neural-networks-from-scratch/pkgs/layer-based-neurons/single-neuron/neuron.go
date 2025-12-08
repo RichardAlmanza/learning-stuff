@@ -7,15 +7,15 @@ import (
 
 type NeuronFloat64 struct {
 	InputSize int
-	Bias float64
-	Weights []float64
+	Bias      float64
+	Weights   []float64
 }
 
 func NewNeuron(numInputs int) *NeuronFloat64 {
 	return &NeuronFloat64{
 		InputSize: numInputs,
-		Bias: 0,
-		Weights: make([]float64, numInputs),
+		Bias:      0,
+		Weights:   make([]float64, numInputs),
 	}
 }
 
@@ -48,5 +48,5 @@ func (n *NeuronFloat64) Synapsis(input []float64) (float64, error) {
 
 	output += n.Bias
 
-	return  output, nil
+	return output, nil
 }
