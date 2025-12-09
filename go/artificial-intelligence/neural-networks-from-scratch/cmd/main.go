@@ -8,7 +8,15 @@ import (
 )
 
 func main() {
-	input := []float64{1.0, 2.0, 3.0, 2.5}
+	input := &matrix.MatrixFloat64{
+		Rows:    3,
+		Columns: 4,
+		Data: []float64{
+			1.0, 2.0, 3.0, 2.5,
+			2.0, 5.0, -1.0, 2.0,
+			-1.5, 2.7, 3.3, -0.8,
+		},
+	}
 
 	weights := &matrix.MatrixFloat64{
 		Rows:    3,
@@ -21,15 +29,10 @@ func main() {
 	}
 
 	biases := []float64{2.0, 3.0, 0.5}
-	mBiases := matrix.NewMatrixFromSlice(1, len(biases), biases)
-
-	fmt.Println(mBiases)
-	fmt.Println(mBiases.Transpose())
-	fmt.Println(mBiases.Product(mBiases.Transpose()))
 
 	// original static example
 
-	outputs1 := matrix.SumVectors(weights.Dot(input), biases)
+	outputs1 := input.Product(weights.Transpose()).AddVectorPerRow(biases)
 
 	fmt.Println(outputs1)
 
@@ -38,7 +41,7 @@ func main() {
 	layer1.SetWeights(*weights)
 	layer1.SetBiases(biases)
 
-	outputs2 := layer1.Forward(input)
+	outputs2 := layer1.ForwardBatch(input)
 
 	fmt.Println(outputs2)
 	fmt.Println(layer1)
@@ -46,11 +49,11 @@ func main() {
 	// Dynamic example
 
 	sizeLayer := 3
-	layer2 := layerbasedneurons.NewLayerBasedNeurons(sizeLayer, len(input))
+	layer2 := layerbasedneurons.NewLayerBasedNeurons(sizeLayer, input.Columns)
 	layer2.RandomizeWeights()
 	layer2.RandomizeBiases()
 
-	outputs3 := layer2.Forward(input)
+	outputs3 := layer2.ForwardBatch(input)
 
 	fmt.Println(outputs3)
 	fmt.Println(layer2)

@@ -77,3 +77,26 @@ func (l *LayerBasedNeurons) Forward(input []float64) []float64 {
 
 	return output
 }
+
+func (l *LayerBasedNeurons) ForwardBatch(input *matrix.MatrixFloat64) *matrix.MatrixFloat64 {
+	output := matrix.NewMatrix(input.Rows, l.Size)
+
+	for sample := 0; sample < input.Rows; sample++ {
+
+		outputNeurons := make([]float64, l.Size)
+
+		for i := 0; i < l.Size; i++ {
+			out, err := l.Neurons[i].Synapsis(input.GetRow(sample))
+			if err != nil {
+				panic(err.Error())
+			}
+
+			outputNeurons[i] = out
+		}
+
+		outputRow := output.GetRow(sample)
+		copy(outputRow, outputNeurons)
+	}
+
+	return output
+}

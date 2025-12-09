@@ -131,8 +131,26 @@ func (m *MatrixFloat64) Add(m2 *MatrixFloat64) *MatrixFloat64 {
 
 	newMatrix := NewMatrix(m.Rows, m.Columns)
 
-	for i := 0; i < len(m.Data); i++ {
-		newMatrix.Data[i] = m.Data[i] + m2.Data[i]
+	for row := 0; row < m.Rows; row++ {
+		// Using the power of slices referencing to the original memory array
+		result := SumVectors(m.GetRow(row), m2.GetRow(row))
+		copy(newMatrix.GetRow(row), result)
+	}
+
+	return newMatrix
+}
+
+func (m *MatrixFloat64) AddVectorPerRow(vector []float64) *MatrixFloat64 {
+	if m.Columns != len(vector) {
+		panic("Size mismatch")
+	}
+
+	newMatrix := NewMatrix(m.Rows, m.Columns)
+
+	for row := 0; row < m.Rows; row++ {
+		// Using the power of slices referencing to the original memory array
+		result := SumVectors(m.GetRow(row), vector)
+		copy(newMatrix.GetRow(row), result)
 	}
 
 	return newMatrix
