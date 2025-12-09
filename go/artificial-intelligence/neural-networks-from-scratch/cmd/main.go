@@ -21,6 +21,11 @@ func main() {
 	}
 
 	biases := []float64{2.0, 3.0, 0.5}
+	mBiases := matrix.NewMatrixFromSlice(1, len(biases), biases)
+
+	fmt.Println(mBiases)
+	fmt.Println(mBiases.Transpose())
+	fmt.Println(mBiases.Product(mBiases.Transpose()))
 
 	// original static example
 

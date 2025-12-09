@@ -1,6 +1,10 @@
 package matrix
 
-import "math/rand"
+import (
+	"fmt"
+	"math/rand"
+	"strings"
+)
 
 type MatrixFloat64 struct {
 	Rows    int
@@ -91,6 +95,35 @@ func (m *MatrixFloat64) Dot(vector []float64) []float64 {
 	return result
 }
 
+func (m *MatrixFloat64) Product(m2 *MatrixFloat64) *MatrixFloat64 {
+	if m2.Rows != m.Columns {
+		panic("Size mismatch")
+	}
+
+	newMatrix := NewMatrix(m.Rows, m2.Columns)
+
+	for row := 0; row < m.Rows; row++ {
+		for col := 0; col < m2.Columns; col++ {
+			index := row*m2.Columns + col
+			newMatrix.Data[index] = DotProduct(m.GetRow(row), m2.GetColumn(col))
+		}
+	}
+
+	return newMatrix
+}
+
+func (m *MatrixFloat64) Transpose() *MatrixFloat64 {
+	newMatrix := NewMatrix(m.Columns, m.Rows)
+
+	for col := 0; col < m.Columns; col++ {
+		// Using the power of slices referencing to the original memory array
+		row := newMatrix.GetRow(col)
+		copy(row, m.GetColumn(col))
+	}
+
+	return newMatrix
+}
+
 func (m *MatrixFloat64) Add(m2 *MatrixFloat64) *MatrixFloat64 {
 	if m.Columns != m2.Columns || m.Rows != m2.Rows {
 		panic("Shape mismatch")
@@ -103,6 +136,26 @@ func (m *MatrixFloat64) Add(m2 *MatrixFloat64) *MatrixFloat64 {
 	}
 
 	return newMatrix
+}
+
+func (m *MatrixFloat64) String() string {
+	var sb strings.Builder
+
+	// Assuming a precision of 11 digits, integer and comma, one comma and one space per element
+	// and finally 200 character for extra buffer, but it still can grow larger, this is just to reduce
+	// the times it needs to reallocate memory
+	sb.Grow(15*m.Columns*m.Rows + 200)
+
+	fmt.Fprintf(&sb, "Columns: %d \n", m.Columns)
+	fmt.Fprintf(&sb, "Rows: %d \n", m.Rows)
+
+	for row := 0; row < m.Rows; row++ {
+		fmt.Fprintf(&sb, "%d ", row)
+		fmt.Fprint(&sb, m.GetRow(row))
+		sb.WriteRune('\n')
+	}
+
+	return sb.String()
 }
 
 func panicOutOfBound(max, value int) {
