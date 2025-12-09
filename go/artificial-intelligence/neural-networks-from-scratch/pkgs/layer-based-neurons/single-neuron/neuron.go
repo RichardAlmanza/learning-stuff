@@ -31,7 +31,7 @@ func (n *NeuronFloat64) SetWeights(newWeights []float64) error {
 
 func (n *NeuronFloat64) RandomizeWeights() {
 	for i := 0; i < n.InputSize; i++ {
-		n.Weights[i] = (rand.Float64() - 0.5) * 10
+		n.Weights[i] = (rand.Float64() - 0.5) * 0.01
 	}
 }
 

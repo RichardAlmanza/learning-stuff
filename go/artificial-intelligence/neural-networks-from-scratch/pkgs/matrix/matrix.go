@@ -20,6 +20,13 @@ func NewMatrix(row, col int) *MatrixFloat64 {
 	}
 }
 
+func NewMatrixRand(row, col int) *MatrixFloat64 {
+	newMatrix := NewMatrix(row, col)
+	newMatrix.Randomize()
+
+	return newMatrix
+}
+
 func NewMatrixFromSlice(row, col int, slice []float64) *MatrixFloat64 {
 	if row*col != len(slice) {
 		panic("Size mismatch!")
@@ -85,10 +92,24 @@ func (m *MatrixFloat64) Randomize() {
 	}
 }
 
-func (m *MatrixFloat64) Scale(scalar float64) {
+func (m *MatrixFloat64) Scale(scalar float64) *MatrixFloat64 {
+	newMatrix := NewMatrix(m.Rows, m.Columns)
+
 	for i := 0; i < len(m.Data); i++ {
-		m.Data[i] *= scalar
+		newMatrix.Data[i] = m.Data[i] * scalar
 	}
+
+	return newMatrix
+}
+
+func (m *MatrixFloat64) MapFunc(f func(float64) float64) *MatrixFloat64 {
+	newMatrix := NewMatrix(m.Rows, m.Columns)
+
+	for i := 0; i < len(m.Data); i++ {
+		newMatrix.Data[i] = f(m.Data[i])
+	}
+
+	return newMatrix
 }
 
 func (m *MatrixFloat64) Dot(vector []float64) []float64 {
@@ -161,6 +182,25 @@ func (m *MatrixFloat64) AddVectorPerRow(vector []float64) *MatrixFloat64 {
 		// Using the power of slices referencing to the original memory array
 		result := SumVectors(m.GetRow(row), vector)
 		copy(newMatrix.GetRow(row), result)
+	}
+
+	return newMatrix
+}
+
+func (m *MatrixFloat64) AddVectorPerColumn(vector []float64) *MatrixFloat64 {
+	if m.Rows != len(vector) {
+		panic("Size mismatch")
+	}
+
+	newMatrix := NewMatrix(m.Rows, m.Columns)
+
+	// Is this way more expressive than using `index % m.Columns`?
+	var index int = 0
+	for row := 0; row < m.Rows; row++ {
+		for col := 0; col < m.Columns; col++ {
+			newMatrix.Data[index] = m.Data[index] + vector[row]
+			index++
+		}
 	}
 
 	return newMatrix
