@@ -18,7 +18,7 @@ func main() {
 		},
 	}
 
-	weights := &matrix.MatrixFloat64{
+	layer1Weights := &matrix.MatrixFloat64{
 		Rows:    3,
 		Columns: 4,
 		Data: []float64{
@@ -28,33 +28,56 @@ func main() {
 		},
 	}
 
-	biases := []float64{2.0, 3.0, 0.5}
+	layer1Biases := []float64{2.0, 3.0, 0.5}
+
+	layer2Weights := &matrix.MatrixFloat64{
+		Rows:    3,
+		Columns: 3,
+		Data: []float64{
+			0.1, -0.14, 0.5,
+			-0.5, 0.12, -0.33,
+			-0.44, 0.73, -0.13,
+		},
+	}
+
+	layer2Biases := []float64{-1, 2, -0.5}
 
 	// original static example
 
-	outputs1 := input.Product(weights.Transpose()).AddVectorPerRow(biases)
+	layer1Outputs := input.Product(layer1Weights.Transpose()).AddVectorPerRow(layer1Biases)
+	layer2Outputs := layer1Outputs.Product(layer2Weights.Transpose()).AddVectorPerRow(layer2Biases)
 
-	fmt.Println(outputs1)
+	fmt.Println(layer2Outputs)
 
 	// Static example
 	layer1 := layerbasedneurons.NewLayerBasedNeurons(3, 4)
-	layer1.SetWeights(*weights)
-	layer1.SetBiases(biases)
+	layer1.SetWeights(*layer1Weights)
+	layer1.SetBiases(layer1Biases)
 
-	outputs2 := layer1.ForwardBatch(input)
+	layer2 := layerbasedneurons.NewLayerBasedNeurons(3, 3)
+	layer2.SetWeights(*layer2Weights)
+	layer2.SetBiases(layer2Biases)
 
-	fmt.Println(outputs2)
-	fmt.Println(layer1)
+	layer1Outputs2 := layer1.ForwardBatch(input)
+	layer2Outputs2 := layer2.ForwardBatch(layer1Outputs2)
+
+	fmt.Println(layer2Outputs2)
 
 	// Dynamic example
 
-	sizeLayer := 3
-	layer2 := layerbasedneurons.NewLayerBasedNeurons(sizeLayer, input.Columns)
-	layer2.RandomizeWeights()
-	layer2.RandomizeBiases()
+	sizeLayer1 := 3
+	randLayer1 := layerbasedneurons.NewLayerBasedNeurons(sizeLayer1, input.Columns)
+	randLayer1.RandomizeWeights()
+	randLayer1.RandomizeBiases()
 
-	outputs3 := layer2.ForwardBatch(input)
+	sizeLayer2 := 3
+	randLayer2 := layerbasedneurons.NewLayerBasedNeurons(sizeLayer2, randLayer1.Size)
+	randLayer2.RandomizeWeights()
+	randLayer2.RandomizeBiases()
 
-	fmt.Println(outputs3)
-	fmt.Println(layer2)
+	randLayer1Outputs := randLayer1.ForwardBatch(input)
+	randLayer2Outputs := randLayer2.ForwardBatch(randLayer1Outputs)
+
+	fmt.Println(randLayer2Outputs)
+	fmt.Println(randLayer2)
 }
