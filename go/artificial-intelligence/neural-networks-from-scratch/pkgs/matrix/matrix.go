@@ -194,13 +194,20 @@ func (m *MatrixFloat64) AddVectorPerColumn(vector []float64) *MatrixFloat64 {
 
 	newMatrix := NewMatrix(m.Rows, m.Columns)
 
-	// Is this way more expressive than using `index % m.Columns`?
-	var index int = 0
 	for row := 0; row < m.Rows; row++ {
-		for col := 0; col < m.Columns; col++ {
-			newMatrix.Data[index] = m.Data[index] + vector[row]
-			index++
-		}
+		result := MapFunc(m.GetRow(row), func(f float64) float64 { return f + vector[row] })
+		copy(newMatrix.GetRow(row), result)
+	}
+
+	return newMatrix
+}
+
+func (m *MatrixFloat64) SoftMax() *MatrixFloat64 {
+	newMatrix := NewMatrix(m.Rows, m.Columns)
+
+	for row := 0; row < m.Rows; row++ {
+		result := SoftMax(m.GetRow(row))
+		copy(newMatrix.GetRow(row), result)
 	}
 
 	return newMatrix

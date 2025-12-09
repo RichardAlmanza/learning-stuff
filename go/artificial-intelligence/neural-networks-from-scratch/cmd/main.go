@@ -5,10 +5,15 @@ import (
 
 	denselayer "github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/dense-layer"
 	layerbasedneurons "github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/layer-based-neurons"
+	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/matrix"
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/spiral"
 )
 
 func main() {
+	outputs := matrix.NewMatrixFromSlice(1, 3, []float64{4.8, 1.21, 2.385})
+	fmt.Println(outputs)
+	fmt.Println(outputs.SoftMax())
+
 	x, _ := spiral.NewSpiralData(100, 3, 0)
 
 	// original dynamic example

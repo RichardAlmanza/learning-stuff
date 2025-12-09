@@ -1,5 +1,7 @@
 package matrix
 
+import "math"
+
 func SumVectors(vector1, vector2 []float64) []float64 {
 	panicVectorSize(vector1, vector2)
 
@@ -8,6 +10,61 @@ func SumVectors(vector1, vector2 []float64) []float64 {
 	for i := 0; i < len(vector1); i++ {
 		newVector[i] = vector1[i] + vector2[i]
 	}
+
+	return newVector
+}
+
+func Sum(vector []float64) float64 {
+	var result float64 = 0
+
+	for i := 0; i < len(vector); i++ {
+		result += vector[i]
+	}
+
+	return result
+}
+
+func Min(vector []float64) float64 {
+	result := vector[0]
+
+	for i := 1; i < len(vector); i++ {
+		if result > vector[i] {
+			result = vector[i]
+		}
+	}
+
+	return result
+}
+
+func Max(vector []float64) float64 {
+	result := vector[0]
+
+	for i := 1; i < len(vector); i++ {
+		if result < vector[i] {
+			result = vector[i]
+		}
+	}
+
+	return result
+}
+
+func MapFunc(vector []float64, f func(float64) float64) []float64 {
+	newVector := make([]float64, len(vector))
+
+	for i := 0; i < len(vector); i++ {
+		newVector[i] = f(vector[i])
+	}
+
+	return newVector
+}
+
+func SoftMax(vector []float64) []float64 {
+	max := Max(vector)
+	newVector := MapFunc(vector, func(f float64) float64 { return math.Pow(math.E, f-max) })
+
+	sum := Sum(newVector)
+
+	newVector = MapFunc(newVector, func(f float64) float64 { return f / sum })
 
 	return newVector
 }
