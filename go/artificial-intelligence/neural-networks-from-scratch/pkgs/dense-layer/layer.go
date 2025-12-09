@@ -1,6 +1,16 @@
 package denselayer
 
-import "github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/matrix"
+import (
+	"math"
+
+	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/matrix"
+)
+
+var (
+	ReLuFunction    ActivationFunction = func(f float64) float64 { return math.Max(0, f) }
+	LinearFunction  ActivationFunction = func(f float64) float64 { return f }
+	SigmoidFunction ActivationFunction = func(f float64) float64 { return 1 / (1 + math.Pow(math.E, f)) }
+)
 
 type ActivationFunction func(float64) float64
 

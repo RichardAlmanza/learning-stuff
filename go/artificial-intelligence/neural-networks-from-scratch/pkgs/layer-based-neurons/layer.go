@@ -13,7 +13,7 @@ type LayerBasedNeurons struct {
 	Neurons   []singleneuron.NeuronFloat64
 }
 
-func NewLayerBasedNeurons(size, inputSize int) *LayerBasedNeurons {
+func NewLayerBasedNeurons(size, inputSize int, f func(float64) float64) *LayerBasedNeurons {
 	if size < 1 || inputSize < 1 {
 		panic("WTF! an empty or negative layer/input size?")
 	}
@@ -25,7 +25,7 @@ func NewLayerBasedNeurons(size, inputSize int) *LayerBasedNeurons {
 	}
 
 	for i := 0; i < size; i++ {
-		layer.Neurons[i] = *singleneuron.NewNeuron(inputSize)
+		layer.Neurons[i] = *singleneuron.NewNeuron(inputSize, f)
 	}
 
 	return layer

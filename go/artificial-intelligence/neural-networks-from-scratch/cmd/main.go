@@ -13,7 +13,7 @@ func main() {
 
 	// original dynamic example
 
-	dense1 := denselayer.NewLayer(3, 2, func(f float64) float64 { return f })
+	dense1 := denselayer.NewLayer(3, 2, denselayer.ReLuFunction)
 	outputs1 := dense1.Forward(x)
 
 	outputs1.Rows = 5 // This will limit the output to only show the first 5 rows
@@ -21,7 +21,7 @@ func main() {
 
 	// Dynamic example
 
-	layer1 := layerbasedneurons.NewLayerBasedNeurons(3, 2)
+	layer1 := layerbasedneurons.NewLayerBasedNeurons(3, 2, denselayer.ReLuFunction)
 	layer1.RandomizeWeights()
 
 	outputs2 := layer1.ForwardBatch(x)
