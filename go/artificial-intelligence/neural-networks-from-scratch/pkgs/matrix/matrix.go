@@ -16,6 +16,22 @@ func NewMatrix(row, col int) *MatrixFloat64 {
 	}
 }
 
+func NewMatrixFromSlice(row, col int, slice []float64) *MatrixFloat64 {
+	if row*col != len(slice) {
+		panic("Size mismatch!")
+	}
+
+	newData := make([]float64, len(slice))
+
+	copy(newData, slice)
+
+	return &MatrixFloat64{
+		Rows:    row,
+		Columns: col,
+		Data:    newData,
+	}
+}
+
 func (m *MatrixFloat64) GetAt(indexCol, indexRow int) float64 {
 	panicOutOfBound(m.Rows, indexRow)
 	panicOutOfBound(m.Columns, indexCol)
@@ -59,6 +75,34 @@ func (m *MatrixFloat64) Scale(scalar float64) {
 	for i := 0; i < len(m.Data); i++ {
 		m.Data[i] *= scalar
 	}
+}
+
+func (m *MatrixFloat64) Dot(vector []float64) []float64 {
+	if len(vector) != m.Columns {
+		panic("Length mismatch")
+	}
+
+	result := make([]float64, m.Rows)
+
+	for row := 0; row < m.Rows; row++ {
+		result[row] = DotProduct(vector, m.GetRow(row))
+	}
+
+	return result
+}
+
+func (m *MatrixFloat64) Add(m2 *MatrixFloat64) *MatrixFloat64 {
+	if m.Columns != m2.Columns || m.Rows != m2.Rows {
+		panic("Shape mismatch")
+	}
+
+	newMatrix := NewMatrix(m.Rows, m.Columns)
+
+	for i := 0; i < len(m.Data); i++ {
+		newMatrix.Data[i] = m.Data[i] + m2.Data[i]
+	}
+
+	return newMatrix
 }
 
 func panicOutOfBound(max, value int) {

@@ -24,17 +24,7 @@ func main() {
 
 	// original static example
 
-	outputs1 := make([]float64, 3)
-
-	for indexNeuron := 0; indexNeuron < 3; indexNeuron++ {
-		output := 0.0
-
-		for indexInput := 0; indexInput < 4; indexInput++ {
-			output += input[indexInput] * weights.GetAt(indexInput, indexNeuron)
-		}
-
-		outputs1[indexNeuron] = output + biases[indexNeuron]
-	}
+	outputs1 := matrix.SumVectors(weights.Dot(input), biases)
 
 	fmt.Println(outputs1)
 
