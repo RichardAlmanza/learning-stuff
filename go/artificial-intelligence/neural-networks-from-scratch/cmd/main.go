@@ -5,9 +5,14 @@ import (
 
 	layerbasedneurons "github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/layer-based-neurons"
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/matrix"
+	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/spiral"
 )
 
 func main() {
+	x, y := spiral.NewSpiralData(100, 3, 0)
+
+	spiral.Plot(x,y)
+
 	input := &matrix.MatrixFloat64{
 		Rows:    3,
 		Columns: 4,

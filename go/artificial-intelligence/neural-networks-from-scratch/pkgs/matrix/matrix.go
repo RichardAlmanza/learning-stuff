@@ -36,12 +36,22 @@ func NewMatrixFromSlice(row, col int, slice []float64) *MatrixFloat64 {
 	}
 }
 
-func (m *MatrixFloat64) GetAt(indexCol, indexRow int) float64 {
-	panicOutOfBound(m.Rows, indexRow)
-	panicOutOfBound(m.Columns, indexCol)
+func (m *MatrixFloat64) Set(row, col int, value float64) {
+	panicOutOfBound(m.Rows, row)
+	panicOutOfBound(m.Columns, col)
 
-	index := indexRow * m.Columns
-	index += indexCol
+	index := row * m.Columns
+	index += col
+
+	m.Data[index] = value
+}
+
+func (m *MatrixFloat64) GetAt(row, col int) float64 {
+	panicOutOfBound(m.Rows, row)
+	panicOutOfBound(m.Columns, col)
+
+	index := row * m.Columns
+	index += col
 
 	return m.Data[index]
 }
