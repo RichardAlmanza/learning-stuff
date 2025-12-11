@@ -43,6 +43,18 @@ func NewMatrixFromSlice(row, col int, slice []float64) *MatrixFloat64 {
 	}
 }
 
+func WrapSlice(row, col int, slice []float64) *MatrixFloat64 {
+	if row*col != len(slice) {
+		panic("Size mismatch!")
+	}
+
+	return &MatrixFloat64{
+		Rows:    row,
+		Columns: col,
+		Data:    slice,
+	}
+}
+
 func (m *MatrixFloat64) Set(row, col int, value float64) {
 	panicOutOfBound(m.Rows, row)
 	panicOutOfBound(m.Columns, col)
@@ -72,6 +84,9 @@ func (m *MatrixFloat64) GetRow(index int) []float64 {
 	return m.Data[start:end]
 }
 
+// GetColumn return a NEW array with the values of the queried column, ordered top to bottom.
+// If you need to query the columns tons of times, is more efficient to transpose (Transpose) the matrix
+// one time and then query the Rows (GetRow) of the transposed matrix.
 func (m *MatrixFloat64) GetColumn(index int) []float64 {
 	panicOutOfBound(m.Columns, index)
 
@@ -93,37 +108,15 @@ func (m *MatrixFloat64) Randomize() {
 }
 
 func (m *MatrixFloat64) Scale(scalar float64) *MatrixFloat64 {
-	newMatrix := NewMatrix(m.Rows, m.Columns)
-
-	for i := 0; i < len(m.Data); i++ {
-		newMatrix.Data[i] = m.Data[i] * scalar
-	}
-
-	return newMatrix
+	return WrapSlice(m.Rows, m.Columns, MapFunc(m.Data, func(f float64) float64 { return f * scalar }))
 }
 
 func (m *MatrixFloat64) MapFunc(f func(float64) float64) *MatrixFloat64 {
-	newMatrix := NewMatrix(m.Rows, m.Columns)
-
-	for i := 0; i < len(m.Data); i++ {
-		newMatrix.Data[i] = f(m.Data[i])
-	}
-
-	return newMatrix
+	return WrapSlice(m.Rows, m.Columns, MapFunc(m.Data, f))
 }
 
-func (m *MatrixFloat64) Dot(vector []float64) []float64 {
-	if len(vector) != m.Columns {
-		panic("Length mismatch")
-	}
-
-	result := make([]float64, m.Rows)
-
-	for row := 0; row < m.Rows; row++ {
-		result[row] = DotProduct(vector, m.GetRow(row))
-	}
-
-	return result
+func (m *MatrixFloat64) Dot(vector []float64) *MatrixFloat64 {
+	return m.Product(WrapSlice(1, len(vector), vector))
 }
 
 func (m *MatrixFloat64) Product(m2 *MatrixFloat64) *MatrixFloat64 {
@@ -156,19 +149,11 @@ func (m *MatrixFloat64) Transpose() *MatrixFloat64 {
 }
 
 func (m *MatrixFloat64) Add(m2 *MatrixFloat64) *MatrixFloat64 {
-	if m.Columns != m2.Columns || m.Rows != m2.Rows {
-		panic("Shape mismatch")
+	if m.Columns != m2.Columns || m.Rows != m2.Rows || len(m.Data) != len(m2.Data) {
+		panic("Shape or data size mismatch")
 	}
 
-	newMatrix := NewMatrix(m.Rows, m.Columns)
-
-	for row := 0; row < m.Rows; row++ {
-		// Using the power of slices referencing to the original memory array
-		result := SumVectors(m.GetRow(row), m2.GetRow(row))
-		copy(newMatrix.GetRow(row), result)
-	}
-
-	return newMatrix
+	return WrapSlice(m.Rows, m.Columns, SumVectors(m.Data, m2.Data))
 }
 
 func (m *MatrixFloat64) AddVectorPerRow(vector []float64) *MatrixFloat64 {
@@ -211,6 +196,14 @@ func (m *MatrixFloat64) SoftMax() *MatrixFloat64 {
 	}
 
 	return newMatrix
+}
+
+func (m *MatrixFloat64) IsEqual(m2 *MatrixFloat64) bool {
+	if m.Columns != m2.Columns || m.Rows != m2.Rows {
+		return false
+	}
+
+	return AreEqual(m.Data, m2.Data)
 }
 
 func (m *MatrixFloat64) String() string {

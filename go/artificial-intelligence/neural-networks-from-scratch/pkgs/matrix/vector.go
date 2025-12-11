@@ -2,6 +2,20 @@ package matrix
 
 import "math"
 
+func AreEqual(vector1, vector2 []float64) bool {
+	if len(vector1) != len(vector2) {
+		return false
+	}
+
+	for i := 0; i < len(vector1); i++ {
+		if vector1[i] != vector2[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
 func SumVectors(vector1, vector2 []float64) []float64 {
 	panicVectorSize(vector1, vector2)
 
@@ -53,6 +67,18 @@ func MapFunc(vector []float64, f func(float64) float64) []float64 {
 
 	for i := 0; i < len(vector); i++ {
 		newVector[i] = f(vector[i])
+	}
+
+	return newVector
+}
+
+func FilterFunction(vector []float64, f func(float64) bool) []float64 {
+	newVector := make([]float64, 0, len(vector)/2)
+
+	for _, value := range vector {
+		if f(value) {
+			newVector = append(newVector, value)
+		}
 	}
 
 	return newVector
