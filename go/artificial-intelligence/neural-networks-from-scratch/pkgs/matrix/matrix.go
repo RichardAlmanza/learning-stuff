@@ -20,6 +20,21 @@ func NewMatrix(row, col int) *MatrixFloat64 {
 	}
 }
 
+func NewMatrixOneHot(row, col int, indexes []int) *MatrixFloat64 {
+	if len(indexes) != row {
+		panic("Size mismatch")
+	}
+
+	newMatrix := NewMatrix(row, col)
+
+	for i := 0; i < row; i++ {
+		panicOutOfBound(col, indexes[i])
+		newMatrix.Set(i, indexes[i], 1)
+	}
+
+	return newMatrix
+}
+
 func NewMatrixRand(row, col int) *MatrixFloat64 {
 	newMatrix := NewMatrix(row, col)
 	newMatrix.Randomize()
@@ -196,6 +211,20 @@ func (m *MatrixFloat64) SoftMax() *MatrixFloat64 {
 	}
 
 	return newMatrix
+}
+
+func (m *MatrixFloat64) CrossEntropyLossPerRow(targets *MatrixFloat64) []float64 {
+	if m.Columns != targets.Columns || m.Rows != targets.Rows || len(m.Data) != len(targets.Data) {
+		panic("Shape or data size mismatch")
+	}
+
+	newVector := make([]float64, m.Rows)
+
+	for i := 0; i < m.Rows; i++ {
+		newVector[i] = CrossEntropyLoss(m.GetRow(i), targets.GetRow(i))
+	}
+
+	return newVector
 }
 
 func (m *MatrixFloat64) IsEqual(m2 *MatrixFloat64) bool {

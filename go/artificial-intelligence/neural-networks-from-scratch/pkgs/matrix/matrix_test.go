@@ -2,6 +2,7 @@ package matrix_test
 
 import (
 	"fmt"
+	"math"
 	"testing"
 
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/matrix"
@@ -908,6 +909,40 @@ func TestMatrix_Product(t *testing.T) {
 
 			if !tc.expectedResult.IsEqual(nm) {
 				t.Errorf("\nexpected matrix: %v \ngot: \n%v", tc.expectedResult, nm)
+			}
+		})
+	}
+}
+
+func TestMatrix_CrossEntropyLossPerRow(t *testing.T) {
+	testCases := []struct {
+		name           string
+		matrixA        *matrix.MatrixFloat64
+		matrixTargets  *matrix.MatrixFloat64
+		expectedResult []float64
+	}{
+		{
+			name: "One-hot Shape (3,3)",
+			matrixA: &matrix.MatrixFloat64{
+				Rows:    3,
+				Columns: 3,
+				Data: []float64{
+					0.7, 0.1, 0.2,
+					0.1, 0.5, 0.4,
+					0.02, 0.9, 0.08,
+				},
+			},
+			matrixTargets:  matrix.NewMatrixOneHot(3, 3, []int{0, 1, 1}),
+			expectedResult: []float64{-math.Log(0.7), -math.Log(0.5), -math.Log(0.9)},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			nv := tc.matrixA.CrossEntropyLossPerRow(tc.matrixTargets)
+
+			if !matrix.AreEqual(nv, tc.expectedResult) {
+				t.Errorf("\nexpected vector: %v \ngot: \n%v", tc.expectedResult, nv)
 			}
 		})
 	}

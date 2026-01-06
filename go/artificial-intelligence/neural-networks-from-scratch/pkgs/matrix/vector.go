@@ -38,6 +38,10 @@ func Sum(vector []float64) float64 {
 	return result
 }
 
+func Avg(vector []float64) float64 {
+	return Sum(vector) / float64(len(vector))
+}
+
 func Min(vector []float64) float64 {
 	result := vector[0]
 
@@ -93,6 +97,26 @@ func SoftMax(vector []float64) []float64 {
 	newVector = MapFunc(newVector, func(f float64) float64 { return f / sum })
 
 	return newVector
+}
+
+func CrossEntropyLoss(vector, targets []float64) float64 {
+	panicVectorSize(vector, targets)
+
+	var sum float64 = 0
+
+	for i := 0; i < len(vector); i++ {
+		if targets[i] == 0 {
+			continue
+		}
+
+		if vector[i] == 0 {
+			return math.MaxFloat64
+		}
+
+		sum += targets[i] * math.Log(vector[i])
+	}
+
+	return -sum
 }
 
 func DotProduct(vector1, vector2 []float64) float64 {
