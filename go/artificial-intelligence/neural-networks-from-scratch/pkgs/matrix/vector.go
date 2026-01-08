@@ -42,28 +42,32 @@ func Avg(vector []float64) float64 {
 	return Sum(vector) / float64(len(vector))
 }
 
-func Min(vector []float64) float64 {
+func Min(vector []float64)  (int, float64) {
 	result := vector[0]
+	index := 0
 
 	for i := 1; i < len(vector); i++ {
 		if result > vector[i] {
 			result = vector[i]
+			index = i
 		}
 	}
 
-	return result
+	return index, result
 }
 
-func Max(vector []float64) float64 {
+func Max(vector []float64) (int, float64) {
 	result := vector[0]
+	index := 0
 
 	for i := 1; i < len(vector); i++ {
 		if result < vector[i] {
 			result = vector[i]
+			index = i
 		}
 	}
 
-	return result
+	return index, result
 }
 
 func MapFunc(vector []float64, f func(float64) float64) []float64 {
@@ -71,6 +75,16 @@ func MapFunc(vector []float64, f func(float64) float64) []float64 {
 
 	for i := 0; i < len(vector); i++ {
 		newVector[i] = f(vector[i])
+	}
+
+	return newVector
+}
+
+func MapFuncIndex(vector []float64, f func(int, float64) float64) []float64 {
+	newVector := make([]float64, len(vector))
+
+	for i := 0; i < len(vector); i++ {
+		newVector[i] = f(i, vector[i])
 	}
 
 	return newVector
@@ -89,7 +103,7 @@ func FilterFunction(vector []float64, f func(float64) bool) []float64 {
 }
 
 func SoftMax(vector []float64) []float64 {
-	max := Max(vector)
+	_, max := Max(vector)
 	newVector := MapFunc(vector, func(f float64) float64 { return math.Pow(math.E, f-max) })
 
 	sum := Sum(newVector)

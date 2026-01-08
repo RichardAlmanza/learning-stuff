@@ -259,8 +259,8 @@ func TestMatrix_Randomize(t *testing.T) {
 	nm.Randomize()
 
 	probabilityDistribution := matrix.SoftMax(nm.Data)
-	min := matrix.Min(probabilityDistribution)
-	max := matrix.Max(probabilityDistribution)
+	_, min := matrix.Min(probabilityDistribution)
+	_, max := matrix.Max(probabilityDistribution)
 
 	maxDelta := 5e-7
 	actualDelta := max - min
