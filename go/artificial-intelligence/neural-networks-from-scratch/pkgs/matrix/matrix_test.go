@@ -948,6 +948,40 @@ func TestMatrix_CrossEntropyLossPerRow(t *testing.T) {
 	}
 }
 
+func TestMatrix_Accuracy(t *testing.T) {
+	testCases := []struct {
+		name           string
+		matrixA        *matrix.MatrixFloat64
+		matrixTargets  *matrix.MatrixFloat64
+		expectedResult float64
+	}{
+		{
+			name: "One-hot Shape (3,3)",
+			matrixA: &matrix.MatrixFloat64{
+				Rows:    3,
+				Columns: 3,
+				Data: []float64{
+					0.7, 0.2, 0.1,
+					0.5, 0.1, 0.4,
+					0.02, 0.9, 0.08,
+				},
+			},
+			matrixTargets:  matrix.NewMatrixOneHot(3, 3, []int{0, 1, 1}),
+			expectedResult: 2.0 / 3.0,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			acc := tc.matrixA.Accuracy(tc.matrixTargets)
+
+			if acc != tc.expectedResult {
+				t.Errorf("\nexpected value: %v \ngot: \n%v", tc.expectedResult, acc)
+			}
+		})
+	}
+}
+
 func BenchmarkMatrix_GetRow(b *testing.B) {
 	sizeX := 1000
 	sizeY := 1000

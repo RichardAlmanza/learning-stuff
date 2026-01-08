@@ -164,9 +164,7 @@ func (m *MatrixFloat64) Transpose() *MatrixFloat64 {
 }
 
 func (m *MatrixFloat64) Add(m2 *MatrixFloat64) *MatrixFloat64 {
-	if m.Columns != m2.Columns || m.Rows != m2.Rows || len(m.Data) != len(m2.Data) {
-		panic("Shape or data size mismatch")
-	}
+	panicShapeMismatch(m, m2)
 
 	return WrapSlice(m.Rows, m.Columns, SumVectors(m.Data, m2.Data))
 }
@@ -214,9 +212,7 @@ func (m *MatrixFloat64) SoftMax() *MatrixFloat64 {
 }
 
 func (m *MatrixFloat64) CrossEntropyLossPerRow(targets *MatrixFloat64) []float64 {
-	if m.Columns != targets.Columns || m.Rows != targets.Rows || len(m.Data) != len(targets.Data) {
-		panic("Shape or data size mismatch")
-	}
+	panicShapeMismatch(m, targets)
 
 	newVector := make([]float64, m.Rows)
 
@@ -225,6 +221,23 @@ func (m *MatrixFloat64) CrossEntropyLossPerRow(targets *MatrixFloat64) []float64
 	}
 
 	return newVector
+}
+
+func (m *MatrixFloat64) Accuracy(targets *MatrixFloat64) float64 {
+	panicShapeMismatch(m, targets)
+
+	var counter int = 0
+
+	for i := 0; i < m.Rows; i++ {
+		maxIndex, _ := Max(m.GetRow(i))
+		maxTargetIndex, _ := Max(targets.GetRow(i))
+
+		if maxIndex == maxTargetIndex {
+			counter++
+		}
+	}
+
+	return float64(counter) / float64(m.Rows)
 }
 
 func (m *MatrixFloat64) IsEqual(m2 *MatrixFloat64) bool {
@@ -258,5 +271,11 @@ func (m *MatrixFloat64) String() string {
 func panicOutOfBound(max, value int) {
 	if value < 0 || value >= max {
 		panic("Be serious, you're out of bounds!")
+	}
+}
+
+func panicShapeMismatch(m1, m2 *MatrixFloat64) {
+	if m1.Columns != m2.Columns || m1.Rows != m2.Rows || len(m1.Data) != len(m2.Data) {
+		panic("Shape or data size mismatch")
 	}
 }
