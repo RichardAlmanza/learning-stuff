@@ -52,3 +52,15 @@ func (n *NeuronFloat64) Synapsis(input []float64) (float64, error) {
 
 	return n.ActivationFunction(output), nil
 }
+
+func (n *NeuronFloat64) Copy() *NeuronFloat64 {
+	newWeights := make([]float64, len(n.Weights))
+	copy(newWeights, n.Weights)
+
+	return &NeuronFloat64{
+		InputSize:          n.InputSize,
+		Bias:               n.Bias,
+		Weights:            newWeights,
+		ActivationFunction: n.ActivationFunction,
+	}
+}

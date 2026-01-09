@@ -45,3 +45,17 @@ func NewLayerFrom(weights *matrix.MatrixFloat64, biases []float64, function Acti
 func (l *Layer) Forward(input *matrix.MatrixFloat64) *matrix.MatrixFloat64 {
 	return input.Product(l.Weights).AddVectorPerRow(l.Biases).MapFunc(l.ActivationFunction)
 }
+
+func (l *Layer) Copy() *Layer {
+	newWeights := matrix.NewMatrix(l.Weights.Rows, l.Weights.Columns)
+	copy(newWeights.Data, l.Weights.Data)
+
+	newBiases := make([]float64, len(l.Biases))
+	copy(newBiases, l.Biases)
+
+	return &Layer{
+		Weights:            newWeights,
+		Biases:             newBiases,
+		ActivationFunction: l.ActivationFunction,
+	}
+}

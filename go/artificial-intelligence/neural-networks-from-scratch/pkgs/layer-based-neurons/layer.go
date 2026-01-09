@@ -100,3 +100,17 @@ func (l *LayerBasedNeurons) ForwardBatch(input *matrix.MatrixFloat64) *matrix.Ma
 
 	return output
 }
+
+func (l *LayerBasedNeurons) Copy() *LayerBasedNeurons {
+	newNeurons := make([]singleneuron.NeuronFloat64, len(l.Neurons))
+
+	for i := 0; i < len(l.Neurons); i++ {
+		newNeurons[i] = *l.Neurons[i].Copy()
+	}
+
+	return &LayerBasedNeurons{
+		Size:      l.Size,
+		InputSize: l.InputSize,
+		Neurons:   newNeurons,
+	}
+}

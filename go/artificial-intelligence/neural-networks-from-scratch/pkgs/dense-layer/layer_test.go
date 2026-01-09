@@ -1,6 +1,7 @@
 package denselayer_test
 
 import (
+	"fmt"
 	"math"
 	"testing"
 
@@ -60,9 +61,40 @@ func TestLayer_Accuracy(t *testing.T) {
 
 	difference := math.Abs(accuracy - expectedAccuracy)
 
-	t.Run("CrossEntropyLoss", func(t *testing.T) {
+	t.Run("Accuracy", func(t *testing.T) {
 		if difference > deltaTolerance {
 			t.Errorf("\nexpected Accuracy: %v \ngot: \n%v", expectedAccuracy, accuracy)
+		}
+	})
+}
+
+func TestLayer_Copy(t *testing.T) {
+	compareLayers := func(l1, l2 *denselayer.Layer) bool {
+		areEqual := l1.Weights.IsEqual(l2.Weights) && matrix.AreEqual(l1.Biases, l2.Biases)
+
+		if !areEqual {
+			return false
+		}
+
+		return fmt.Sprintf("%v", l1.ActivationFunction) == fmt.Sprintf("%v", l2.ActivationFunction)
+	}
+
+	dense := denselayer.NewLayer(10, 2, denselayer.SigmoidFunction)
+	denseCopy := dense.Copy()
+
+	// verify copy
+	copiedCorrectly := compareLayers(dense, denseCopy)
+
+	// Modify original
+	dense.ActivationFunction = denselayer.LinearFunction
+	dense.Weights = dense.Weights.Scale(0.3)
+	dense.Biases[2] = 1.3
+
+	areEquals := compareLayers(dense, denseCopy)
+
+	t.Run("Copy", func(t *testing.T) {
+		if !copiedCorrectly || areEquals {
+			t.Errorf("Failed to deep copy\n%v \n%v", dense, denseCopy)
 		}
 	})
 }
