@@ -5,7 +5,6 @@ import (
 	"math"
 
 	denselayer "github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/dense-layer"
-	layerbasedneurons "github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/layer-based-neurons"
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/matrix"
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/spiral"
 )
@@ -22,23 +21,37 @@ func vectorF64ToInt(vectorF []float64) []int {
 
 func main() {
 	x, y := spiral.NewSpiralData(100, 3, 0)
+	expectedLabels := matrix.NewMatrixOneHot(300, 3, vectorF64ToInt(y.Data))
 
 	// original dynamic example
-	var dense1 *denselayer.Layer
-	var dense2 *denselayer.Layer
-
 	var lowestLoss float64 = math.MaxFloat64
-	var bestDense1 *denselayer.Layer
-	var bestDense2 *denselayer.Layer
+	bestDense1 := denselayer.NewLayer(3, 2, denselayer.ReLuFunction)
+	bestDense2 := denselayer.NewLayer(3, 3, denselayer.LinearFunction)
+
+	var dense2 *denselayer.Layer
+	var dense1 *denselayer.Layer
+
+	auxWeights1 := matrix.NewMatrix(bestDense1.Weights.Rows, bestDense1.Weights.Columns)
+	auxBiases1 := matrix.NewMatrix(1, len(bestDense1.Biases))
+	auxWeights2 := matrix.NewMatrix(bestDense2.Weights.Rows, bestDense2.Weights.Columns)
+	auxBiases2 := matrix.NewMatrix(1, len(bestDense2.Biases))
 
 	for i := 0; i < 1000; i++ {
-		dense1 = denselayer.NewLayer(3, 2, denselayer.ReLuFunction)
-		dense2 = denselayer.NewLayer(3, 3, denselayer.LinearFunction)
+		dense1 = bestDense1.Copy()
+		dense2 = bestDense2.Copy()
+
+		auxWeights1.Randomize()
+		auxBiases1.Randomize()
+		auxWeights2.Randomize()
+		auxBiases2.Randomize()
+
+		dense1.Weights = dense1.Weights.Add(auxWeights1.Scale(0.05))
+		dense1.Biases = matrix.SumVectors(dense1.Biases, auxBiases1.Scale(0.05).Data)
+		dense2.Weights = dense2.Weights.Add(auxWeights2.Scale(0.05))
+		dense2.Biases = matrix.SumVectors(dense2.Biases, auxBiases2.Scale(0.05).Data)
 
 		outputs1 := dense1.Forward(x)
 		outputs2 := dense2.Forward(outputs1).SoftMax()
-
-		expectedLabels := matrix.NewMatrixOneHot(300, 3, vectorF64ToInt(y.Data))
 
 		loss := matrix.Avg(outputs2.CrossEntropyLossPerRow(expectedLabels))
 		accuracy := outputs2.Accuracy(expectedLabels)
@@ -53,41 +66,4 @@ func main() {
 	}
 
 	fmt.Println(bestDense1, "\n", bestDense2)
-
-	// Dynamic example
-
-	var layer1 *layerbasedneurons.LayerBasedNeurons
-	var layer2 *layerbasedneurons.LayerBasedNeurons
-
-	lowestLoss = math.MaxFloat64
-	var bestLayer1 *layerbasedneurons.LayerBasedNeurons
-	var bestLayer2 *layerbasedneurons.LayerBasedNeurons
-
-	for i := 0; i < 1000; i++ {
-
-		layer1 = layerbasedneurons.NewLayerBasedNeurons(3, 2, denselayer.ReLuFunction)
-		layer2 = layerbasedneurons.NewLayerBasedNeurons(3, 3, denselayer.LinearFunction)
-
-		layer1.RandomizeWeights()
-		layer2.RandomizeWeights()
-
-		layer1outputs := layer1.ForwardBatch(x)
-		layer2outputs := layer2.ForwardBatch(layer1outputs).SoftMax()
-
-		expectedLabels := matrix.NewMatrixOneHot(300, 3, vectorF64ToInt(y.Data))
-
-		loss := matrix.Avg(layer2outputs.CrossEntropyLossPerRow(expectedLabels))
-		accuracy := layer2outputs.Accuracy(expectedLabels)
-
-		if loss < lowestLoss {
-			fmt.Printf("New set of weights found!\nIteration: %d\nLoss: %v\nAccuracy: %v\n", i, loss, accuracy)
-
-			bestLayer1 = layer1.Copy()
-			bestLayer2 = layer2.Copy()
-			lowestLoss = loss
-		}
-	}
-
-	fmt.Println(bestLayer1, "\n", bestLayer2)
-
 }
