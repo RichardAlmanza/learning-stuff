@@ -262,6 +262,24 @@ func (m *MatrixFloat64) DerivativeCrossEntropyLossPerRow(targets *MatrixFloat64)
 	return newVector
 }
 
+func (m *MatrixFloat64) DerivativeCrossEntropyLossSoftMaxPerRow(targetsOneHot []int) *MatrixFloat64 {
+	if len(targetsOneHot) != m.Rows {
+		panic("Size mismatch")
+	}
+
+	newMatrix := m.Copy()
+
+	for row := 0; row < m.Rows; row++ {
+		col := targetsOneHot[row]
+		panicOutOfBound(m.Columns, col)
+
+		newValue := newMatrix.GetAt(row, col) - 1
+		newMatrix.Set(row, col, newValue)
+	}
+
+	return newMatrix
+}
+
 func (m *MatrixFloat64) Accuracy(targets *MatrixFloat64) float64 {
 	panicShapeMismatch(m, targets)
 
@@ -306,8 +324,8 @@ func (m *MatrixFloat64) String() string {
 	// the times it needs to reallocate memory
 	sb.Grow(15*m.Columns*m.Rows + 200)
 
-	fmt.Fprintf(&sb, "Columns: %d \n", m.Columns)
 	fmt.Fprintf(&sb, "Rows: %d \n", m.Rows)
+	fmt.Fprintf(&sb, "Columns: %d \n", m.Columns)
 
 	for row := 0; row < m.Rows; row++ {
 		fmt.Fprintf(&sb, "%d ", row)
