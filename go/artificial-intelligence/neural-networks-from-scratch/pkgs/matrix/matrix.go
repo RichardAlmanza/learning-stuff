@@ -58,6 +58,22 @@ func NewMatrixFromSlice(row, col int, slice []float64) *MatrixFloat64 {
 	}
 }
 
+func NewMatrixDiagonalFromSlice(slice []float64) *MatrixFloat64 {
+	length := len(slice)
+	newData := make([]float64, length*length)
+
+	for i := 0; i < length; i++ {
+		index := i*length + i
+		newData[index] = slice[i]
+	}
+
+	return &MatrixFloat64{
+		Rows:    length,
+		Columns: length,
+		Data:    newData,
+	}
+}
+
 func WrapSlice(row, col int, slice []float64) *MatrixFloat64 {
 	if row*col != len(slice) {
 		panic("Size mismatch!")
@@ -211,6 +227,17 @@ func (m *MatrixFloat64) SoftMax() *MatrixFloat64 {
 	return newMatrix
 }
 
+func (m *MatrixFloat64) DerivativeSoftMax() []MatrixFloat64 {
+	// Jacobian matrices
+	newMatrices := make([]MatrixFloat64, m.Rows)
+
+	for row := 0; row < m.Rows; row++ {
+		newMatrices[row] = *DerivativeSoftMax(m.GetRow(row))
+	}
+
+	return newMatrices
+}
+
 func (m *MatrixFloat64) CrossEntropyLossPerRow(targets *MatrixFloat64) []float64 {
 	panicShapeMismatch(m, targets)
 
@@ -218,6 +245,18 @@ func (m *MatrixFloat64) CrossEntropyLossPerRow(targets *MatrixFloat64) []float64
 
 	for i := 0; i < m.Rows; i++ {
 		newVector[i] = CrossEntropyLoss(m.GetRow(i), targets.GetRow(i))
+	}
+
+	return newVector
+}
+
+func (m *MatrixFloat64) DerivativeCrossEntropyLossPerRow(targets *MatrixFloat64) []float64 {
+	panicShapeMismatch(m, targets)
+
+	newVector := make([]float64, m.Rows)
+
+	for i := 0; i < m.Rows; i++ {
+		newVector[i] = DerivativeCrossEntropyLoss(m.GetRow(i), targets.GetRow(i))
 	}
 
 	return newVector
@@ -246,6 +285,17 @@ func (m *MatrixFloat64) IsEqual(m2 *MatrixFloat64) bool {
 	}
 
 	return AreEqual(m.Data, m2.Data)
+}
+
+func (m *MatrixFloat64) Copy() *MatrixFloat64 {
+	newData := make([]float64, len(m.Data))
+	copy(newData, m.Data)
+
+	return &MatrixFloat64{
+		Rows:    m.Rows,
+		Columns: m.Columns,
+		Data:    newData,
+	}
 }
 
 func (m *MatrixFloat64) String() string {

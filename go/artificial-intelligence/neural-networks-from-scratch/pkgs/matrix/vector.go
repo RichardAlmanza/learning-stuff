@@ -1,6 +1,8 @@
 package matrix
 
-import "math"
+import (
+	"math"
+)
 
 func AreEqual(vector1, vector2 []float64) bool {
 	if len(vector1) != len(vector2) {
@@ -17,15 +19,7 @@ func AreEqual(vector1, vector2 []float64) bool {
 }
 
 func SumVectors(vector1, vector2 []float64) []float64 {
-	panicVectorSize(vector1, vector2)
-
-	newVector := make([]float64, len(vector1))
-
-	for i := 0; i < len(vector1); i++ {
-		newVector[i] = vector1[i] + vector2[i]
-	}
-
-	return newVector
+	return Map2VectorFunc(vector1, vector2, func(v1, v2 float64) float64 { return v1 + v2 })
 }
 
 func Sum(vector []float64) float64 {
@@ -42,7 +36,7 @@ func Avg(vector []float64) float64 {
 	return Sum(vector) / float64(len(vector))
 }
 
-func Min(vector []float64)  (int, float64) {
+func Min(vector []float64) (int, float64) {
 	result := vector[0]
 	index := 0
 
@@ -90,6 +84,18 @@ func MapFuncIndex(vector []float64, f func(int, float64) float64) []float64 {
 	return newVector
 }
 
+func Map2VectorFunc(vector1, vector2 []float64, f func(float64, float64) float64) []float64 {
+	panicVectorSize(vector1, vector2)
+
+	newVector := make([]float64, len(vector1))
+
+	for i := 0; i < len(vector1); i++ {
+		newVector[i] = f(vector1[i], vector2[i])
+	}
+
+	return newVector
+}
+
 func FilterFunction(vector []float64, f func(float64) bool) []float64 {
 	newVector := make([]float64, 0, len(vector)/2)
 
@@ -113,6 +119,14 @@ func SoftMax(vector []float64) []float64 {
 	return newVector
 }
 
+func DerivativeSoftMax(vector []float64) *MatrixFloat64 {
+	diagVector := NewMatrixDiagonalFromSlice(vector)
+	m1 := WrapSlice(len(vector), 1, vector)
+	m1 = m1.Product(m1.Transpose()).Scale(-1)
+
+	return diagVector.Add(m1)
+}
+
 func CrossEntropyLoss(vector, targets []float64) float64 {
 	panicVectorSize(vector, targets)
 
@@ -131,6 +145,10 @@ func CrossEntropyLoss(vector, targets []float64) float64 {
 	}
 
 	return -sum
+}
+
+func DerivativeCrossEntropyLoss(vector, targets []float64) float64 {
+	return -Sum(Map2VectorFunc(vector, targets, func(f1, f2 float64) float64 { return f2 / f1 }))
 }
 
 func DotProduct(vector1, vector2 []float64) float64 {

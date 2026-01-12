@@ -70,7 +70,7 @@ func TestLayer_Accuracy(t *testing.T) {
 
 func TestLayer_Copy(t *testing.T) {
 	compareLayers := func(l1, l2 *denselayer.Layer) bool {
-		areEqual := l1.Weights.IsEqual(l2.Weights) && matrix.AreEqual(l1.Biases, l2.Biases)
+		areEqual := l1.TWeights.IsEqual(l2.TWeights) && matrix.AreEqual(l1.Biases, l2.Biases)
 
 		if !areEqual {
 			return false
@@ -87,7 +87,7 @@ func TestLayer_Copy(t *testing.T) {
 
 	// Modify original
 	dense.ActivationFunction = denselayer.LinearFunction
-	dense.Weights = dense.Weights.Scale(0.3)
+	dense.TWeights = dense.TWeights.Scale(0.3)
 	dense.Biases[2] = 1.3
 
 	areEquals := compareLayers(dense, denseCopy)
