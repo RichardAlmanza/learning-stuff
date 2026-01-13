@@ -1,52 +1,8 @@
 package denselayer
 
 import (
-	"math"
-
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/matrix"
 )
-
-var (
-	sigmoid func(float64) float64 = func(f float64) float64 { return 1 / (1 + math.Pow(math.E, f)) }
-
-	ReLuFunction *ActivationFunction = &ActivationFunction{
-		Function: func(m *matrix.MatrixFloat64, _ *Layer) *matrix.MatrixFloat64 {
-			return m.MapFunc(func(f float64) float64 { return math.Max(0, f) })
-		},
-		Derivative: func(m *matrix.MatrixFloat64, _ *Layer) *matrix.MatrixFloat64 {
-			return m.MapFunc(func(f float64) float64 {
-				if f > 0 {
-					return 1
-				}
-				return 0
-			})
-		},
-	}
-
-	LinearFunction *ActivationFunction = &ActivationFunction{
-		Function: func(m *matrix.MatrixFloat64, _ *Layer) *matrix.MatrixFloat64 { return m },
-		Derivative: func(m *matrix.MatrixFloat64, _ *Layer) *matrix.MatrixFloat64 {
-			return m.MapFunc(func(f float64) float64 { return 1 })
-		},
-	}
-
-	SigmoidFunction *ActivationFunction = &ActivationFunction{
-		Function: func(m *matrix.MatrixFloat64, _ *Layer) *matrix.MatrixFloat64 {
-			return m.MapFunc(func(f float64) float64 { return sigmoid(f) })
-		},
-		Derivative: func(m *matrix.MatrixFloat64, _ *Layer) *matrix.MatrixFloat64 {
-			return m.MapFunc(func(f float64) float64 {
-				sig := sigmoid(f)
-				return sig * (1 - sig)
-			})
-		},
-	}
-)
-
-type ActivationFunction struct {
-	Function   func(*matrix.MatrixFloat64, *Layer) *matrix.MatrixFloat64
-	Derivative func(*matrix.MatrixFloat64, *Layer) *matrix.MatrixFloat64
-}
 
 type Layer struct {
 	TWeights           *matrix.MatrixFloat64
@@ -83,22 +39,13 @@ func NewLayerFrom(tWeights *matrix.MatrixFloat64, biases []float64, function *Ac
 }
 
 func (l *Layer) Forward(input *matrix.MatrixFloat64) *matrix.MatrixFloat64 {
-	l.LastInput = input.Copy()
-	l.LastOutput = l.ActivationFunction.Function(input.Product(l.TWeights).AddVectorPerRow(l.Biases), l)
+	l.ActivationFunction.Forward(input, l)
 
 	return l.LastOutput
 }
 
 func (l *Layer) Backward(dValues *matrix.MatrixFloat64) *matrix.MatrixFloat64 {
-	dFunction := l.ActivationFunction.Derivative(dValues, l)
-
-	l.DInputs = dFunction.Product(l.TWeights.Transpose())
-	l.DWeights = l.LastInput.Transpose().Product(dFunction)
-	l.DBiases = make([]float64, len(l.Biases))
-
-	for i := 0; i < len(l.DBiases); i++ {
-		l.DBiases[i] = matrix.Sum(dFunction.GetColumn(i))
-	}
+	l.ActivationFunction.Backward(dValues, l)
 
 	return l.DInputs
 }

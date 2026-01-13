@@ -280,6 +280,18 @@ func (m *MatrixFloat64) DerivativeCrossEntropyLossSoftMaxPerRow(targetsOneHot []
 	return newMatrix
 }
 
+func (m *MatrixFloat64) ToOneHot() []int {
+	onehot := make([]int, m.Rows)
+
+	for row := 0; row < m.Rows; row++ {
+		index, _ := Max(m.GetRow(row))
+
+		onehot[row] = index
+	}
+
+	return onehot
+}
+
 func (m *MatrixFloat64) Accuracy(targets *MatrixFloat64) float64 {
 	panicShapeMismatch(m, targets)
 

@@ -152,15 +152,7 @@ func DerivativeCrossEntropyLoss(vector, targets []float64) float64 {
 }
 
 func DotProduct(vector1, vector2 []float64) float64 {
-	panicVectorSize(vector1, vector2)
-
-	var result float64 = 0
-
-	for i := 0; i < len(vector1); i++ {
-		result += vector1[i] * vector2[i]
-	}
-
-	return result
+	return Sum(Map2VectorFunc(vector1, vector2, func(f1, f2 float64) float64 { return f1 * f2 }))
 }
 
 func panicVectorSize(vector1, vector2 []float64) {
