@@ -12,7 +12,6 @@ type Layer struct {
 	DInputs            *matrix.MatrixFloat64
 	DWeights           *matrix.MatrixFloat64
 	DBiases            []float64
-	DeltaParameters    float64
 	ActivationFunction *ActivationFunction
 }
 
@@ -48,11 +47,6 @@ func (l *Layer) Backward(dValues *matrix.MatrixFloat64) *matrix.MatrixFloat64 {
 	l.ActivationFunction.Backward(dValues, l)
 
 	return l.DInputs
-}
-
-func (l *Layer) UpdateParameters() {
-	l.TWeights = l.DWeights.Scale(-l.DeltaParameters).Add(l.TWeights)
-	l.Biases = matrix.Map2VectorFunc(l.DBiases, l.Biases, func(f1, f2 float64) float64 { return -l.DeltaParameters*f1 + f2 })
 }
 
 func (l *Layer) Copy() *Layer {

@@ -68,6 +68,41 @@ func TestLayer_Accuracy(t *testing.T) {
 	})
 }
 
+func TestLayer_Derivative(t *testing.T) {
+	expectedResult := &matrix.MatrixFloat64{
+		Rows:    3,
+		Columns: 3,
+		Data: []float64{
+			-0.1, 1.0 / 30, 2.0 / 30,
+			1.0 / 30, -5.0 / 30, 4.0 / 30,
+			2.0 / 300, -1.0 / 30, 8.0 / 300,
+		},
+	}
+	deltaTolerance := 0.1
+
+	softmaxOutput := &matrix.MatrixFloat64{
+		Rows:    3,
+		Columns: 3,
+		Data: []float64{
+			0.7, 0.1, 0.2,
+			0.1, 0.5, 0.4,
+			0.02, 0.9, 0.08,
+		},
+	}
+
+	onehot := []int{0, 1, 1}
+	derivative := softmaxOutput.DerivativeCrossEntropyLossSoftMaxPerRow(onehot).Scale(1 / float64(len(onehot)))
+
+	diff := derivative.Scale(-1).Add(expectedResult).MapFunc(func(f float64) float64 { return math.Abs(f) })
+	_, maxdiff := matrix.Max(diff.Data)
+
+	t.Run("Derivative", func(t *testing.T) {
+		if maxdiff > deltaTolerance {
+			t.Errorf("\nexpected Result: %v \ngot: \n%v", expectedResult, derivative)
+		}
+	})
+}
+
 func TestLayer_Copy(t *testing.T) {
 	compareLayers := func(l1, l2 *denselayer.Layer) bool {
 		areEqual := l1.TWeights.IsEqual(l2.TWeights) && matrix.AreEqual(l1.Biases, l2.Biases)

@@ -50,6 +50,15 @@ var (
 			return &m.DerivativeSoftMax()[0]
 		},
 	}
+
+	SoftMaxWCrossEntropyFunction *ActivationFunction = &ActivationFunction{
+		Function: func(m *matrix.MatrixFloat64, _ *Layer) *matrix.MatrixFloat64 {
+			return m.SoftMax()
+		},
+		Derivative: func(m *matrix.MatrixFloat64, l *Layer) *matrix.MatrixFloat64 {
+			return l.LastInput.DerivativeCrossEntropyLossSoftMaxPerRow(m.ToOneHot())
+		},
+	}
 )
 
 type ActivationFunction struct {
@@ -65,7 +74,7 @@ func (af *ActivationFunction) Forward(input *matrix.MatrixFloat64, layer *Layer)
 }
 
 func (af *ActivationFunction) Backward(dValues *matrix.MatrixFloat64, layer *Layer) {
-	dFunction := af.Derivative(dValues, layer)
+	dFunction := af.Derivative(dValues, layer).Scale(1 / float64(dValues.Rows))
 
 	layer.DInputs = dFunction.Product(layer.TWeights.Transpose())
 	layer.DWeights = layer.LastInput.Transpose().Product(dFunction)
