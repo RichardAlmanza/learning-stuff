@@ -6,56 +6,57 @@ import (
 	"testing"
 
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/matrix"
+	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/vector"
 )
 
-func TestMatrix_GetAt(t *testing.T) {
+func TestMatrix_GetAt_Float64(t *testing.T) {
 	testCases := []struct {
 		name           string
-		matrix         *matrix.MatrixFloat64
-		position       [2]int
+		matrix         *matrix.Matrix[float64]
+		position       []int
 		expectedResult float64
 	}{
 		{
 			name:           "Shape (1,1)",
-			matrix:         matrix.NewMatrixFromSlice(1, 1, []float64{5}),
-			position:       [2]int{0, 0},
+			matrix:         matrix.NewMatrixFromSlice([]int{1, 1}, []float64{5}),
+			position:       []int{0, 0},
 			expectedResult: 5.0,
 		},
 		{
 			name: "Shape (1,20)",
-			matrix: func() *matrix.MatrixFloat64 {
-				nm := matrix.NewMatrix(1, 20)
+			matrix: func() *matrix.Matrix[float64] {
+				nm := matrix.NewMatrix[float64]([]int{1, 20})
 				nm.Data[13] = 6.2
 				return nm
 			}(),
-			position:       [2]int{0, 13},
+			position:       []int{0, 13},
 			expectedResult: 6.2,
 		},
 		{
 			name: "Shape (20,1)",
-			matrix: func() *matrix.MatrixFloat64 {
-				nm := matrix.NewMatrix(20, 1)
+			matrix: func() *matrix.Matrix[float64] {
+				nm := matrix.NewMatrix[float64]([]int{20, 1})
 				nm.Data[13] = 6.5
 				return nm
 			}(),
-			position:       [2]int{13, 0},
+			position:       []int{13, 0},
 			expectedResult: 6.5,
 		},
 		{
 			name: "Shape (20,20)",
-			matrix: func() *matrix.MatrixFloat64 {
-				nm := matrix.NewMatrix(20, 20)
+			matrix: func() *matrix.Matrix[float64] {
+				nm := matrix.NewMatrix[float64]([]int{20, 20})
 				nm.Data[33] = 2.2
 				return nm
 			}(),
-			position:       [2]int{33 / 20, 33 % 20},
+			position:       []int{33 / 20, 33 % 20},
 			expectedResult: 2.2,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			number := tc.matrix.GetAt(tc.position[0], tc.position[1])
+			number := tc.matrix.GetAt(tc.position)
 
 			if number != tc.expectedResult {
 				t.Errorf("\nfloat expected: %.3f | got: %.3f \n%v", tc.expectedResult, number, tc.matrix)
@@ -64,80 +65,80 @@ func TestMatrix_GetAt(t *testing.T) {
 	}
 }
 
-func TestMatrix_Set(t *testing.T) {
+func TestMatrix_Set_Int8(t *testing.T) {
 	testCases := []struct {
 		name           string
-		shape          [2]int
-		position       [2]int
-		expectedResult float64
+		shape          []int
+		position       []int
+		expectedResult int8
 	}{
 		{
 			name:           "Shape (1,1)",
-			shape:          [2]int{1, 1},
-			position:       [2]int{0, 0},
-			expectedResult: 5.0,
+			shape:          []int{1, 1},
+			position:       []int{0, 0},
+			expectedResult: 5,
 		},
 		{
 			name:           "Shape (1,20)",
-			shape:          [2]int{1, 20},
-			position:       [2]int{0, 13},
-			expectedResult: 6.2,
+			shape:          []int{1, 20},
+			position:       []int{0, 13},
+			expectedResult: 6,
 		},
 		{
 			name:           "Shape (20,1)",
-			shape:          [2]int{20, 1},
-			position:       [2]int{13, 0},
-			expectedResult: 6.5,
+			shape:          []int{20, 1},
+			position:       []int{13, 0},
+			expectedResult: 4,
 		},
 		{
 			name:           "Shape (20,20)",
-			shape:          [2]int{20, 20},
-			position:       [2]int{4, 15},
-			expectedResult: 2.2,
+			shape:          []int{20, 20},
+			position:       []int{4, 15},
+			expectedResult: 2,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			nm := matrix.NewMatrix(tc.shape[0], tc.shape[1])
-			nm.Set(tc.position[0], tc.position[1], tc.expectedResult)
-			number := nm.GetAt(tc.position[0], tc.position[1])
+			nm := matrix.NewMatrix[int8](tc.shape)
+			nm.Set(tc.position, tc.expectedResult)
+			number := nm.GetAt(tc.position)
 
 			if number != tc.expectedResult {
-				t.Errorf("\nfloat expected: %.3f | got: %.3f \n%v", tc.expectedResult, number, nm)
+				t.Errorf("\nfloat expected: %v | got: %v \n%v", tc.expectedResult, number, nm)
 			}
 		})
 	}
 }
 
-func TestMatrix_GetRow(t *testing.T) {
-	baseVector := make([]float64, 400)
+func TestMatrix_GetRow_Float32(t *testing.T) {
+	baseVector := make([]float32, 400)
 
 	for i := 0; i < 400; i++ {
-		baseVector[i] = float64(i)
+		baseVector[i] = float32(i)
 	}
 
 	testCases := []struct {
 		name           string
-		shape          [2]int
+		shape          vector.Shape
 		row            int
-		expectedResult []float64
+		expectedResult []float32
 	}{
 		{
 			name:           "Shape (1,1)",
-			shape:          [2]int{1, 1},
+			shape:          []int{1, 1},
 			row:            0,
-			expectedResult: []float64{0},
+			expectedResult: []float32{0},
 		},
 		{
 			name:  "Shape (1,20)",
-			shape: [2]int{1, 20},
+			shape: []int{1, 20},
 			row:   0,
-			expectedResult: func() []float64 {
-				v := make([]float64, 20)
+			expectedResult: func() []float32 {
+				v := make([]float32, 20)
 
 				for i := 0; i < 20; i++ {
-					v[i] = float64(i)
+					v[i] = float32(i)
 				}
 
 				return v
@@ -145,22 +146,22 @@ func TestMatrix_GetRow(t *testing.T) {
 		},
 		{
 			name:           "Shape (20,1)",
-			shape:          [2]int{20, 1},
+			shape:          []int{20, 1},
 			row:            5,
-			expectedResult: []float64{5},
+			expectedResult: []float32{5},
 		},
 		{
 			name:  "Shape (20,20)",
-			shape: [2]int{20, 20},
+			shape: []int{20, 20},
 			row:   12,
-			expectedResult: func() []float64 {
-				v := make([]float64, 20)
+			expectedResult: func() []float32 {
+				v := make([]float32, 20)
 				start := 20 * 12
 				end := start + 20
 
 				var index int = 0
 				for i := start; i < end; i++ {
-					v[index] = float64(i)
+					v[index] = float32(i)
 					index++
 				}
 
@@ -171,51 +172,51 @@ func TestMatrix_GetRow(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			size := tc.shape[0] * tc.shape[1]
-			nm := matrix.NewMatrixFromSlice(tc.shape[0], tc.shape[1], baseVector[:size])
+			size := tc.shape.TotalSize()
+			nm := matrix.NewMatrixFromSlice(tc.shape, baseVector[:size])
 			row := nm.GetRow(tc.row)
 
-			if !matrix.AreEqual(row, tc.expectedResult) {
+			if !vector.AreEqual(row, tc.expectedResult) {
 				t.Errorf("\nexpected vector: %v | got: %v \n%v", tc.expectedResult, row, nm)
 			}
 		})
 	}
 }
 
-func TestMatrix_GetColumn(t *testing.T) {
-	baseVector := make([]float64, 400)
+func TestMatrix_GetColumn_Int16(t *testing.T) {
+	baseVector := make([]int16, 400)
 
 	for i := 0; i < 400; i++ {
-		baseVector[i] = float64(i)
+		baseVector[i] = int16(i)
 	}
 
 	testCases := []struct {
 		name           string
-		shape          [2]int
+		shape          vector.Shape
 		col            int
-		expectedResult []float64
+		expectedResult []int16
 	}{
 		{
 			name:           "Shape (1,1)",
-			shape:          [2]int{1, 1},
+			shape:          []int{1, 1},
 			col:            0,
-			expectedResult: []float64{0},
+			expectedResult: []int16{0},
 		},
 		{
 			name:           "Shape (1,20)",
-			shape:          [2]int{1, 20},
+			shape:          []int{1, 20},
 			col:            6,
-			expectedResult: []float64{6},
+			expectedResult: []int16{6},
 		},
 		{
 			name:  "Shape (20,1)",
-			shape: [2]int{20, 1},
+			shape: []int{20, 1},
 			col:   0,
-			expectedResult: func() []float64 {
-				v := make([]float64, 20)
+			expectedResult: func() []int16 {
+				v := make([]int16, 20)
 
 				for i := 0; i < 20; i++ {
-					v[i] = float64(i)
+					v[i] = int16(i)
 				}
 
 				return v
@@ -223,12 +224,12 @@ func TestMatrix_GetColumn(t *testing.T) {
 		},
 		{
 			name:  "Shape (20,20)",
-			shape: [2]int{20, 20},
+			shape: []int{20, 20},
 			col:   12,
-			expectedResult: func() []float64 {
-				v := make([]float64, 20)
+			expectedResult: func() []int16 {
+				v := make([]int16, 20)
 
-				value := float64(12)
+				value := int16(12)
 				for i := 0; i < 20; i++ {
 					v[i] = value
 					value += 20
@@ -241,11 +242,11 @@ func TestMatrix_GetColumn(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			size := tc.shape[0] * tc.shape[1]
-			nm := matrix.NewMatrixFromSlice(tc.shape[0], tc.shape[1], baseVector[:size])
+			size := tc.shape.TotalSize()
+			nm := matrix.NewMatrixFromSlice(tc.shape, baseVector[:size])
 			col := nm.GetColumn(tc.col)
 
-			if !matrix.AreEqual(col, tc.expectedResult) {
+			if !vector.AreEqual(col, tc.expectedResult) {
 				t.Errorf("\nexpected vector: %v | got: %v \n%v", tc.expectedResult, col, nm)
 			}
 		})
