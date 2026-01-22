@@ -179,39 +179,39 @@ func (m *Matrix[T]) Randomize() {
 	}
 }
 
-func (m *MatrixFloat64) Scale(scalar float64) *MatrixFloat64 {
-	return WrapSlice(m.Rows, m.Columns, MapFunc(m.Data, func(f float64) float64 { return f * scalar }))
+func (m *Matrix[T]) Scale(scalar float64) *Matrix[T] {
+	return WrapSlice(m.shape, vector.MapFunc(m.Data, func(_ int, n T) T { return T(float64(n) * scalar) }))
 }
 
-func (m *MatrixFloat64) MapFunc(f func(float64) float64) *MatrixFloat64 {
-	return WrapSlice(m.Rows, m.Columns, MapFunc(m.Data, f))
+func (m *Matrix[T]) MapFunc(f func(int, T) T) *Matrix[T] {
+	return WrapSlice(m.shape, vector.MapFunc(m.Data, f))
 }
 
-func (m *MatrixFloat64) Dot(vector []float64) *MatrixFloat64 {
-	return m.Product(WrapSlice(1, len(vector), vector))
+func (m *Matrix[T]) Dot(vector []T) *Matrix[T] {
+	return m.Product(WrapSlice([]int{1, len(vector)}, vector))
 }
 
-func (m *MatrixFloat64) Product(m2 *MatrixFloat64) *MatrixFloat64 {
-	if m2.Rows != m.Columns {
+func (m *Matrix[T]) Product(m2 *Matrix[T]) *Matrix[T] {
+	if m2.shape[0] != m.shape[1] {
 		panic("Size mismatch")
 	}
 
-	newMatrix := NewMatrix(m.Rows, m2.Columns)
+	newMatrix := NewMatrix[T]([]int{m.shape[0], m2.shape[1]})
 
-	for row := 0; row < m.Rows; row++ {
-		for col := 0; col < m2.Columns; col++ {
-			index := row*m2.Columns + col
-			newMatrix.Data[index] = DotProduct(m.GetRow(row), m2.GetColumn(col))
+	for row := 0; row < m.shape[0]; row++ {
+		for col := 0; col < m2.shape[1]; col++ {
+			index := row*m2.shape[1] + col
+			newMatrix.Data[index] = vector.DotProduct(m.GetRow(row), m2.GetColumn(col))
 		}
 	}
 
 	return newMatrix
 }
 
-func (m *MatrixFloat64) Transpose() *MatrixFloat64 {
-	newMatrix := NewMatrix(m.Columns, m.Rows)
+func (m *Matrix[T]) Transpose() *Matrix[T] {
+	newMatrix := NewMatrix[T](m.shape)
 
-	for col := 0; col < m.Columns; col++ {
+	for col := 0; col < m.shape[1]; col++ {
 		// Using the power of slices referencing to the original memory array
 		row := newMatrix.GetRow(col)
 		copy(row, m.GetColumn(col))
@@ -220,112 +220,112 @@ func (m *MatrixFloat64) Transpose() *MatrixFloat64 {
 	return newMatrix
 }
 
-func (m *MatrixFloat64) Add(m2 *MatrixFloat64) *MatrixFloat64 {
+func (m *Matrix[T]) Add(m2 *Matrix[T]) *Matrix[T] {
 	panicShapeMismatch(m, m2)
 
-	return WrapSlice(m.Rows, m.Columns, SumVectors(m.Data, m2.Data))
+	return WrapSlice(m.shape, vector.AddVectors(m.Data, m2.Data))
 }
 
-func (m *MatrixFloat64) AddVectorPerRow(vector []float64) *MatrixFloat64 {
-	if m.Columns != len(vector) {
+func (m *Matrix[T]) AddVectorPerRow(v []T) *Matrix[T] {
+	if m.shape[1] != len(v) {
 		panic("Size mismatch")
 	}
 
-	newMatrix := NewMatrix(m.Rows, m.Columns)
+	newMatrix := NewMatrix[T](m.shape)
 
-	for row := 0; row < m.Rows; row++ {
+	for row := 0; row < m.shape[0]; row++ {
 		// Using the power of slices referencing to the original memory array
-		result := SumVectors(m.GetRow(row), vector)
+		result := vector.AddVectors(m.GetRow(row), v)
 		copy(newMatrix.GetRow(row), result)
 	}
 
 	return newMatrix
 }
 
-func (m *MatrixFloat64) AddVectorPerColumn(vector []float64) *MatrixFloat64 {
-	if m.Rows != len(vector) {
+func (m *Matrix[T]) AddVectorPerColumn(v []T) *Matrix[T] {
+	if m.shape[0] != len(v) {
 		panic("Size mismatch")
 	}
 
-	newMatrix := NewMatrix(m.Rows, m.Columns)
+	newMatrix := NewMatrix[T](m.shape)
 
-	for row := 0; row < m.Rows; row++ {
-		result := MapFunc(m.GetRow(row), func(f float64) float64 { return f + vector[row] })
+	for row := 0; row < m.shape[0]; row++ {
+		result := vector.MapFunc(m.GetRow(row), func(_ int, n T) T { return n + v[row] })
 		copy(newMatrix.GetRow(row), result)
 	}
 
 	return newMatrix
 }
 
-func (m *MatrixFloat64) SoftMax() *MatrixFloat64 {
-	newMatrix := NewMatrix(m.Rows, m.Columns)
+func SoftMax[T vector.Real](m *Matrix[T]) *Matrix[T] {
+	newMatrix := NewMatrix[T](m.shape)
 
-	for row := 0; row < m.Rows; row++ {
-		result := SoftMax(m.GetRow(row))
+	for row := 0; row < m.shape[0]; row++ {
+		result := vector.SoftMax(m.GetRow(row))
 		copy(newMatrix.GetRow(row), result)
 	}
 
 	return newMatrix
 }
 
-func (m *MatrixFloat64) DerivativeSoftMax() []MatrixFloat64 {
-	// Jacobian matrices
-	newMatrices := make([]MatrixFloat64, m.Rows)
+// func DerivativeSoftMax[T vector.Real](m *Matrix[T]) *Matrix[T] {
+// 	// Jacobian matrices
+// 	newMatrices := make([]Matrix[T], m.shape[0])
 
-	for row := 0; row < m.Rows; row++ {
-		newMatrices[row] = *DerivativeSoftMax(m.GetRow(row))
-	}
+// 	for row := 0; row < m.shape[0]; row++ {
+// 		newMatrices[row] = *vector.DerivativeSoftMax(m.GetRow(row))
+// 	}
 
-	return newMatrices
-}
+// 	return &newMatrices[0]
+// }
 
-func (m *MatrixFloat64) CrossEntropyLossPerRow(targets *MatrixFloat64) []float64 {
+func CrossEntropyLossPerRow[T vector.Number](m, targets *Matrix[T]) []float64 {
 	panicShapeMismatch(m, targets)
 
-	newVector := make([]float64, m.Rows)
+	newVector := make([]float64, m.shape[0])
 
-	for i := 0; i < m.Rows; i++ {
-		newVector[i] = CrossEntropyLoss(m.GetRow(i), targets.GetRow(i))
+	for i := 0; i < m.shape[0]; i++ {
+		newVector[i] = vector.CrossEntropyLoss(m.GetRow(i), targets.GetRow(i))
 	}
 
 	return newVector
 }
 
-func (m *MatrixFloat64) DerivativeCrossEntropyLossPerRow(targets *MatrixFloat64) []float64 {
-	panicShapeMismatch(m, targets)
+// func DerivativeCrossEntropyLossPerRow[T vector.Number](m, targets *Matrix[T]) []float64 {
+// 	panicShapeMismatch(m, targets)
 
-	newVector := make([]float64, m.Rows)
+// 	newVector := make([]float64, m.shape[0])
 
-	for i := 0; i < m.Rows; i++ {
-		newVector[i] = DerivativeCrossEntropyLoss(m.GetRow(i), targets.GetRow(i))
-	}
+// 	for i := 0; i < m.shape[0]; i++ {
+// 		newVector[i] = vector.DerivativeCrossEntropyLoss(m.GetRow(i), targets.GetRow(i))
+// 	}
 
-	return newVector
-}
+// 	return newVector
+// }
 
-func (m *MatrixFloat64) DerivativeCrossEntropyLossSoftMaxPerRow(targetsOneHot []int) *MatrixFloat64 {
-	if len(targetsOneHot) != m.Rows {
+func (m *Matrix[T]) DerivativeCrossEntropyLossSoftMaxPerRow(targetsOneHot []int) *Matrix[T] {
+	if len(targetsOneHot) != m.shape[0] {
 		panic("Size mismatch")
 	}
 
 	newMatrix := m.Copy()
 
-	for row := 0; row < m.Rows; row++ {
+	for row := 0; row < m.shape[0]; row++ {
 		col := targetsOneHot[row]
-		panicOutOfBound(m.Columns, col)
+		panicOutOfBound(m.shape[1], col)
 
-		newValue := newMatrix.GetAt(row, col) - 1
-		newMatrix.Set(row, col, newValue)
+		newValue := newMatrix.GetAt([]int{row, col}) - 1
+		newMatrix.Set([]int{row, col}, newValue)
 	}
 
 	return newMatrix
 }
 
-func (m *MatrixFloat64) ToOneHot() []int {
-	onehot := make([]int, m.Rows)
+func (m *Matrix[T]) ToOneHot() []int {
+	onehot := make([]int, m.shape[0])
 
-	for row := 0; row < m.Rows; row++ {
-		index, _ := Max(m.GetRow(row))
+	for row := 0; row < m.shape[0]; row++ {
+		index, _ := vector.Max(m.GetRow(row))
 
 		onehot[row] = index
 	}
@@ -333,54 +333,50 @@ func (m *MatrixFloat64) ToOneHot() []int {
 	return onehot
 }
 
-func (m *MatrixFloat64) Accuracy(targets *MatrixFloat64) float64 {
+func (m *Matrix[T]) Accuracy(targets *Matrix[T]) float64 {
 	panicShapeMismatch(m, targets)
 
 	var counter int = 0
 
-	for i := 0; i < m.Rows; i++ {
-		maxIndex, _ := Max(m.GetRow(i))
-		maxTargetIndex, _ := Max(targets.GetRow(i))
+	for i := 0; i < m.shape[0]; i++ {
+		maxIndex, _ := vector.Max(m.GetRow(i))
+		maxTargetIndex, _ := vector.Max(targets.GetRow(i))
 
 		if maxIndex == maxTargetIndex {
 			counter++
 		}
 	}
 
-	return float64(counter) / float64(m.Rows)
+	return float64(counter) / float64(m.shape[0])
 }
 
-func (m *MatrixFloat64) IsEqual(m2 *MatrixFloat64) bool {
-	if m.Columns != m2.Columns || m.Rows != m2.Rows {
+func (m *Matrix[T]) IsEqual(m2 *Matrix[T]) bool {
+	if vector.AreEqual(m.shape, m2.shape) {
 		return false
 	}
 
-	return AreEqual(m.Data, m2.Data)
+	return vector.AreEqual(m.Data, m2.Data)
 }
 
-func (m *MatrixFloat64) Copy() *MatrixFloat64 {
-	newData := make([]float64, len(m.Data))
-	copy(newData, m.Data)
-
-	return &MatrixFloat64{
-		Rows:    m.Rows,
-		Columns: m.Columns,
-		Data:    newData,
+func (m *Matrix[T]) Copy() *Matrix[T] {
+	return &Matrix[T]{
+		shape: m.shape.Copy(),
+		Data:  vector.NewCopy(m.Data),
 	}
 }
 
-func (m *MatrixFloat64) String() string {
+func (m *Matrix[T]) String() string {
 	var sb strings.Builder
 
 	// Assuming a precision of 11 digits, integer and comma, one comma and one space per element
 	// and finally 200 character for extra buffer, but it still can grow larger, this is just to reduce
 	// the times it needs to reallocate memory
-	sb.Grow(15*m.Columns*m.Rows + 200)
+	sb.Grow(15*m.shape.TotalSize() + 200)
 
-	fmt.Fprintf(&sb, "Rows: %d \n", m.Rows)
-	fmt.Fprintf(&sb, "Columns: %d \n", m.Columns)
+	fmt.Fprintf(&sb, "Rows: %d \n", m.shape[0])
+	fmt.Fprintf(&sb, "Columns: %d \n", m.shape[1])
 
-	for row := 0; row < m.Rows; row++ {
+	for row := 0; row < m.shape[0]; row++ {
 		fmt.Fprintf(&sb, "%d ", row)
 		fmt.Fprint(&sb, m.GetRow(row))
 		sb.WriteRune('\n')
@@ -401,8 +397,8 @@ func panicDimensionsShape(shape vector.Shape) {
 	}
 }
 
-func panicShapeMismatch(m1, m2 *MatrixFloat64) {
-	if m1.Columns != m2.Columns || m1.Rows != m2.Rows || len(m1.Data) != len(m2.Data) {
+func panicShapeMismatch[T vector.Number](m1, m2 *Matrix[T]) {
+	if !vector.AreEqual(m1.shape, m2.shape) || len(m1.Data) != len(m2.Data) {
 		panic("Shape or data size mismatch")
 	}
 }
