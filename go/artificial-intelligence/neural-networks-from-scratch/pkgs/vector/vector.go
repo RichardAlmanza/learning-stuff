@@ -4,18 +4,6 @@ import (
 	"math"
 )
 
-type Real interface {
-	~float32 | ~float64
-}
-
-type Integer interface {
-	~int | ~int8 | ~int16 | ~int32 | ~int64
-}
-
-type Number interface {
-	Real | Integer
-}
-
 // Vector is a generic type that represents a mathematical vector.
 type Vector[T Number] interface {
 	~[]T
@@ -25,6 +13,13 @@ func panicVectorSize[V Vector[T], T Number](vector1, vector2 V) {
 	if len(vector1) != len(vector2) {
 		panic("Size mismatch!")
 	}
+}
+
+func NewCopy[V Vector[T], T Number](vector V) V {
+	newVector := make(V, len(vector))
+	copy(newVector, vector)
+	
+	return newVector
 }
 
 // AreEqual compares two vectors and returns true if they are equal.
@@ -42,12 +37,12 @@ func AreEqual[V Vector[T], T Number](vector1, vector2 V) bool {
 	return true
 }
 
-// Reduce applies a function to each element of the vector and returns the accumulated result.
-func Reduce[V Vector[T], T Number](vector V, initialValue T, f func(int, T) T) T {
+// Reduce applies a function to each element of the vector and returns the accumulated user defined result.
+func Reduce[V Vector[T], T Number](vector V, initialValue T, f func(index int, element T, prevResult T) T) T {
 	result := initialValue
 
 	for i := 0; i < len(vector); i++ {
-		result += f(i, vector[i])
+		result = f(i, vector[i], result)
 	}
 
 	return result
@@ -100,7 +95,7 @@ func AddVectors[V Vector[T], T Number](vector1, vector2 V) V {
 
 // Sum returns the sum of all elements in a vector
 func Sum[V Vector[T], T Number](vector V) T {
-	return Reduce(vector, 0, func(_ int, n T) T { return n })
+	return Reduce(vector, 0, func(_ int, n T, p T) T { return n + p })
 }
 
 // Avg returns the average of all elements in a vector
