@@ -2,115 +2,147 @@ package matrix
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"strings"
+
+	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/vector"
 )
 
-type MatrixFloat64 struct {
-	Rows    int
-	Columns int
-	Data    []float64
+var (
+	matrix *Matrix[int8] = NewMatrix[int8]([]int{1, 1})
+	_      vector.Dense  = matrix
+)
+
+type Matrix[T vector.Number] struct {
+	shape       vector.Shape
+	elementType vector.NumberType
+	Data        []T
 }
 
-func NewMatrix(row, col int) *MatrixFloat64 {
-	return &MatrixFloat64{
-		Rows:    row,
-		Columns: col,
-		Data:    make([]float64, row*col),
+func (m *Matrix[T]) Type() vector.NumberType {
+	if m.elementType == 0 {
+		m.elementType = vector.AssertNumber(m.Data[0])
+	}
+
+	return m.elementType
+}
+
+func (m *Matrix[T]) Shape() vector.Shape {
+	return m.shape
+}
+
+func NewMatrix[T vector.Number](shape vector.Shape) *Matrix[T] {
+	size := shape.TotalSize()
+	if size <= 0 || shape.Dims() != 2 {
+		panic("Invalid shape!")
+	}
+
+	data := make([]T, size)
+
+	return &Matrix[T]{
+		shape: shape.Copy(),
+		Data:  data,
 	}
 }
 
-func NewMatrixOneHot(row, col int, indexes []int) *MatrixFloat64 {
-	if len(indexes) != row {
+func NewMatrixOneHot[T vector.Number](shape, indexes []int) *Matrix[T] {
+	if len(indexes) != shape[0] {
 		panic("Size mismatch")
 	}
 
-	newMatrix := NewMatrix(row, col)
+	newMatrix := NewMatrix[T](shape)
 
-	for i := 0; i < row; i++ {
-		panicOutOfBound(col, indexes[i])
-		newMatrix.Set(i, indexes[i], 1)
+	for i := 0; i < shape[0]; i++ {
+		panicOutOfBound(shape[1], indexes[i])
+		coordinates := []int{i, indexes[i]}
+
+		newMatrix.Set(coordinates, 1)
 	}
 
 	return newMatrix
 }
 
-func NewMatrixRand(row, col int) *MatrixFloat64 {
-	newMatrix := NewMatrix(row, col)
+func NewMatrixRand[T vector.Number](shape vector.Shape) *Matrix[T] {
+	newMatrix := NewMatrix[T](shape)
 	newMatrix.Randomize()
 
 	return newMatrix
 }
 
-func NewMatrixFromSlice(row, col int, slice []float64) *MatrixFloat64 {
-	if row*col != len(slice) {
+func NewMatrixFromSlice[T vector.Number](shape vector.Shape, slice []T) *Matrix[T] {
+	panicDimensionsShape(shape)
+
+	if shape.TotalSize() != len(slice) {
 		panic("Size mismatch!")
 	}
 
-	newData := make([]float64, len(slice))
-
-	copy(newData, slice)
-
-	return &MatrixFloat64{
-		Rows:    row,
-		Columns: col,
-		Data:    newData,
+	return &Matrix[T]{
+		shape: shape,
+		Data:  vector.NewCopy(slice),
 	}
 }
 
-func NewMatrixDiagonalFromSlice(slice []float64) *MatrixFloat64 {
+func NewMatrixDiagonalFromSlice[T vector.Number](slice []T) *Matrix[T] {
 	length := len(slice)
-	newData := make([]float64, length*length)
+	newMatrix := NewMatrix[T]([]int{length, length})
 
 	for i := 0; i < length; i++ {
 		index := i*length + i
-		newData[index] = slice[i]
+		newMatrix.Data[index] = slice[i]
 	}
 
-	return &MatrixFloat64{
-		Rows:    length,
-		Columns: length,
-		Data:    newData,
-	}
+	return newMatrix
 }
 
-func WrapSlice(row, col int, slice []float64) *MatrixFloat64 {
-	if row*col != len(slice) {
+func WrapSlice[T vector.Number](shape vector.Shape, slice []T) *Matrix[T] {
+	panicDimensionsShape(shape)
+
+	if shape.TotalSize() != len(slice) {
 		panic("Size mismatch!")
 	}
 
-	return &MatrixFloat64{
-		Rows:    row,
-		Columns: col,
-		Data:    slice,
+	return &Matrix[T]{
+		shape: shape,
+		Data:  slice,
 	}
 }
 
-func (m *MatrixFloat64) Set(row, col int, value float64) {
-	panicOutOfBound(m.Rows, row)
-	panicOutOfBound(m.Columns, col)
+func (m *Matrix[T]) Set(coordinates vector.Shape, value T) {
+	panicDimensionsShape(coordinates)
 
-	index := row * m.Columns
+	row := coordinates[0]
+	col := coordinates[1]
+
+	panicOutOfBound(m.shape[0], row)
+	panicOutOfBound(m.shape[1], col)
+
+	index := row * m.shape[1]
 	index += col
 
 	m.Data[index] = value
 }
 
-func (m *MatrixFloat64) GetAt(row, col int) float64 {
-	panicOutOfBound(m.Rows, row)
-	panicOutOfBound(m.Columns, col)
+func (m *Matrix[T]) GetAt(coordinates vector.Shape) T {
+	panicDimensionsShape(coordinates)
 
-	index := row * m.Columns
+	row := coordinates[0]
+	col := coordinates[1]
+
+	panicOutOfBound(m.shape[0], row)
+	panicOutOfBound(m.shape[1], col)
+
+	index := row * m.shape[1]
 	index += col
 
 	return m.Data[index]
 }
 
-func (m *MatrixFloat64) GetRow(index int) []float64 {
-	panicOutOfBound(m.Rows, index)
+func (m *Matrix[T]) GetRow(index int) []T {
+	panicOutOfBound(m.shape[0], index)
 
-	start := index * m.Columns
-	end := start + m.Columns
+	start := index * m.shape[1]
+	end := start + m.shape[1]
 
 	return m.Data[start:end]
 }
@@ -118,13 +150,13 @@ func (m *MatrixFloat64) GetRow(index int) []float64 {
 // GetColumn return a NEW array with the values of the queried column, ordered top to bottom.
 // If you need to query the columns tons of times, is more efficient to transpose (Transpose) the matrix
 // one time and then query the Rows (GetRow) of the transposed matrix.
-func (m *MatrixFloat64) GetColumn(index int) []float64 {
-	panicOutOfBound(m.Columns, index)
+func (m *Matrix[T]) GetColumn(index int) []T {
+	panicOutOfBound(m.shape[1], index)
 
 	sliceIndex := 0
-	newSlice := make([]float64, m.Rows)
+	newSlice := make([]T, m.shape[0])
 
-	for i := index; i < len(m.Data); i += m.Columns {
+	for i := index; i < len(m.Data); i += m.shape[1] {
 		newSlice[sliceIndex] = m.Data[i]
 		sliceIndex++
 	}
@@ -132,9 +164,18 @@ func (m *MatrixFloat64) GetColumn(index int) []float64 {
 	return newSlice
 }
 
-func (m *MatrixFloat64) Randomize() {
+func (m *Matrix[T]) Randomize() {
+	var f func(float64) T
+
+	if m.Type()&vector.IntegerNumber != 0 {
+		f = func(f float64) T { return T(math.Round(100 * f)) }
+	} else {
+		f = func(f float64) T { return T(f) }
+	}
+
 	for i := 0; i < len(m.Data); i++ {
-		m.Data[i] = rand.Float64() - 0.5
+		random := rand.Float64() - 0.5
+		m.Data[i] = f(random)
 	}
 }
 
@@ -351,6 +392,12 @@ func (m *MatrixFloat64) String() string {
 func panicOutOfBound(max, value int) {
 	if value < 0 || value >= max {
 		panic("Be serious, you're out of bounds!")
+	}
+}
+
+func panicDimensionsShape(shape vector.Shape) {
+	if shape.Dims() != 2 {
+		panic("Invalid shape! Expected 2 dimensions.")
 	}
 }
 
