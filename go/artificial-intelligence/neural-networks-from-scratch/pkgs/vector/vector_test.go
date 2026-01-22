@@ -241,3 +241,34 @@ func TestMin_SmallReal(t *testing.T) {
 		})
 	}
 }
+
+func TestConvertTo_Float32ToInt16(t *testing.T) {
+	testCases := []struct {
+		name     string
+		vector   []float32
+		expected []int16
+	}{
+		{
+			name:     "Convert small float32 number into int16",
+			vector:   []float32{-1.0026, -0.9, 4.001, 0.002, -12.00015, -6.666},
+			expected: []int16{-1, 0, 4, 0, -12, -6},
+		},
+		{
+			name:     "Convert big float32 number into int16",
+			vector:   []float32{-100.0026, 50.9, 1554.001, -5004.00015, 689452.35156},
+			// Keep in mind the overflow cases
+			expected: []int16{-100, 50, 1554, -5004, -31444},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			int16Vector := vector.ConvertTo[[]float32, []int16](tc.vector)
+
+			if !vector.AreEqual(int16Vector, tc.expected) {
+				t.Errorf("\ngot: %v\nexpected: %v", int16Vector, tc.expected)
+			}
+		})
+	}
+
+}

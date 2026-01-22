@@ -18,7 +18,7 @@ func panicVectorSize[V Vector[T], T Number](vector1, vector2 V) {
 func NewCopy[V Vector[T], T Number](vector V) V {
 	newVector := make(V, len(vector))
 	copy(newVector, vector)
-	
+
 	return newVector
 }
 
@@ -131,6 +131,19 @@ func Max[V Vector[T], T Number](vector V) (int, T) {
 	}
 
 	return index, result
+}
+
+// ConvertTo converts a vector from one type to another,
+// Keep in mind the overflow cases when converting from a bigger type to a smaller one.
+// eg: int to float32 or float32 to int16
+func ConvertTo[V Vector[T], W Vector[K], T, K Number](vector V) W {
+	result := make(W, len(vector))
+
+	for i := 0; i < len(vector); i++ {
+		result[i] = K(vector[i])
+	}
+
+	return result
 }
 
 // DotProduct returns the dot product of two vectors.
