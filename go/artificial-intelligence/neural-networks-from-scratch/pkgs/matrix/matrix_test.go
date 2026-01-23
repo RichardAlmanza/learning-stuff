@@ -2,7 +2,7 @@ package matrix_test
 
 import (
 	"fmt"
-	"math"
+	// "math"
 	"testing"
 
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/matrix"
@@ -253,17 +253,17 @@ func TestMatrix_GetColumn_Int16(t *testing.T) {
 	}
 }
 
-func TestMatrix_Randomize(t *testing.T) {
+func TestMatrix_Randomize_Float32(t *testing.T) {
 	sizeX := 2000
 	sizeY := 2000
-	nm := matrix.NewMatrix(sizeY, sizeX)
+	nm := matrix.NewMatrix[float32]([]int{sizeY, sizeX})
 	nm.Randomize()
 
-	probabilityDistribution := matrix.SoftMax(nm.Data)
-	_, min := matrix.Min(probabilityDistribution)
-	_, max := matrix.Max(probabilityDistribution)
+	probabilityDistribution := vector.SoftMax(nm.Data)
+	_, min := vector.Min(probabilityDistribution)
+	_, max := vector.Max(probabilityDistribution)
 
-	maxDelta := 5e-7
+	maxDelta := float32(5e-7)
 	actualDelta := max - min
 
 	testName := fmt.Sprintf("Randomize keeping Normal distribution Shape (%d,%d) MaxDelta %v", sizeY, sizeX, maxDelta)
@@ -276,24 +276,24 @@ func TestMatrix_Randomize(t *testing.T) {
 	})
 }
 
-func TestMatrix_Scale(t *testing.T) {
+func TestMatrix_Scale_Int32(t *testing.T) {
 	scalar := -2.0
-	sizeX := 10
-	sizeY := 10
-	baseVector := make([]float64, sizeX*sizeY)
+	var shape vector.Shape = []int{10, 10}
+
+	baseVector := make([]int32, shape.TotalSize())
 
 	for i := 0; i < len(baseVector); i++ {
 		baseVector[i] = 10
 	}
 
-	nm := matrix.WrapSlice(sizeY, sizeX, baseVector).Scale(scalar)
+	nm := matrix.WrapSlice(shape, baseVector).Scale(scalar)
 
-	expectedMatrix := matrix.NewMatrix(sizeY, sizeX)
+	expectedMatrix := matrix.NewMatrix[int32](shape)
 	for i := 0; i < len(expectedMatrix.Data); i++ {
 		expectedMatrix.Data[i] = -20
 	}
 
-	testName := fmt.Sprintf("Scale matrix %v Shape (%d,%d)", scalar, sizeY, sizeX)
+	testName := fmt.Sprintf("Scale matrix %v Shape %v", scalar, shape)
 
 	t.Run(testName, func(t *testing.T) {
 		if !expectedMatrix.IsEqual(nm) {
@@ -302,19 +302,18 @@ func TestMatrix_Scale(t *testing.T) {
 	})
 }
 
-func TestMatrix_MapFunction(t *testing.T) {
-	f := func(v float64) float64 { return 10 }
-	sizeX := 10
-	sizeY := 10
+func TestMatrix_MapFunction_Int(t *testing.T) {
+	f := func(_, v int) int { return 10 }
+	var shape vector.Shape = []int{10, 10}
 
-	nm := matrix.NewMatrix(sizeY, sizeX).MapFunc(f)
+	nm := matrix.NewMatrix[int](shape).MapFunc(f)
 
-	expectedMatrix := matrix.NewMatrix(sizeY, sizeX)
+	expectedMatrix := matrix.NewMatrix[int](shape)
 	for i := 0; i < len(expectedMatrix.Data); i++ {
 		expectedMatrix.Data[i] = 10
 	}
 
-	testName := fmt.Sprintf("Map matrix Shape (%d,%d)", sizeY, sizeX)
+	testName := fmt.Sprintf("Map matrix Shape %v", shape)
 
 	t.Run(testName, func(t *testing.T) {
 		if !expectedMatrix.IsEqual(nm) {
@@ -323,7 +322,7 @@ func TestMatrix_MapFunction(t *testing.T) {
 	})
 }
 
-func TestMatrix_Transpose(t *testing.T) {
+func TestMatrix_Transpose_Float64(t *testing.T) {
 	baseVector := make([]float64, 400)
 
 	for i := 0; i < 400; i++ {
@@ -332,58 +331,44 @@ func TestMatrix_Transpose(t *testing.T) {
 
 	testCases := []struct {
 		name           string
-		shape          [2]int
-		expectedResult *matrix.MatrixFloat64
+		shape          vector.Shape
+		expectedResult *matrix.Matrix[float64]
 	}{
 		{
-			name:  "Shape (1,1)",
-			shape: [2]int{1, 1},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    1,
-				Columns: 1,
-				Data:    []float64{0},
-			},
+			name:           "Shape (1,1)",
+			shape:          []int{1, 1},
+			expectedResult: matrix.WrapSlice([]int{1, 1}, []float64{0}),
 		},
 		{
-			name:  "Shape (1,10) -> (10,1)",
-			shape: [2]int{1, 10},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    10,
-				Columns: 1,
-				Data:    []float64{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
-			},
+			name:           "Shape (1,10) -> (10,1)",
+			shape:          []int{1, 10},
+			expectedResult: matrix.WrapSlice([]int{10, 1}, []float64{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}),
 		},
 		{
-			name:  "Shape (10,1) -> (1,10)",
-			shape: [2]int{10, 1},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    1,
-				Columns: 10,
-				Data:    []float64{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
-			},
+			name:           "Shape (10,1) -> (1,10)",
+			shape:          []int{10, 1},
+			expectedResult: matrix.WrapSlice([]int{1, 10}, []float64{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}),
 		},
 		{
 			name:  "Shape (5,5)",
-			shape: [2]int{5, 5},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    5,
-				Columns: 5,
-				Data: []float64{
+			shape: []int{5, 5},
+			expectedResult: matrix.WrapSlice(
+				[]int{5, 5},
+				[]float64{
 					0, 5, 10, 15, 20,
 					1, 6, 11, 16, 21,
 					2, 7, 12, 17, 22,
 					3, 8, 13, 18, 23,
 					4, 9, 14, 19, 24,
 				},
-			},
+			),
 		},
 		{
 			name:  "Shape (16,25) -> (25,16)",
-			shape: [2]int{16, 25},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    25,
-				Columns: 16,
-				Data: func() []float64 {
+			shape: []int{16, 25},
+			expectedResult: matrix.WrapSlice(
+				[]int{25, 16},
+				func() []float64 {
 					nv := make([]float64, 400)
 
 					var index int = 0
@@ -396,14 +381,14 @@ func TestMatrix_Transpose(t *testing.T) {
 
 					return nv
 				}(),
-			},
+			),
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			size := tc.shape[0] * tc.shape[1]
-			nm := matrix.WrapSlice(tc.shape[0], tc.shape[1], baseVector[:size]).Transpose()
+			size := tc.shape.TotalSize()
+			nm := matrix.WrapSlice(tc.shape, baseVector[:size]).Transpose()
 
 			if !tc.expectedResult.IsEqual(nm) {
 				t.Errorf("\nexpected matrix: %v \ngot: \n%v", tc.expectedResult, nm)
@@ -412,101 +397,69 @@ func TestMatrix_Transpose(t *testing.T) {
 	}
 }
 
-func TestMatrix_Add(t *testing.T) {
-	baseVector := make([]float64, 400)
+func TestMatrix_Add_Int32(t *testing.T) {
+	baseVector := make([]int32, 400)
 
 	for i := 0; i < 400; i++ {
-		baseVector[i] = float64(i)
+		baseVector[i] = int32(i)
 	}
 
 	testCases := []struct {
 		name           string
-		shape          [2]int
+		shape          vector.Shape
 		times          int
-		expectedResult *matrix.MatrixFloat64
+		expectedResult *matrix.Matrix[int32]
 	}{
 		{
-			name:  "Shape (1,1)",
-			shape: [2]int{1, 1},
-			times: 20,
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    1,
-				Columns: 1,
-				Data:    []float64{0},
-			},
+			name:           "Shape (1,1)",
+			shape:          []int{1, 1},
+			times:          20,
+			expectedResult: matrix.NewMatrixFromSlice([]int{1, 1}, []int32{0}),
 		},
 		{
 			name:  "Shape (1,10)",
-			shape: [2]int{1, 10},
+			shape: []int{1, 10},
 			times: 4,
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    1,
-				Columns: 10,
-				Data: func() []float64 {
-					nv := make([]float64, 10)
-					for i := 0; i < len(nv); i++ {
-						nv[i] = float64(4 * i)
-					}
-					return nv
-				}(),
-			},
+			expectedResult: matrix.NewMatrixFromSlice(
+				[]int{1, 10},
+				vector.MapFunc(make([]int32, 10), func(i int, _ int32) int32 { return int32(i) * 4 }),
+			),
 		},
 		{
 			name:  "Shape (10,1)",
-			shape: [2]int{10, 1},
+			shape: []int{10, 1},
 			times: 15,
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    10,
-				Columns: 1,
-				Data: func() []float64 {
-					nv := make([]float64, 10)
-					for i := 0; i < len(nv); i++ {
-						nv[i] = float64(15 * i)
-					}
-					return nv
-				}(),
-			},
+			expectedResult: matrix.NewMatrixFromSlice(
+				[]int{10, 1},
+				vector.MapFunc(make([]int32, 10), func(i int, _ int32) int32 { return int32(i) * 15 }),
+			),
 		},
 		{
 			name:  "Shape (5,5)",
-			shape: [2]int{5, 5},
+			shape: []int{5, 5},
 			times: 2,
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    5,
-				Columns: 5,
-				Data: func() []float64 {
-					nv := make([]float64, 25)
-					for i := 0; i < len(nv); i++ {
-						nv[i] = float64(2 * i)
-					}
-					return nv
-				}(),
-			},
+			expectedResult: matrix.NewMatrixFromSlice(
+				[]int{5, 5},
+				vector.MapFunc(make([]int32, 25), func(i int, _ int32) int32 { return int32(i) * 2 }),
+			),
 		},
 		{
 			name:  "Shape (16,25)",
-			shape: [2]int{16, 25},
+			shape: []int{16, 25},
 			times: 10,
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    16,
-				Columns: 25,
-				Data: func() []float64 {
-					nv := make([]float64, 400)
-					for i := 0; i < len(nv); i++ {
-						nv[i] = float64(10 * i)
-					}
-					return nv
-				}(),
-			},
+			expectedResult: matrix.NewMatrixFromSlice(
+				[]int{16, 25},
+				vector.MapFunc(make([]int32, 400), func(i int, _ int32) int32 { return int32(i) * 10 }),
+			),
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			size := tc.shape[0] * tc.shape[1]
-			nm := matrix.WrapSlice(tc.shape[0], tc.shape[1], baseVector[:size])
+			size := tc.shape.TotalSize()
+			nm := matrix.WrapSlice(tc.shape, baseVector[:size])
 
-			nmSum := matrix.NewMatrix(tc.shape[0], tc.shape[1])
+			nmSum := matrix.NewMatrix[int32](tc.shape)
 			for i := 0; i < tc.times; i++ {
 				nmSum = nmSum.Add(nm)
 			}
@@ -518,105 +471,92 @@ func TestMatrix_Add(t *testing.T) {
 	}
 }
 
-func TestMatrix_AddVectorPerRow(t *testing.T) {
-	baseVector := make([]float64, 400)
+func TestMatrix_AddVectorPerRow_Int16(t *testing.T) {
+	baseVector := make([]int16, 400)
 
 	for i := 0; i < 400; i++ {
-		baseVector[i] = float64(i)
+		baseVector[i] = int16(i)
 	}
 
 	testCases := []struct {
 		name           string
-		shape          [2]int
-		vector         []float64
-		expectedResult *matrix.MatrixFloat64
+		shape          vector.Shape
+		vector         []int16
+		expectedResult *matrix.Matrix[int16]
 	}{
 		{
-			name:   "Shape (1,1)",
-			shape:  [2]int{1, 1},
-			vector: []float64{5},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    1,
-				Columns: 1,
-				Data:    []float64{5},
-			},
+			name:           "Shape (1,1)",
+			shape:          []int{1, 1},
+			vector:         []int16{5},
+			expectedResult: matrix.WrapSlice([]int{1, 1}, []int16{5}),
 		},
 		{
-			name:   "Shape (1,10)",
-			shape:  [2]int{1, 10},
-			vector: []float64{9, 8, 7, 6, 5, 4, 3, 2, 1, 0},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    1,
-				Columns: 10,
-				Data:    []float64{9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-			},
+			name:           "Shape (1,10)",
+			shape:          []int{1, 10},
+			vector:         []int16{9, 8, 7, 6, 5, 4, 3, 2, 1, 0},
+			expectedResult: matrix.WrapSlice([]int{1, 10}, []int16{9, 9, 9, 9, 9, 9, 9, 9, 9, 9}),
 		},
 		{
-			name:   "Shape (10,1)",
-			shape:  [2]int{10, 1},
-			vector: []float64{10},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    10,
-				Columns: 1,
-				Data:    []float64{10, 11, 12, 13, 14, 15, 16, 17, 18, 19},
-			},
+			name:           "Shape (10,1)",
+			shape:          []int{10, 1},
+			vector:         []int16{10},
+			expectedResult: matrix.WrapSlice([]int{10, 1}, []int16{10, 11, 12, 13, 14, 15, 16, 17, 18, 19}),
 		},
 		{
 			name:   "Shape (5,5)",
-			shape:  [2]int{5, 5},
-			vector: []float64{-10, 10, -10, 10, -10},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    5,
-				Columns: 5,
-				Data: func() []float64 {
-					nv := make([]float64, 25)
+			shape:  []int{5, 5},
+			vector: []int16{-10, 10, -10, 10, -10},
+			expectedResult: matrix.WrapSlice(
+				[]int{5, 5},
+				func() []int16 {
+					nv := make([]int16, 25)
 					for row := 0; row < 5; row++ {
 						value := -10.0
 						for col := 0; col < 5; col++ {
 							index := 5*row + col
-							nv[index] = float64(index) + value
+							nv[index] = int16(index) + int16(value)
 							value *= -1
 						}
 					}
 					return nv
 				}(),
-			},
+			),
 		},
 		{
 			name:  "Shape (16,25)",
-			shape: [2]int{16, 25},
-			vector: func() []float64 {
-				nv := make([]float64, 25)
-				value := -10.0
+			shape: []int{16, 25},
+			vector: func() []int16 {
+				nv := make([]int16, 25)
+				var value int16 = -10
 				for i := 0; i < len(nv); i++ {
 					nv[i] = value
 					value *= -1
 				}
 				return nv
 			}(),
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    16,
-				Columns: 25,
-				Data: func() []float64 {
-					nv := make([]float64, 400)
+			expectedResult: matrix.WrapSlice(
+				[]int{16, 25},
+				func() []int16 {
+					nv := make([]int16, 400)
+					var value int16
 					for row := 0; row < 16; row++ {
-						value := -10.0
+						value = -10
 						for col := 0; col < 25; col++ {
 							index := 25*row + col
-							nv[index] = float64(index) + value
+							nv[index] = int16(index) + value
 							value *= -1
 						}
 					}
 					return nv
 				}(),
-			},
+			),
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			size := tc.shape[0] * tc.shape[1]
-			nm := matrix.WrapSlice(tc.shape[0], tc.shape[1], baseVector[:size]).AddVectorPerRow(tc.vector)
+			size := tc.shape.TotalSize()
+			nm := matrix.WrapSlice(tc.shape, baseVector[:size]).AddVectorPerRow(tc.vector)
 
 			if !tc.expectedResult.IsEqual(nm) {
 				t.Errorf("\nexpected matrix: %v \ngot: \n%v", tc.expectedResult, nm)

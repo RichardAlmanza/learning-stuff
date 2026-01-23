@@ -209,7 +209,8 @@ func (m *Matrix[T]) Product(m2 *Matrix[T]) *Matrix[T] {
 }
 
 func (m *Matrix[T]) Transpose() *Matrix[T] {
-	newMatrix := NewMatrix[T](m.shape)
+	newShape := vector.Shape{m.shape[1], m.shape[0]}
+	newMatrix := NewMatrix[T](newShape)
 
 	for col := 0; col < m.shape[1]; col++ {
 		// Using the power of slices referencing to the original memory array
@@ -351,7 +352,7 @@ func (m *Matrix[T]) Accuracy(targets *Matrix[T]) float64 {
 }
 
 func (m *Matrix[T]) IsEqual(m2 *Matrix[T]) bool {
-	if vector.AreEqual(m.shape, m2.shape) {
+	if !vector.AreEqual(m.shape, m2.shape) {
 		return false
 	}
 
