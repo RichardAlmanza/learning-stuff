@@ -280,7 +280,7 @@ func SoftMax[T vector.Real](m *Matrix[T]) *Matrix[T] {
 // 	return &newMatrices[0]
 // }
 
-func CrossEntropyLossPerRow[T vector.Number](m, targets *Matrix[T]) []float64 {
+func CrossEntropyLossPerRow[T vector.Real](m, targets *Matrix[T]) []float64 {
 	panicShapeMismatch(m, targets)
 
 	newVector := make([]float64, m.shape[0])

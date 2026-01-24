@@ -254,8 +254,8 @@ func TestConvertTo_Float32ToInt16(t *testing.T) {
 			expected: []int16{-1, 0, 4, 0, -12, -6},
 		},
 		{
-			name:     "Convert big float32 number into int16",
-			vector:   []float32{-100.0026, 50.9, 1554.001, -5004.00015, 689452.35156},
+			name:   "Convert big float32 number into int16",
+			vector: []float32{-100.0026, 50.9, 1554.001, -5004.00015, 689452.35156},
 			// Keep in mind the overflow cases
 			expected: []int16{-100, 50, 1554, -5004, -31444},
 		},
@@ -271,4 +271,20 @@ func TestConvertTo_Float32ToInt16(t *testing.T) {
 		})
 	}
 
+}
+
+func BenchmarkVector_Filter(b *testing.B) {
+	size := 1_000_000
+	baseVector := make([]float64, size)
+
+	for i := 0; i < size; i++ {
+		baseVector[i] = float64(i)
+	}
+
+	for b.Loop() {
+		vector.FilterFunc(baseVector, func(_ int, v float64) bool {
+			return v < 500_000
+			
+		})
+	}
 }

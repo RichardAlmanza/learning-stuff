@@ -2,7 +2,7 @@ package matrix_test
 
 import (
 	"fmt"
-	// "math"
+	"math"
 	"testing"
 
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/matrix"
@@ -565,63 +565,50 @@ func TestMatrix_AddVectorPerRow_Int16(t *testing.T) {
 	}
 }
 
-func TestMatrix_AddVectorPerColumn(t *testing.T) {
-	baseVector := make([]float64, 400)
+func TestMatrix_AddVectorPerColumn_Float32(t *testing.T) {
+	baseVector := make([]float32, 400)
 
 	for i := 0; i < 400; i++ {
-		baseVector[i] = float64(i)
+		baseVector[i] = float32(i)
 	}
 
 	testCases := []struct {
 		name           string
-		shape          [2]int
-		vector         []float64
-		expectedResult *matrix.MatrixFloat64
+		shape          vector.Shape
+		vector         []float32
+		expectedResult *matrix.Matrix[float32]
 	}{
 		{
-			name:   "Shape (1,1)",
-			shape:  [2]int{1, 1},
-			vector: []float64{5},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    1,
-				Columns: 1,
-				Data:    []float64{5},
-			},
+			name:           "Shape (1,1)",
+			shape:          []int{1, 1},
+			vector:         []float32{5},
+			expectedResult: matrix.WrapSlice([]int{1, 1}, []float32{5}),
 		},
 		{
-			name:   "Shape (1,10)",
-			shape:  [2]int{1, 10},
-			vector: []float64{10},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    1,
-				Columns: 10,
-				Data:    []float64{10, 11, 12, 13, 14, 15, 16, 17, 18, 19},
-			},
+			name:           "Shape (1,10)",
+			shape:          []int{1, 10},
+			vector:         []float32{10},
+			expectedResult: matrix.WrapSlice([]int{1, 10}, []float32{10, 11, 12, 13, 14, 15, 16, 17, 18, 19}),
 		},
 		{
-			name:   "Shape (10,1)",
-			shape:  [2]int{10, 1},
-			vector: []float64{9, 8, 7, 6, 5, 4, 3, 2, 1, 0},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    10,
-				Columns: 1,
-				Data:    []float64{9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-			},
+			name:           "Shape (10,1)",
+			shape:          []int{10, 1},
+			vector:         []float32{9, 8, 7, 6, 5, 4, 3, 2, 1, 0},
+			expectedResult: matrix.WrapSlice([]int{10, 1}, []float32{9, 9, 9, 9, 9, 9, 9, 9, 9, 9}),
 		},
 		{
 			name:   "Shape (5,5)",
-			shape:  [2]int{5, 5},
-			vector: []float64{-10, 10, -10, 10, 10},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    5,
-				Columns: 5,
-				Data: func() []float64 {
-					nv := make([]float64, 25)
-					value := -10.0
+			shape:  []int{5, 5},
+			vector: []float32{-10, 10, -10, 10, 10},
+			expectedResult: matrix.WrapSlice(
+				[]int{5, 5},
+				func() []float32 {
+					nv := make([]float32, 25)
+					var value float32 = -10.0
 					for row := 0; row < 5; row++ {
 						for col := 0; col < 5; col++ {
 							index := 5*row + col
-							nv[index] = float64(index) + value
+							nv[index] = float32(index) + value
 						}
 						value *= -1
 						if row == 3 {
@@ -629,44 +616,41 @@ func TestMatrix_AddVectorPerColumn(t *testing.T) {
 						}
 					}
 					return nv
-				}(),
-			},
+				}()),
 		},
 		{
 			name:  "Shape (16,25)",
-			shape: [2]int{16, 25},
-			vector: func() []float64 {
-				nv := make([]float64, 16)
-				value := -10.0
+			shape: []int{16, 25},
+			vector: func() []float32 {
+				nv := make([]float32, 16)
+				var value float32 = -10.0
 				for i := 0; i < len(nv); i++ {
 					nv[i] = value
 					value *= -1
 				}
 				return nv
 			}(),
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    16,
-				Columns: 25,
-				Data: func() []float64 {
-					nv := make([]float64, 400)
-					value := -10.0
+			expectedResult: matrix.WrapSlice(
+				[]int{16, 25},
+				func() []float32 {
+					nv := make([]float32, 400)
+					var value float32 = -10.0
 					for row := 0; row < 16; row++ {
 						for col := 0; col < 25; col++ {
 							index := 25*row + col
-							nv[index] = float64(index) + value
+							nv[index] = float32(index) + value
 						}
 						value *= -1
 					}
 					return nv
-				}(),
-			},
+				}()),
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			size := tc.shape[0] * tc.shape[1]
-			nm := matrix.WrapSlice(tc.shape[0], tc.shape[1], baseVector[:size]).AddVectorPerColumn(tc.vector)
+			size := tc.shape.TotalSize()
+			nm := matrix.WrapSlice(tc.shape, baseVector[:size]).AddVectorPerColumn(tc.vector)
 
 			if !tc.expectedResult.IsEqual(nm) {
 				t.Errorf("\nexpected matrix: %v \ngot: \n%v", tc.expectedResult, nm)
@@ -675,172 +659,92 @@ func TestMatrix_AddVectorPerColumn(t *testing.T) {
 	}
 }
 
-func TestMatrix_Product(t *testing.T) {
+func TestMatrix_Product_Int(t *testing.T) {
 	testCases := []struct {
 		name           string
-		matrixA        *matrix.MatrixFloat64
-		matrixB        *matrix.MatrixFloat64
-		expectedResult *matrix.MatrixFloat64
+		matrixA        *matrix.Matrix[int]
+		matrixB        *matrix.Matrix[int]
+		expectedResult *matrix.Matrix[int]
 	}{
 		{
-			name: "Shapes (1,3) * (3, 1)",
-			matrixA: &matrix.MatrixFloat64{
-				Rows:    1,
-				Columns: 3,
-				Data: []float64{
-					1, 2, 3,
-				},
-			},
-			matrixB: &matrix.MatrixFloat64{
-				Rows:    3,
-				Columns: 1,
-				Data: []float64{
-					4,
-					5,
-					6,
-				},
-			},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    1,
-				Columns: 1,
-				Data:    []float64{32},
-			},
+			name:           "Shapes (1,3) * (3, 1)",
+			matrixA:        matrix.WrapSlice([]int{1, 3}, []int{1, 2, 3}),
+			matrixB:        matrix.WrapSlice([]int{3, 1}, []int{4, 5, 6}),
+			expectedResult: matrix.WrapSlice([]int{1, 1}, []int{32}),
 		},
 		{
 			name: "Shapes (3,1) * (1, 3)",
-			matrixA: &matrix.MatrixFloat64{
-				Rows:    3,
-				Columns: 1,
-				Data: []float64{
-					1,
-					2,
-					3,
-				},
-			},
-			matrixB: &matrix.MatrixFloat64{
-				Rows:    1,
-				Columns: 3,
-				Data: []float64{
-					4, 5, 6,
-				},
-			},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    3,
-				Columns: 3,
-				Data: []float64{
-					4, 5, 6,
-					8, 10, 12,
-					12, 15, 18,
-				},
-			},
+			matrixA: matrix.WrapSlice([]int{3, 1}, []int{
+				1,
+				2,
+				3,
+			}),
+			matrixB: matrix.WrapSlice([]int{1, 3}, []int{4, 5, 6}),
+			expectedResult: matrix.WrapSlice([]int{3, 3}, []int{
+				4, 5, 6,
+				8, 10, 12,
+				12, 15, 18,
+			}),
 		},
 		{
 			name: "Shapes (2,3) * (3,2)",
-			matrixA: &matrix.MatrixFloat64{
-				Rows:    2,
-				Columns: 3,
-				Data: []float64{
-					1, 2, 3,
-					4, 5, 6,
-				},
-			},
-			matrixB: &matrix.MatrixFloat64{
-				Rows:    3,
-				Columns: 2,
-				Data: []float64{
-					7, 8,
-					9, 10,
-					11, 12,
-				},
-			},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    2,
-				Columns: 2,
-				Data: []float64{
-					58, 64,
-					139, 154,
-				},
-			},
+			matrixA: matrix.WrapSlice([]int{2, 3}, []int{
+				1, 2, 3,
+				4, 5, 6,
+			}),
+			matrixB: matrix.WrapSlice([]int{3, 2}, []int{
+				7, 8,
+				9, 10,
+				11, 12,
+			}),
+			expectedResult: matrix.WrapSlice([]int{2, 2}, []int{
+				58, 64,
+				139, 154,
+			}),
 		},
 		{
 			name: "Shapes (2,2) * (2,2)",
-			matrixA: &matrix.MatrixFloat64{
-				Rows:    2,
-				Columns: 2,
-				Data: []float64{
-					1, 2,
-					3, 4,
-				},
-			},
-			matrixB: &matrix.MatrixFloat64{
-				Rows:    2,
-				Columns: 2,
-				Data: []float64{
-					2, 0,
-					1, 2,
-				},
-			},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    2,
-				Columns: 2,
-				Data: []float64{
-					4, 4,
-					10, 8,
-				},
-			},
+			matrixA: matrix.WrapSlice([]int{2, 2}, []int{
+				1, 2,
+				3, 4,
+			}),
+			matrixB: matrix.WrapSlice([]int{2, 2}, []int{
+				2, 0,
+				1, 2,
+			}),
+			expectedResult: matrix.WrapSlice([]int{2, 2}, []int{
+				4, 4,
+				10, 8,
+			}),
 		},
 		{
 			name: "Shapes (2,2) * (2,2)",
-			matrixA: &matrix.MatrixFloat64{
-				Rows:    2,
-				Columns: 2,
-				Data: []float64{
-					2, 0,
-					1, 2,
-				},
-			},
-			matrixB: &matrix.MatrixFloat64{
-				Rows:    2,
-				Columns: 2,
-				Data: []float64{
-					1, 2,
-					3, 4,
-				},
-			},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    2,
-				Columns: 2,
-				Data: []float64{
-					2, 4,
-					7, 10,
-				},
-			},
+			matrixA: matrix.WrapSlice([]int{2, 2}, []int{
+				2, 0,
+				1, 2,
+			}),
+			matrixB: matrix.WrapSlice([]int{2, 2}, []int{
+				1, 2,
+				3, 4,
+			}),
+			expectedResult: matrix.WrapSlice([]int{2, 2}, []int{
+				2, 4,
+				7, 10,
+			}),
 		},
 		{
 			name: "Shapes (1,3) * (3,4)",
-			matrixA: &matrix.MatrixFloat64{
-				Rows:    1,
-				Columns: 3,
-				Data: []float64{
-					3, 4, 2,
-				},
-			},
-			matrixB: &matrix.MatrixFloat64{
-				Rows:    3,
-				Columns: 4,
-				Data: []float64{
-					13, 9, 7, 15,
-					8, 7, 4, 6,
-					6, 4, 0, 3,
-				},
-			},
-			expectedResult: &matrix.MatrixFloat64{
-				Rows:    1,
-				Columns: 4,
-				Data: []float64{
-					83, 63, 37, 75,
-				},
-			},
+			matrixA: matrix.WrapSlice([]int{1, 3}, []int{
+				3, 4, 2,
+			}),
+			matrixB: matrix.WrapSlice([]int{3, 4}, []int{
+				13, 9, 7, 15,
+				8, 7, 4, 6,
+				6, 4, 0, 3,
+			}),
+			expectedResult: matrix.WrapSlice([]int{1, 4}, []int{
+				83, 63, 37, 75,
+			}),
 		},
 	}
 
@@ -855,59 +759,51 @@ func TestMatrix_Product(t *testing.T) {
 	}
 }
 
-func TestMatrix_CrossEntropyLossPerRow(t *testing.T) {
+func TestMatrix_CrossEntropyLossPerRow_Float64(t *testing.T) {
 	testCases := []struct {
 		name           string
-		matrixA        *matrix.MatrixFloat64
-		matrixTargets  *matrix.MatrixFloat64
+		matrixA        *matrix.Matrix[float64]
+		matrixTargets  *matrix.Matrix[float64]
 		expectedResult []float64
 	}{
 		{
 			name: "One-hot Shape (3,3)",
-			matrixA: &matrix.MatrixFloat64{
-				Rows:    3,
-				Columns: 3,
-				Data: []float64{
-					0.7, 0.1, 0.2,
-					0.1, 0.5, 0.4,
-					0.02, 0.9, 0.08,
-				},
-			},
-			matrixTargets:  matrix.NewMatrixOneHot(3, 3, []int{0, 1, 1}),
+			matrixA: matrix.WrapSlice([]int{3, 3}, []float64{
+				0.7, 0.1, 0.2,
+				0.1, 0.5, 0.4,
+				0.02, 0.9, 0.08,
+			}),
+			matrixTargets:  matrix.NewMatrixOneHot[float64]([]int{3, 3}, []int{0, 1, 1}),
 			expectedResult: []float64{-math.Log(0.7), -math.Log(0.5), -math.Log(0.9)},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			nv := tc.matrixA.CrossEntropyLossPerRow(tc.matrixTargets)
+			nv := matrix.CrossEntropyLossPerRow(tc.matrixA, tc.matrixTargets)
 
-			if !matrix.AreEqual(nv, tc.expectedResult) {
+			if !vector.AreEqual(nv, tc.expectedResult) {
 				t.Errorf("\nexpected vector: %v \ngot: \n%v", tc.expectedResult, nv)
 			}
 		})
 	}
 }
 
-func TestMatrix_Accuracy(t *testing.T) {
+func TestMatrix_Accuracy_Int8(t *testing.T) {
 	testCases := []struct {
 		name           string
-		matrixA        *matrix.MatrixFloat64
-		matrixTargets  *matrix.MatrixFloat64
+		matrixA        *matrix.Matrix[int8]
+		matrixTargets  *matrix.Matrix[int8]
 		expectedResult float64
 	}{
 		{
 			name: "One-hot Shape (3,3)",
-			matrixA: &matrix.MatrixFloat64{
-				Rows:    3,
-				Columns: 3,
-				Data: []float64{
-					0.7, 0.2, 0.1,
-					0.5, 0.1, 0.4,
-					0.02, 0.9, 0.08,
-				},
-			},
-			matrixTargets:  matrix.NewMatrixOneHot(3, 3, []int{0, 1, 1}),
+			matrixA: matrix.WrapSlice([]int{3, 3}, []int8{
+				70, 20, 10,
+				50, 10, 40,
+				2, 90, 8,
+			}),
+			matrixTargets:  matrix.NewMatrixOneHot[int8]([]int{3, 3}, []int{0, 1, 1}),
 			expectedResult: 2.0 / 3.0,
 		},
 	}
@@ -923,65 +819,47 @@ func TestMatrix_Accuracy(t *testing.T) {
 	}
 }
 
-func BenchmarkMatrix_GetRow(b *testing.B) {
-	sizeX := 1000
-	sizeY := 1000
+func BenchmarkMatrix_GetRow_Float64(b *testing.B) {
+	shape := []int{1000, 1000}
 
-	nm := matrix.NewMatrixRand(sizeY, sizeX)
+	nm := matrix.NewMatrixRand[float64](shape)
 
 	index := 0
 	for b.Loop() {
 		nm.GetRow(index)
-		index = (index + 1) % sizeY
+		index = (index + 1) % shape[0]
 	}
 }
 
-func BenchmarkMatrix_GetColumn(b *testing.B) {
-	sizeX := 1000
-	sizeY := 1000
+func BenchmarkMatrix_GetColumn_Int(b *testing.B) {
+	shape := []int{1000, 1000}
 
-	nm := matrix.NewMatrixRand(sizeY, sizeX)
+	nm := matrix.NewMatrixRand[int](shape)
 
 	index := 0
 	for b.Loop() {
 		nm.GetColumn(index)
-		index = (index + 1) % sizeX
+		index = (index + 1) % shape[1]
 	}
 }
 
-func BenchmarkMatrix_Scale(b *testing.B) {
-	sizeX := 20
-	sizeY := 20
+func BenchmarkMatrix_Scale_Int8(b *testing.B) {
+	shape := []int{2000, 500}
 
-	nm := matrix.NewMatrixRand(sizeY, sizeX)
+	nm := matrix.NewMatrixRand[int8](shape)
 
 	for b.Loop() {
 		nm.Scale(-1)
 	}
 }
 
-func BenchmarkMatrix_Add(b *testing.B) {
-	sizeX := 1000
-	sizeY := 1000
+func BenchmarkMatrix_Add_Float64(b *testing.B) {
+	shape := []int{1000, 1000}
 
-	nm1 := matrix.NewMatrixRand(sizeY, sizeX)
-	nm2 := matrix.NewMatrixRand(sizeY, sizeX)
+	nm1 := matrix.NewMatrixRand[float64](shape)
+	nm2 := matrix.NewMatrixRand[float64](shape)
 
 	for b.Loop() {
 		nm1.Add(nm2)
-	}
-}
-
-func BenchmarkVector_Filter(b *testing.B) {
-	baseVector := make([]float64, 40000)
-
-	for i := 0; i < 40000; i++ {
-		baseVector[i] = float64(i)
-	}
-
-	for b.Loop() {
-		matrix.FilterFunction(baseVector, func(v float64) bool {
-			return v < 20000
-		})
 	}
 }
