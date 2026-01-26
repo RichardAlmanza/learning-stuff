@@ -13,11 +13,12 @@ import (
 
 // NewSpiralData generates spiral data. see: https://cs231n.github.io/neural-networks-case-study/
 // Local adaptation from https://github.com/mbdeveci/NNfSiX/blob/master/Go/p005-ReLU-Activation.go
-func NewSpiralData(numberOfPoints, numberOfClasses int, seed int) (*matrix.MatrixFloat64, *matrix.MatrixFloat64) {
+func NewSpiralData(numberOfPoints, numberOfClasses int, seed int) (*matrix.Matrix[float64], *matrix.Matrix[int]) {
 	seededRand := rand.New(rand.NewSource(int64(seed)))
+	rows := numberOfPoints * numberOfClasses
 
-	X := matrix.NewMatrix(numberOfPoints*numberOfClasses, 2)
-	y := matrix.NewMatrix(numberOfPoints*numberOfClasses, 1)
+	X := matrix.NewMatrix[float64]([]int{rows, 2})
+	y := matrix.NewMatrix[int]([]int{rows, 1})
 
 	for c := 0; c < numberOfClasses; c++ {
 		radius := linspace(0, 1, numberOfPoints)
@@ -28,9 +29,9 @@ func NewSpiralData(numberOfPoints, numberOfClasses int, seed int) (*matrix.Matri
 		}
 
 		for i := 0; i < numberOfPoints; i++ {
-			X.Set(c*numberOfPoints+i, 0, radius[i]*math.Sin(t[i]*2.5))
-			X.Set(c*numberOfPoints+i, 1, radius[i]*math.Cos(t[i]*2.5))
-			y.Set(c*numberOfPoints+i, 0, float64(c))
+			X.Set([]int{c*numberOfPoints + i, 0}, radius[i]*math.Sin(t[i]*2.5))
+			X.Set([]int{c*numberOfPoints + i, 1}, radius[i]*math.Cos(t[i]*2.5))
+			y.Set([]int{c*numberOfPoints + i, 0}, c)
 		}
 	}
 
@@ -49,7 +50,7 @@ func linspace(start, end float64, num int) []float64 {
 }
 
 // Local adaptation from https://github.com/mbdeveci/NNfSiX/blob/master/Go/p005-ReLU-Activation.go
-func Plot(X *matrix.MatrixFloat64, y *matrix.MatrixFloat64) {
+func Plot(X *matrix.Matrix[float64], y *matrix.Matrix[int]) {
 	p := plot.New()
 
 	p.Title.Text = "Spiral"
@@ -60,21 +61,24 @@ func Plot(X *matrix.MatrixFloat64, y *matrix.MatrixFloat64) {
 	c2 := make(plotter.XYs, 0)
 	c3 := make(plotter.XYs, 0)
 
-	for i := 0; i < X.Rows; i++ {
-		if y.GetAt(i, 0) == 0 {
+	for i := 0; i < X.Shape()[0]; i++ {
+		coordX := []int{i, 0}
+		coordY := []int{i, 1}
+
+		if y.GetAt(coordX) == 0 {
 			c1 = append(c1, plotter.XY{
-				X: X.GetAt(i, 0),
-				Y: X.GetAt(i, 1),
+				X: X.GetAt(coordX),
+				Y: X.GetAt(coordY),
 			})
-		} else if y.GetAt(i, 0) == 1 {
+		} else if y.GetAt(coordX) == 1 {
 			c2 = append(c2, plotter.XY{
-				X: X.GetAt(i, 0),
-				Y: X.GetAt(i, 1),
+				X: X.GetAt(coordX),
+				Y: X.GetAt(coordY),
 			})
-		} else if y.GetAt(i, 0) == 2 {
+		} else if y.GetAt(coordX) == 2 {
 			c3 = append(c3, plotter.XY{
-				X: X.GetAt(i, 0),
-				Y: X.GetAt(i, 1),
+				X: X.GetAt(coordX),
+				Y: X.GetAt(coordY),
 			})
 		}
 	}
