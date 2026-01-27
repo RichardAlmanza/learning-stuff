@@ -5,34 +5,35 @@ import (
 
 	singleneuron "github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/layer-based-neurons/single-neuron"
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/matrix"
+	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/vector"
 )
 
-type LayerBasedNeurons struct {
+type LayerBasedNeurons[T vector.Real] struct {
 	Size      int
 	InputSize int
-	Neurons   []singleneuron.NeuronFloat64
+	Neurons   []singleneuron.Neuron[T]
 }
 
-func NewLayerBasedNeurons(size, inputSize int, f func(float64) float64) *LayerBasedNeurons {
+func NewLayerBasedNeurons[T vector.Real](size, inputSize int, af func(T) T) *LayerBasedNeurons[T] {
 	if size < 1 || inputSize < 1 {
 		panic("WTF! an empty or negative layer/input size?")
 	}
 
-	layer := &LayerBasedNeurons{
+	layer := &LayerBasedNeurons[T]{
 		Size:      size,
 		InputSize: inputSize,
-		Neurons:   make([]singleneuron.NeuronFloat64, size),
+		Neurons:   make([]singleneuron.Neuron[T], size),
 	}
 
 	for i := 0; i < size; i++ {
-		layer.Neurons[i] = *singleneuron.NewNeuron(inputSize, f)
+		layer.Neurons[i] = *singleneuron.NewNeuron(inputSize, af)
 	}
 
 	return layer
 }
 
-func (l *LayerBasedNeurons) SetWeights(m matrix.MatrixFloat64) {
-	if m.Columns != l.InputSize || m.Rows != l.Size {
+func (l *LayerBasedNeurons[T]) SetWeights(m matrix.Matrix[T]) {
+	if m.Shape()[1] != l.InputSize || m.Shape()[0] != l.Size {
 		panic("Dimensions mismatch!")
 	}
 
@@ -41,7 +42,7 @@ func (l *LayerBasedNeurons) SetWeights(m matrix.MatrixFloat64) {
 	}
 }
 
-func (l *LayerBasedNeurons) SetBiases(biases []float64) {
+func (l *LayerBasedNeurons[T]) SetBiases(biases []T) {
 	if len(biases) != l.Size {
 		panic("Size mismatch!")
 	}
@@ -51,20 +52,20 @@ func (l *LayerBasedNeurons) SetBiases(biases []float64) {
 	}
 }
 
-func (l *LayerBasedNeurons) RandomizeWeights() {
+func (l *LayerBasedNeurons[T]) RandomizeWeights() {
 	for i := 0; i < l.Size; i++ {
 		l.Neurons[i].RandomizeWeights()
 	}
 }
 
-func (l *LayerBasedNeurons) RandomizeBiases() {
+func (l *LayerBasedNeurons[T]) RandomizeBiases() {
 	for i := 0; i < l.Size; i++ {
-		l.Neurons[i].Bias = (rand.Float64() - 0.5) * 10
+		l.Neurons[i].Bias = T((rand.Float64() - 0.5) * 10)
 	}
 }
 
-func (l *LayerBasedNeurons) Forward(input []float64) []float64 {
-	output := make([]float64, l.Size)
+func (l *LayerBasedNeurons[T]) Forward(input []T) []T {
+	output := make([]T, l.Size)
 
 	for i := 0; i < l.Size; i++ {
 		out, err := l.Neurons[i].Synapsis(input)
@@ -78,12 +79,13 @@ func (l *LayerBasedNeurons) Forward(input []float64) []float64 {
 	return output
 }
 
-func (l *LayerBasedNeurons) ForwardBatch(input *matrix.MatrixFloat64) *matrix.MatrixFloat64 {
-	output := matrix.NewMatrix(input.Rows, l.Size)
+func (l *LayerBasedNeurons[T]) ForwardBatch(input *matrix.Matrix[T]) *matrix.Matrix[T] {
+	newShape := []int{input.Shape()[0], l.Size}
+	output := matrix.NewMatrix[T](newShape)
 
-	for sample := 0; sample < input.Rows; sample++ {
+	for sample := 0; sample < input.Shape()[0]; sample++ {
 
-		outputNeurons := make([]float64, l.Size)
+		outputNeurons := make([]T, l.Size)
 
 		for i := 0; i < l.Size; i++ {
 			out, err := l.Neurons[i].Synapsis(input.GetRow(sample))
@@ -101,14 +103,14 @@ func (l *LayerBasedNeurons) ForwardBatch(input *matrix.MatrixFloat64) *matrix.Ma
 	return output
 }
 
-func (l *LayerBasedNeurons) Copy() *LayerBasedNeurons {
-	newNeurons := make([]singleneuron.NeuronFloat64, len(l.Neurons))
+func (l *LayerBasedNeurons[T]) Copy() *LayerBasedNeurons[T] {
+	newNeurons := make([]singleneuron.Neuron[T], len(l.Neurons))
 
 	for i := 0; i < len(l.Neurons); i++ {
 		newNeurons[i] = *l.Neurons[i].Copy()
 	}
 
-	return &LayerBasedNeurons{
+	return &LayerBasedNeurons[T]{
 		Size:      l.Size,
 		InputSize: l.InputSize,
 		Neurons:   newNeurons,

@@ -3,25 +3,27 @@ package singleneuron
 import (
 	"errors"
 	"math/rand"
+
+	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/vector"
 )
 
-type NeuronFloat64 struct {
+type Neuron[T vector.Real] struct {
 	InputSize          int
-	Bias               float64
-	Weights            []float64
-	ActivationFunction func(float64) float64
+	Bias               T
+	Weights            []T
+	ActivationFunction func(T) T
 }
 
-func NewNeuron(numInputs int, function func(float64) float64) *NeuronFloat64 {
-	return &NeuronFloat64{
+func NewNeuron[T vector.Real](numInputs int, function func(T) T) *Neuron[T] {
+	return &Neuron[T]{
 		InputSize:          numInputs,
 		Bias:               0,
-		Weights:            make([]float64, numInputs),
+		Weights:            make([]T, numInputs),
 		ActivationFunction: function,
 	}
 }
 
-func (n *NeuronFloat64) SetWeights(newWeights []float64) error {
+func (n *Neuron[T]) SetWeights(newWeights []T) error {
 	if len(newWeights) != n.InputSize {
 		return errors.New("size mismatch")
 	}
@@ -31,18 +33,18 @@ func (n *NeuronFloat64) SetWeights(newWeights []float64) error {
 	return nil
 }
 
-func (n *NeuronFloat64) RandomizeWeights() {
+func (n *Neuron[T]) RandomizeWeights() {
 	for i := 0; i < n.InputSize; i++ {
-		n.Weights[i] = (rand.Float64() - 0.5) * 0.01
+		n.Weights[i] = T((rand.Float64() - 0.5) * 0.01)
 	}
 }
 
-func (n *NeuronFloat64) Synapsis(input []float64) (float64, error) {
+func (n *Neuron[T]) Synapsis(input []T) (T, error) {
 	if len(input) != n.InputSize {
 		return 0, errors.New("size mismatch")
 	}
 
-	var output float64 = 0
+	var output T = 0
 
 	for i := 0; i < len(input); i++ {
 		output += n.Weights[i] * input[i]
@@ -53,14 +55,12 @@ func (n *NeuronFloat64) Synapsis(input []float64) (float64, error) {
 	return n.ActivationFunction(output), nil
 }
 
-func (n *NeuronFloat64) Copy() *NeuronFloat64 {
-	newWeights := make([]float64, len(n.Weights))
-	copy(newWeights, n.Weights)
+func (n *Neuron[T]) Copy() *Neuron[T] {
 
-	return &NeuronFloat64{
+	return &Neuron[T]{
 		InputSize:          n.InputSize,
 		Bias:               n.Bias,
-		Weights:            newWeights,
+		Weights:            vector.NewCopy(n.Weights),
 		ActivationFunction: n.ActivationFunction,
 	}
 }
