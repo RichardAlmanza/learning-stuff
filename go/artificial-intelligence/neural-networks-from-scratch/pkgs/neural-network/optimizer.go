@@ -3,18 +3,19 @@ package neuralnetwork
 import (
 	denselayer "github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/dense-layer"
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/matrix"
+	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/vector"
 )
 
-type Optimizer struct {
-	LearningRate float64
+type Optimizer[T vector.Real] struct {
+	LearningRate T
 }
 
-type Batch struct {
-	Input          *matrix.MatrixFloat64
-	ExpectedResult *matrix.MatrixFloat64
+type Batch[T vector.Real] struct {
+	Input          *matrix.Matrix[T]
+	ExpectedResult *matrix.Matrix[T]
 }
 
-func (o *Optimizer) UpdateParameters(l *denselayer.Layer) {
-	l.TWeights = l.DWeights.Scale(-o.LearningRate).Add(l.TWeights)
-	l.Biases = matrix.Map2VectorFunc(l.DBiases, l.Biases, func(f1, f2 float64) float64 { return -o.LearningRate*f1 + f2 })
+func (o *Optimizer[T]) UpdateParameters(l *denselayer.Layer[T]) {
+	l.TWeights = l.DWeights.Scale(-float64(o.LearningRate)).Add(l.TWeights)
+	l.Biases = vector.Map2Func(l.DBiases, l.Biases, func(_ int, dBias, bias T) T { return -o.LearningRate*dBias + bias })
 }

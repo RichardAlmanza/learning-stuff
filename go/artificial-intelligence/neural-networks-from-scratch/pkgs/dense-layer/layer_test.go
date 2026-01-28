@@ -8,33 +8,24 @@ import (
 	denselayer "github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/dense-layer"
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/matrix"
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/spiral"
+	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/vector"
 )
 
-func vectorF64ToInt(vectorF []float64) []int {
-	vectorInt := make([]int, len(vectorF))
-
-	for i := 0; i < len(vectorF); i++ {
-		vectorInt[i] = int(vectorF[i])
-	}
-
-	return vectorInt
-}
-
-func TestLayer_CrossEntropyLoss(t *testing.T) {
+func TestLayer_CrossEntropyLoss_Float64(t *testing.T) {
 	expectedAvgLoss := 1.0986123
 	deltaTolerance := 2e-5
 
 	x, y := spiral.NewSpiralData(100, 3, 0)
 
-	dense1 := denselayer.NewLayer(3, 2, denselayer.ReLuFunction)
-	dense2 := denselayer.NewLayer(3, 3, denselayer.LinearFunction)
+	dense1 := denselayer.NewLayer(3, 2, denselayer.NewReLuFloat64())
+	dense2 := denselayer.NewLayer(3, 3, denselayer.NewLinearFloat64())
 
 	outputs1 := dense1.Forward(x)
-	outputs2 := dense2.Forward(outputs1).SoftMax()
+	outputs2 := matrix.SoftMax(dense2.Forward(outputs1))
 
-	expectedLabels := matrix.NewMatrixOneHot(300, 3, vectorF64ToInt(y.Data))
-	entropy := outputs2.CrossEntropyLossPerRow(expectedLabels)
-	avgLoss := matrix.Avg(entropy)
+	expectedLabels := matrix.NewMatrixOneHot[float64]([]int{300, 3}, y.Data)
+	entropy := matrix.CrossEntropyLossPerRow(outputs2, expectedLabels)
+	avgLoss := vector.Avg(entropy)
 	difference := math.Abs(avgLoss - expectedAvgLoss)
 
 	t.Run("CrossEntropyLoss", func(t *testing.T) {
@@ -44,19 +35,19 @@ func TestLayer_CrossEntropyLoss(t *testing.T) {
 	})
 }
 
-func TestLayer_Accuracy(t *testing.T) {
+func TestLayer_Accuracy_Float64(t *testing.T) {
 	expectedAccuracy := 0.33
 	deltaTolerance := 0.1
 
 	x, y := spiral.NewSpiralData(100, 3, 0)
 
-	dense1 := denselayer.NewLayer(3, 2, denselayer.ReLuFunction)
-	dense2 := denselayer.NewLayer(3, 3, denselayer.LinearFunction)
+	dense1 := denselayer.NewLayer(3, 2, denselayer.NewReLuFloat64())
+	dense2 := denselayer.NewLayer(3, 3, denselayer.NewReLuFloat64())
 
 	outputs1 := dense1.Forward(x)
-	outputs2 := dense2.Forward(outputs1).SoftMax()
+	outputs2 := matrix.SoftMax(dense2.Forward(outputs1))
 
-	expectedLabels := matrix.NewMatrixOneHot(300, 3, vectorF64ToInt(y.Data))
+	expectedLabels := matrix.NewMatrixOneHot[float64]([]int{300, 3}, y.Data)
 	accuracy := outputs2.Accuracy(expectedLabels)
 
 	difference := math.Abs(accuracy - expectedAccuracy)
@@ -68,33 +59,30 @@ func TestLayer_Accuracy(t *testing.T) {
 	})
 }
 
-func TestLayer_Derivative(t *testing.T) {
-	expectedResult := &matrix.MatrixFloat64{
-		Rows:    3,
-		Columns: 3,
-		Data: []float64{
+func TestLayer_Derivative_Float64(t *testing.T) {
+	expectedResult := matrix.WrapSlice([]int{3, 3},
+		[]float64{
 			-0.1, 1.0 / 30, 2.0 / 30,
 			1.0 / 30, -5.0 / 30, 4.0 / 30,
 			2.0 / 300, -1.0 / 30, 8.0 / 300,
 		},
-	}
+	)
+
 	deltaTolerance := 0.1
 
-	softmaxOutput := &matrix.MatrixFloat64{
-		Rows:    3,
-		Columns: 3,
-		Data: []float64{
+	softmaxOutput := matrix.WrapSlice([]int{3, 3},
+		[]float64{
 			0.7, 0.1, 0.2,
 			0.1, 0.5, 0.4,
 			0.02, 0.9, 0.08,
 		},
-	}
+	)
 
 	onehot := []int{0, 1, 1}
 	derivative := softmaxOutput.DerivativeCrossEntropyLossSoftMaxPerRow(onehot).Scale(1 / float64(len(onehot)))
 
-	diff := derivative.Scale(-1).Add(expectedResult).MapFunc(func(f float64) float64 { return math.Abs(f) })
-	_, maxdiff := matrix.Max(diff.Data)
+	diff := derivative.Scale(-1).Add(expectedResult).MapFunc(func(_ int,f float64) float64 { return math.Abs(f) })
+	_, maxdiff := vector.Max(diff.Data)
 
 	t.Run("Derivative", func(t *testing.T) {
 		if maxdiff > deltaTolerance {
@@ -103,9 +91,9 @@ func TestLayer_Derivative(t *testing.T) {
 	})
 }
 
-func TestLayer_Copy(t *testing.T) {
-	compareLayers := func(l1, l2 *denselayer.Layer) bool {
-		areEqual := l1.TWeights.IsEqual(l2.TWeights) && matrix.AreEqual(l1.Biases, l2.Biases)
+func TestLayer_Copy_Float64(t *testing.T) {
+	compareLayers := func(l1, l2 *denselayer.Layer[float64]) bool {
+		areEqual := l1.TWeights.IsEqual(l2.TWeights) && vector.AreEqual(l1.Biases, l2.Biases)
 
 		if !areEqual {
 			return false
@@ -114,14 +102,14 @@ func TestLayer_Copy(t *testing.T) {
 		return fmt.Sprintf("%v", l1.ActivationFunction) == fmt.Sprintf("%v", l2.ActivationFunction)
 	}
 
-	dense := denselayer.NewLayer(10, 2, denselayer.SigmoidFunction)
+	dense := denselayer.NewLayer(10, 2, denselayer.NewSigmoidFloat64())
 	denseCopy := dense.Copy()
 
 	// verify copy
 	copiedCorrectly := compareLayers(dense, denseCopy)
 
 	// Modify original
-	dense.ActivationFunction = denselayer.LinearFunction
+	dense.ActivationFunction = denselayer.NewLinearFloat64()
 	dense.TWeights = dense.TWeights.Scale(0.3)
 	dense.Biases[2] = 1.3
 
