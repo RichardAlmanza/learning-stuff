@@ -119,6 +119,10 @@ func (s *SoftMaxWithCrossEntropy[T]) Forward(input *matrix.Matrix[T]) {
 	s.Output = matrix.SoftMax(input)
 }
 
-func (s *SoftMaxWithCrossEntropy[T]) Backward(dValues *matrix.Matrix[T], targets []int) {
-	s.DInput = dValues.DerivativeCrossEntropyLossSoftMaxPerRow(targets)
+func (s *SoftMaxWithCrossEntropy[T]) Backward(dValues, targets *matrix.Matrix[T]) {
+	s.DInput = matrix.DerivativeCrossEntropyLossSoftMaxPerRow(dValues, targets)
+}
+
+func (s *SoftMaxWithCrossEntropy[T]) Loss(targets *matrix.Matrix[T]) float64 {
+	return vector.Avg(matrix.CrossEntropyLossPerRow(s.Output, targets))
 }

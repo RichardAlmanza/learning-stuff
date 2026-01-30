@@ -69,7 +69,10 @@ func TestLayer_Accuracy_Float64(t *testing.T) {
 }
 
 func TestLayer_Derivative_Float64(t *testing.T) {
-	expectedResult := matrix.WrapSlice([]int{3, 3},
+	deltaTolerance := 0.1
+	shape := []int{3,3}
+
+	expectedResult := matrix.WrapSlice(shape,
 		[]float64{
 			-0.1, 1.0 / 30, 2.0 / 30,
 			1.0 / 30, -5.0 / 30, 4.0 / 30,
@@ -77,9 +80,8 @@ func TestLayer_Derivative_Float64(t *testing.T) {
 		},
 	)
 
-	deltaTolerance := 0.1
 
-	softmaxOutput := matrix.WrapSlice([]int{3, 3},
+	softmaxOutput := matrix.WrapSlice(shape,
 		[]float64{
 			0.7, 0.1, 0.2,
 			0.1, 0.5, 0.4,
@@ -87,8 +89,8 @@ func TestLayer_Derivative_Float64(t *testing.T) {
 		},
 	)
 
-	onehot := []int{0, 1, 1}
-	derivative := softmaxOutput.DerivativeCrossEntropyLossSoftMaxPerRow(onehot).Scale(1 / float64(len(onehot)))
+	targets := matrix.NewMatrixOneHot[float64](shape, []int{0, 1, 1})
+	derivative := matrix.DerivativeCrossEntropyLossSoftMaxPerRow(softmaxOutput, targets).Scale(1 / float64(shape[0]))
 
 	diff := derivative.Scale(-1).Add(expectedResult).MapFunc(func(_ int,f float64) float64 { return math.Abs(f) })
 	_, maxdiff := vector.Max(diff.Data)

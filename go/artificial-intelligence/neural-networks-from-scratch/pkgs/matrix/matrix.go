@@ -304,22 +304,12 @@ func CrossEntropyLossPerRow[T vector.Real](m, targets *Matrix[T]) []float64 {
 // 	return newVector
 // }
 
-func (m *Matrix[T]) DerivativeCrossEntropyLossSoftMaxPerRow(targetsOneHot []int) *Matrix[T] {
-	if len(targetsOneHot) != m.shape[0] {
-		panic("Size mismatch")
-	}
+func DerivativeCrossEntropyLossSoftMaxPerRow[T vector.Number](probabilities, targets *Matrix[T]) *Matrix[T] {
+	panicShapeMismatch(probabilities, targets)
 
-	newMatrix := m.Copy()
+	newData := vector.Map2Func(probabilities.Data, targets.Data, func(_ int, p, t T) T { return p - t })
 
-	for row := 0; row < m.shape[0]; row++ {
-		col := targetsOneHot[row]
-		panicOutOfBound(m.shape[1], col)
-
-		newValue := newMatrix.GetAt([]int{row, col}) - 1
-		newMatrix.Set([]int{row, col}, newValue)
-	}
-
-	return newMatrix
+	return WrapSlice(probabilities.Shape(), newData)
 }
 
 func (m *Matrix[T]) ToOneHot() []int {
