@@ -24,11 +24,7 @@ var (
 	softMaxWithCrossEntropyFunctionFloat32 *SoftMaxWithCrossEntropy[float32] = nil
 )
 
-type ActivationFunction[T vector.Real] struct {
-	Input  *matrix.Matrix[T]
-	Output *matrix.Matrix[T]
-	DInput *matrix.Matrix[T]
-}
+type ActivationFunction[T vector.Real] PeripheralStates[T]
 
 type AFConstraint[T vector.Real] interface {
 	ActivationFunction[T] | ReLu[T] | Linear[T] |
@@ -62,7 +58,7 @@ func (rl *ReLu[T]) Backward(dValues *matrix.Matrix[T]) {
 		return dvalue
 	})
 
-	rl.DInput = matrix.WrapSlice(dValues.Shape(), newVector)
+	rl.Gradient = matrix.WrapSlice(dValues.Shape(), newVector)
 }
 
 func (l *Linear[T]) Forward(input *matrix.Matrix[T]) {
@@ -71,7 +67,7 @@ func (l *Linear[T]) Forward(input *matrix.Matrix[T]) {
 }
 
 func (l *Linear[T]) Backward(dValues *matrix.Matrix[T]) {
-	l.DInput = dValues.Copy()
+	l.Gradient = dValues.Copy()
 }
 
 func sigmoid[T vector.Real](r T) T {
@@ -89,7 +85,7 @@ func (s *Sigmoid[T]) Backward(dValues *matrix.Matrix[T]) {
 		return sig * (1 - sig) * dvalue
 	})
 
-	s.DInput = matrix.WrapSlice(dValues.Shape(), newVector)
+	s.Gradient = matrix.WrapSlice(dValues.Shape(), newVector)
 }
 
 func (s *SoftMax[T]) Forward(input *matrix.Matrix[T]) {
@@ -111,7 +107,7 @@ func (s *SoftMax[T]) Backward(dValues *matrix.Matrix[T]) {
 		newMatrices[row] = *diagMatrix.Add(m1)
 	}
 
-	s.DInput = &newMatrices[0]
+	s.Gradient = &newMatrices[0]
 }
 
 func (s *SoftMaxWithCrossEntropy[T]) Forward(input *matrix.Matrix[T]) {
@@ -120,7 +116,7 @@ func (s *SoftMaxWithCrossEntropy[T]) Forward(input *matrix.Matrix[T]) {
 }
 
 func (s *SoftMaxWithCrossEntropy[T]) Backward(dValues, targets *matrix.Matrix[T]) {
-	s.DInput = matrix.DerivativeCrossEntropyLossSoftMaxPerRow(dValues, targets).Scale(1/float64(dValues.Shape()[0]))
+	s.Gradient = matrix.DerivativeCrossEntropyLossSoftMaxPerRow(dValues, targets).Scale(1 / float64(dValues.Shape()[0]))
 }
 
 func (s *SoftMaxWithCrossEntropy[T]) Loss(targets *matrix.Matrix[T]) float64 {

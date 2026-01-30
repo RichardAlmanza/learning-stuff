@@ -29,9 +29,9 @@ func main() {
 	for i := 0; i < 10001; i++ {
 
 		dense1.Forward(x32)
-		relu.Forward(dense1.Output)
+		relu.Forward(dense1.IOStates.Output)
 		dense2.Forward(relu.Output)
-		softmax.Forward(dense2.Output)
+		softmax.Forward(dense2.IOStates.Output)
 
 		loss := softmax.Loss(expectedLabels)
 		accuracy := softmax.Output.Accuracy(expectedLabels)
@@ -45,9 +45,9 @@ func main() {
 
 		// Backpropagation
 		softmax.Backward(softmax.Output, expectedLabels)
-		dense2.Backward(softmax.DInput)
-		relu.Backward(dense2.DInputs)
-		dense1.Backward(relu.DInput)
+		dense2.Backward(softmax.Gradient)
+		relu.Backward(dense2.IOStates.Gradient)
+		dense1.Backward(relu.Gradient)
 
 		// Update parameters using the optimizer
 		optimizer.UpdateLearningRate(i)

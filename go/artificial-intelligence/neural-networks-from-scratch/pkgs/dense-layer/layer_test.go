@@ -23,9 +23,9 @@ func TestLayer_CrossEntropyLoss_Float64(t *testing.T) {
 	softMax := denselayer.NewSoftMax[float64]()
 
 	dense1.Forward(x)
-	relu.Forward(dense1.Output)
+	relu.Forward(dense1.IOStates.Output)
 	dense2.Forward(relu.Output)
-	softMax.Forward(dense2.Output)
+	softMax.Forward(dense2.IOStates.Output)
 
 	expectedLabels := matrix.NewMatrixOneHot[float64]([]int{300, 3}, y.Data)
 	entropy := matrix.CrossEntropyLossPerRow(softMax.Output, expectedLabels)
@@ -52,9 +52,9 @@ func TestLayer_Accuracy_Float64(t *testing.T) {
 	softMax := denselayer.NewSoftMax[float64]()
 
 	dense1.Forward(x)
-	relu.Forward(dense1.Output)
+	relu.Forward(dense1.IOStates.Output)
 	dense2.Forward(relu.Output)
-	softMax.Forward(dense2.Output)
+	softMax.Forward(dense2.IOStates.Output)
 
 	expectedLabels := matrix.NewMatrixOneHot[float64]([]int{300, 3}, y.Data)
 	accuracy := softMax.Output.Accuracy(expectedLabels)

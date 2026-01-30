@@ -5,26 +5,59 @@ import (
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/vector"
 )
 
+// PeripheralStates represents the peripheral states of a layer.
+
+type PeripheralStates[T vector.Real] struct {
+	Input    *matrix.Matrix[T]
+	Output   *matrix.Matrix[T]
+	Gradient *matrix.Matrix[T]
+}
+
+func (ps *PeripheralStates[T]) Copy() *PeripheralStates[T] {
+	newPS := &PeripheralStates[T]{}
+
+	if ps.Input != nil {
+		newPS.Input = ps.Input.Copy()
+	}
+	if ps.Output != nil {
+		newPS.Output = ps.Output.Copy()
+	}
+	if ps.Gradient != nil {
+		newPS.Gradient = ps.Gradient.Copy()
+	}
+
+	return newPS
+}
+
+// LayerBase represents the base properties of a layer.
 type LayerBase[T vector.Real] struct {
+	// Weights and biases
 	W *matrix.Matrix[T]
 	B []T
 }
 
+// Copy creates a deep copy of the LayerBase.
 func (lb *LayerBase[T]) Copy() *LayerBase[T] {
-	return &LayerBase[T]{
-		W: lb.W.Copy(),
-		B: vector.NewCopy(lb.B),
+	newLB := &LayerBase[T]{}
+
+	if lb.W != nil {
+		newLB.W = lb.W.Copy()
 	}
+	if lb.B != nil {
+		newLB.B = vector.NewCopy(lb.B)
+	}
+
+	return newLB
 }
 
+// Layer represents a dense layer in the neural network.
 type Layer[T vector.Real] struct {
-	Base    *LayerBase[T]
-	DBase   *LayerBase[T]
-	Input   *matrix.Matrix[T]
-	Output  *matrix.Matrix[T]
-	DInputs *matrix.Matrix[T]
+	Base     *LayerBase[T]
+	DBase    *LayerBase[T]
+	IOStates *PeripheralStates[T]
 }
 
+// NewLayer creates a new layer with the specified number of neurons and input size.
 func NewLayer[T vector.Real](nNeurons, inputSize int) *Layer[T] {
 	shape := []int{inputSize, nNeurons}
 
@@ -33,10 +66,12 @@ func NewLayer[T vector.Real](nNeurons, inputSize int) *Layer[T] {
 			W: matrix.NewMatrixRand[T](shape).Scale(0.01),
 			B: make([]T, nNeurons),
 		},
-		DBase: &LayerBase[T]{},
+		DBase:    &LayerBase[T]{},
+		IOStates: &PeripheralStates[T]{},
 	}
 }
 
+// NewLayerFrom creates a new layer with the specified weights and biases.
 func NewLayerFrom[T vector.Real](tWeights *matrix.Matrix[T], biases []T) *Layer[T] {
 	if len(biases) != tWeights.Shape()[1] {
 		panic("Size mismatch")
@@ -47,32 +82,36 @@ func NewLayerFrom[T vector.Real](tWeights *matrix.Matrix[T], biases []T) *Layer[
 			W: tWeights.Copy(),
 			B: vector.NewCopy(biases),
 		},
-		DBase: &LayerBase[T]{},
+		DBase:    &LayerBase[T]{},
+		IOStates: &PeripheralStates[T]{},
 	}
 }
 
 func (l *Layer[T]) Forward(input *matrix.Matrix[T]) *matrix.Matrix[T] {
-	l.Input = input.Copy()
-	l.Output = input.Product(l.Base.W).AddVectorPerRow(l.Base.B)
+	l.IOStates.Input = input.Copy()
+	l.IOStates.Output = input.Product(l.Base.W).AddVectorPerRow(l.Base.B)
 
-	return l.Output
+	return l.IOStates.Output
 }
 
 func (l *Layer[T]) Backward(dValues *matrix.Matrix[T]) *matrix.Matrix[T] {
 	// Dinputs are the Gradients
-	l.DInputs = dValues.Product(l.Base.W.Transpose())
-	l.DBase.W = l.Input.Transpose().Product(dValues)
+	l.IOStates.Gradient = dValues.Product(l.Base.W.Transpose())
+	l.DBase.W = l.IOStates.Input.Transpose().Product(dValues)
 	l.DBase.B = make([]T, len(l.Base.B))
 
 	for i := 0; i < len(l.Base.B); i++ {
 		l.DBase.B[i] = vector.Sum(dValues.GetColumn(i))
 	}
 
-	return l.DInputs
+	return l.IOStates.Gradient
 }
 
+// Copy creates a deep copy of the layer.
 func (l *Layer[T]) Copy() *Layer[T] {
 	return &Layer[T]{
-		Base: l.Base.Copy(),
+		Base:     l.Base.Copy(),
+		DBase:    l.DBase.Copy(),
+		IOStates: l.IOStates.Copy(),
 	}
 }
