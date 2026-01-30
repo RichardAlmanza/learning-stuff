@@ -54,6 +54,7 @@ func (lb *LayerBase[T]) Copy() *LayerBase[T] {
 type Layer[T vector.Real] struct {
 	Base     *LayerBase[T]
 	DBase    *LayerBase[T]
+	Momentum *LayerBase[T]
 	IOStates *PeripheralStates[T]
 }
 
@@ -67,6 +68,7 @@ func NewLayer[T vector.Real](nNeurons, inputSize int) *Layer[T] {
 			B: make([]T, nNeurons),
 		},
 		DBase:    &LayerBase[T]{},
+		Momentum:    &LayerBase[T]{},
 		IOStates: &PeripheralStates[T]{},
 	}
 }
@@ -83,6 +85,7 @@ func NewLayerFrom[T vector.Real](tWeights *matrix.Matrix[T], biases []T) *Layer[
 			B: vector.NewCopy(biases),
 		},
 		DBase:    &LayerBase[T]{},
+		Momentum:    &LayerBase[T]{},
 		IOStates: &PeripheralStates[T]{},
 	}
 }
@@ -112,6 +115,7 @@ func (l *Layer[T]) Copy() *Layer[T] {
 	return &Layer[T]{
 		Base:     l.Base.Copy(),
 		DBase:    l.DBase.Copy(),
+		Momentum: l.Momentum.Copy(),
 		IOStates: l.IOStates.Copy(),
 	}
 }

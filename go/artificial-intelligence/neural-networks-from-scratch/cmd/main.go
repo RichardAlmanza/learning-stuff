@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	// "math"
 
 	denselayer "github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/dense-layer"
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/matrix"
@@ -24,7 +23,9 @@ func main() {
 	relu := denselayer.NewReLu[float64]()
 	softmax := denselayer.NewSoftMaxWithCrossEntropy[float64]()
 
-	optimizer := neuralnetwork.NewSGD[float64](3, 1e-4)
+	optimizer := neuralnetwork.NewSGD[float64](1.8, 1e-4, 0.65)
+
+	fmt.Println(optimizer)
 
 	for i := 0; i < 10001; i++ {
 
