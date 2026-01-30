@@ -1,7 +1,6 @@
 package denselayer_test
 
 import (
-	"fmt"
 	"math"
 	"testing"
 
@@ -17,14 +16,19 @@ func TestLayer_CrossEntropyLoss_Float64(t *testing.T) {
 
 	x, y := spiral.NewSpiralData(100, 3, 0)
 
-	dense1 := denselayer.NewLayer(3, 2, denselayer.NewReLuFloat64())
-	dense2 := denselayer.NewLayer(3, 3, denselayer.NewLinearFloat64())
+	dense1 := denselayer.NewLayer[float64](3, 2)
+	dense2 := denselayer.NewLayer[float64](3, 3)
 
-	outputs1 := dense1.Forward(x)
-	outputs2 := matrix.SoftMax(dense2.Forward(outputs1))
+	relu := denselayer.NewReLu[float64]()
+	softMax := denselayer.NewSoftMax[float64]()
+
+	dense1.Forward(x)
+	relu.Forward(dense1.Output)
+	dense2.Forward(relu.Output)
+	softMax.Forward(dense2.Output)
 
 	expectedLabels := matrix.NewMatrixOneHot[float64]([]int{300, 3}, y.Data)
-	entropy := matrix.CrossEntropyLossPerRow(outputs2, expectedLabels)
+	entropy := matrix.CrossEntropyLossPerRow(softMax.Output, expectedLabels)
 	avgLoss := vector.Avg(entropy)
 	difference := math.Abs(avgLoss - expectedAvgLoss)
 
@@ -41,14 +45,19 @@ func TestLayer_Accuracy_Float64(t *testing.T) {
 
 	x, y := spiral.NewSpiralData(100, 3, 0)
 
-	dense1 := denselayer.NewLayer(3, 2, denselayer.NewReLuFloat64())
-	dense2 := denselayer.NewLayer(3, 3, denselayer.NewReLuFloat64())
+	dense1 := denselayer.NewLayer[float64](3, 2)
+	dense2 := denselayer.NewLayer[float64](3, 3)
 
-	outputs1 := dense1.Forward(x)
-	outputs2 := matrix.SoftMax(dense2.Forward(outputs1))
+	relu := denselayer.NewReLu[float64]()
+	softMax := denselayer.NewSoftMax[float64]()
+
+	dense1.Forward(x)
+	relu.Forward(dense1.Output)
+	dense2.Forward(relu.Output)
+	softMax.Forward(dense2.Output)
 
 	expectedLabels := matrix.NewMatrixOneHot[float64]([]int{300, 3}, y.Data)
-	accuracy := outputs2.Accuracy(expectedLabels)
+	accuracy := softMax.Output.Accuracy(expectedLabels)
 
 	difference := math.Abs(accuracy - expectedAccuracy)
 
@@ -93,23 +102,16 @@ func TestLayer_Derivative_Float64(t *testing.T) {
 
 func TestLayer_Copy_Float64(t *testing.T) {
 	compareLayers := func(l1, l2 *denselayer.Layer[float64]) bool {
-		areEqual := l1.TWeights.IsEqual(l2.TWeights) && vector.AreEqual(l1.Biases, l2.Biases)
-
-		if !areEqual {
-			return false
-		}
-
-		return fmt.Sprintf("%v", l1.ActivationFunction) == fmt.Sprintf("%v", l2.ActivationFunction)
+		return l1.TWeights.IsEqual(l2.TWeights) && vector.AreEqual(l1.Biases, l2.Biases)
 	}
 
-	dense := denselayer.NewLayer(10, 2, denselayer.NewSigmoidFloat64())
+	dense := denselayer.NewLayer[float64](10, 2)
 	denseCopy := dense.Copy()
 
 	// verify copy
 	copiedCorrectly := compareLayers(dense, denseCopy)
 
 	// Modify original
-	dense.ActivationFunction = denselayer.NewLinearFloat64()
 	dense.TWeights = dense.TWeights.Scale(0.3)
 	dense.Biases[2] = 1.3
 
