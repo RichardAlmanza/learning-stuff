@@ -41,11 +41,11 @@ type Sigmoid[T vector.Real] ActivationFunction[T]
 type SoftMax[T vector.Real] ActivationFunction[T]
 type SoftMaxWithCrossEntropy[T vector.Real] ActivationFunction[T]
 
-func newReLu[T vector.Real]() *ReLu[T]       { return &ReLu[T]{} }
-func newLinear[T vector.Real]() *Linear[T]   { return &Linear[T]{} }
-func newSigmoid[T vector.Real]() *Sigmoid[T] { return &Sigmoid[T]{} }
-func newSoftMax[T vector.Real]() *SoftMax[T] { return &SoftMax[T]{} }
-func newSoftMaxWithCrossEntropy[T vector.Real]() *SoftMaxWithCrossEntropy[T] {
+func NewReLu[T vector.Real]() *ReLu[T]       { return &ReLu[T]{} }
+func NewLinear[T vector.Real]() *Linear[T]   { return &Linear[T]{} }
+func NewSigmoid[T vector.Real]() *Sigmoid[T] { return &Sigmoid[T]{} }
+func NewSoftMax[T vector.Real]() *SoftMax[T] { return &SoftMax[T]{} }
+func NewSoftMaxWithCrossEntropy[T vector.Real]() *SoftMaxWithCrossEntropy[T] {
 	return &SoftMaxWithCrossEntropy[T]{}
 }
 
@@ -117,53 +117,4 @@ func (s *SoftMaxWithCrossEntropy[T]) Forward(input *matrix.Matrix[T]) {
 
 func (s *SoftMaxWithCrossEntropy[T]) Backward(dValues *matrix.Matrix[T], targets []int) {
 	s.DInput = dValues.DerivativeCrossEntropyLossSoftMaxPerRow(targets)
-}
-
-func singletonAF[T vector.Real, AF AFConstraint[T]](af *AF, newAF func() *AF) *AF {
-	if af == nil {
-		af = newAF()
-	}
-
-	return af
-}
-
-// Exported functions for creating ActivationFunctions.
-
-func NewReLuFloat64() *ReLu[float64] {
-	return singletonAF(reLuFunctionFloat64, newReLu)
-}
-
-func NewReLuFloat32() *ReLu[float32] {
-	return singletonAF(reLuFunctionFloat32, newReLu)
-}
-
-func NewLinearFloat64() *Linear[float64] {
-	return singletonAF(linearFunctionFloat64, newLinear)
-}
-
-func NewLinearFloat32() *Linear[float32] {
-	return singletonAF(linearFunctionFloat32, newLinear)
-}
-func NewSigmoidFloat64() *Sigmoid[float64] {
-	return singletonAF(sigmoidFunctionFloat64, newSigmoid)
-}
-
-func NewSigmoidFloat32() *Sigmoid[float32] {
-	return singletonAF(sigmoidFunctionFloat32, newSigmoid)
-}
-
-func NewSoftMaxFloat64() *SoftMax[float64] {
-	return singletonAF(softMaxFunctionFloat64, newSoftMax)
-}
-
-func NewSoftMaxFloat32() *SoftMax[float32] {
-	return singletonAF(softMaxFunctionFloat32, newSoftMax)
-}
-
-func NewSoftMaxWCrossEntropyFloat64() *SoftMaxWithCrossEntropy[float64] {
-	return singletonAF(softMaxWithCrossEntropyFunctionFloat64, newSoftMaxWithCrossEntropy)
-}
-
-func NewSoftMaxWCrossEntropyFloat32() *SoftMaxWithCrossEntropy[float32] {
-	return singletonAF(softMaxWithCrossEntropyFunctionFloat32, newSoftMaxWithCrossEntropy)
 }
