@@ -6,7 +6,7 @@ import (
 
 	denselayer "github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/dense-layer"
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/matrix"
-	// neuralnetwork "github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/neural-network"
+	neuralnetwork "github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/neural-network"
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/spiral"
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/vector"
 )
@@ -24,24 +24,30 @@ func main() {
 	relu := denselayer.NewReLu[float32]()
 	softmax := denselayer.NewSoftMaxWithCrossEntropy[float32]()
 
-	dense1.Forward(x32)
-	relu.Forward(dense1.Output)
-	dense2.Forward(dense1.Output)
-	softmax.Forward(dense2.Output)
+	optimizer := neuralnetwork.NewSGD[float32](1)
 
-	loss := vector.Avg(matrix.CrossEntropyLossPerRow(softmax.Output, expectedLabels))
-	accuracy := softmax.Output.Accuracy(expectedLabels)
+	for i := 0; i < 10001; i++ {
 
-	fmt.Println("Loss: ", loss)
-	fmt.Println("Accuracy: ", accuracy)
+		dense1.Forward(x32)
+		relu.Forward(dense1.Output)
+		dense2.Forward(relu.Output)
+		softmax.Forward(dense2.Output)
 
-	softmax.Backward(softmax.Output, y.Data)
-	dense2.Backward(expectedLabels)
-	relu.Backward(dense2.DInputs)
-	dense1.Backward(relu.DInput)
+		loss := softmax.Loss(expectedLabels)
+		accuracy := softmax.Output.Accuracy(expectedLabels)
 
-	fmt.Println(dense1.DWeights)
-	fmt.Println(dense1.DBiases)
-	fmt.Println(dense2.DWeights)
-	fmt.Println(dense2.DBiases)
+		if i%500 == 0 {
+			fmt.Print("Epoch: ", i)
+			fmt.Printf(", Accuracy: %.3f", accuracy)
+			fmt.Printf(", Loss: %0.5f\n", loss)
+		}
+
+		softmax.Backward(softmax.Output, expectedLabels)
+		dense2.Backward(softmax.DInput)
+		relu.Backward(dense2.DInputs)
+		dense1.Backward(relu.DInput)
+
+		optimizer.UpdateParameters(dense1)
+		optimizer.UpdateParameters(dense2)
+	}
 }

@@ -43,6 +43,7 @@ func (l *Layer[T]) Forward(input *matrix.Matrix[T]) *matrix.Matrix[T] {
 }
 
 func (l *Layer[T]) Backward(dValues *matrix.Matrix[T]) *matrix.Matrix[T] {
+	// Dinputs are the Gradients
 	l.DInputs = dValues.Product(l.TWeights.Transpose())
 	l.DWeights = l.Input.Transpose().Product(dValues)
 	l.DBiases = make([]T, len(l.Biases))
