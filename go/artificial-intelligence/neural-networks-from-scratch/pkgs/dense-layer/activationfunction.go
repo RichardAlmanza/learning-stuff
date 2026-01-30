@@ -55,12 +55,14 @@ func (rl *ReLu[T]) Forward(input *matrix.Matrix[T]) {
 }
 
 func (rl *ReLu[T]) Backward(dValues *matrix.Matrix[T]) {
-	rl.DInput = dValues.MapFunc(func(_ int, f T) T {
-		if f > 0 {
-			return 1
+	newVector := vector.Map2Func(dValues.Data, rl.Input.Data, func(_ int, dvalue, input T) T {
+		if input <= 0 {
+			return 0
 		}
-		return 0
+		return dvalue
 	})
+
+	rl.DInput = matrix.WrapSlice(dValues.Shape(), newVector)
 }
 
 func (l *Linear[T]) Forward(input *matrix.Matrix[T]) {
@@ -69,7 +71,7 @@ func (l *Linear[T]) Forward(input *matrix.Matrix[T]) {
 }
 
 func (l *Linear[T]) Backward(dValues *matrix.Matrix[T]) {
-	l.DInput = dValues.MapFunc(func(_ int, f T) T { return 1 })
+	l.DInput = dValues.Copy()
 }
 
 func sigmoid[T vector.Real](r T) T {
@@ -82,10 +84,12 @@ func (s *Sigmoid[T]) Forward(input *matrix.Matrix[T]) {
 }
 
 func (s *Sigmoid[T]) Backward(dValues *matrix.Matrix[T]) {
-	s.DInput = dValues.MapFunc(func(_ int, f T) T {
-		sig := sigmoid(f)
-		return sig * (1 - sig)
+	newVector := vector.Map2Func(dValues.Data, s.Output.Data, func(_ int, dvalue, output T) T {
+		sig := output // which is sigmoid(input)
+		return sig * (1 - sig) * dvalue
 	})
+
+	s.DInput = matrix.WrapSlice(dValues.Shape(), newVector)
 }
 
 func (s *SoftMax[T]) Forward(input *matrix.Matrix[T]) {
