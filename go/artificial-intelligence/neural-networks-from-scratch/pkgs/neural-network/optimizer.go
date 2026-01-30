@@ -29,8 +29,8 @@ func (oSGD *StochasticGradientDescent[T]) UpdateLearningRate(epoch int) {
 }
 
 func (oSGD *StochasticGradientDescent[T]) UpdateParameters(l *denselayer.Layer[T]) {
-	l.TWeights = l.DWeights.Scale(-float64(oSGD.LearningRate)).Add(l.TWeights)
-	l.Biases = vector.Map2Func(l.DBiases, l.Biases, func(_ int, dBias, bias T) T { return -oSGD.LearningRate*dBias + bias })
+	l.Base.W = l.DBase.W.Scale(-float64(oSGD.LearningRate)).Add(l.Base.W)
+	l.Base.B = vector.Map2Func(l.DBase.B, l.Base.B, func(_ int, dBias, bias T) T { return -oSGD.LearningRate*dBias + bias })
 }
 
 type Batch[T vector.Real] struct {

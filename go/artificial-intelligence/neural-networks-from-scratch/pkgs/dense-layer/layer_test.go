@@ -104,7 +104,7 @@ func TestLayer_Derivative_Float64(t *testing.T) {
 
 func TestLayer_Copy_Float64(t *testing.T) {
 	compareLayers := func(l1, l2 *denselayer.Layer[float64]) bool {
-		return l1.TWeights.IsEqual(l2.TWeights) && vector.AreEqual(l1.Biases, l2.Biases)
+		return l1.Base.W.IsEqual(l2.Base.W) && vector.AreEqual(l1.Base.B, l2.Base.B)
 	}
 
 	dense := denselayer.NewLayer[float64](10, 2)
@@ -114,8 +114,8 @@ func TestLayer_Copy_Float64(t *testing.T) {
 	copiedCorrectly := compareLayers(dense, denseCopy)
 
 	// Modify original
-	dense.TWeights = dense.TWeights.Scale(0.3)
-	dense.Biases[2] = 1.3
+	dense.Base.W = dense.Base.W.Scale(0.3)
+	dense.Base.B[2] = 1.3
 
 	areEquals := compareLayers(dense, denseCopy)
 
