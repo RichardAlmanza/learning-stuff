@@ -13,18 +13,18 @@ import (
 
 func main() {
 	x, y := spiral.NewSpiralData(100, 3, 0)
-	x32 := matrix.NewMatrixFromSlice(x.Shape(), vector.ConvertTo[[]float64, []float32](x.Data))
-	expectedLabels := matrix.NewMatrixOneHot[float32]([]int{300, 3}, y.Data)
+	x32 := matrix.NewMatrixFromSlice(x.Shape(), vector.ConvertTo[[]float64, []float64](x.Data))
+	expectedLabels := matrix.NewMatrixOneHot[float64]([]int{300, 3}, y.Data)
 
 	// original dynamic example
 
-	dense1 := denselayer.NewLayer[float32](64, 2)
-	dense2 := denselayer.NewLayer[float32](3, 64)
+	dense1 := denselayer.NewLayer[float64](64, 2)
+	dense2 := denselayer.NewLayer[float64](3, 64)
 
-	relu := denselayer.NewReLu[float32]()
-	softmax := denselayer.NewSoftMaxWithCrossEntropy[float32]()
+	relu := denselayer.NewReLu[float64]()
+	softmax := denselayer.NewSoftMaxWithCrossEntropy[float64]()
 
-	optimizer := neuralnetwork.NewSGD[float32](1)
+	optimizer := neuralnetwork.NewSGD[float64](3, 1e-4)
 
 	for i := 0; i < 10001; i++ {
 
@@ -38,15 +38,19 @@ func main() {
 
 		if i%500 == 0 {
 			fmt.Print("Epoch: ", i)
+			fmt.Printf(", Current Learning Rate: %.3f", optimizer.LearningRate)
 			fmt.Printf(", Accuracy: %.3f", accuracy)
 			fmt.Printf(", Loss: %0.5f\n", loss)
 		}
 
+		// Backpropagation
 		softmax.Backward(softmax.Output, expectedLabels)
 		dense2.Backward(softmax.DInput)
 		relu.Backward(dense2.DInputs)
 		dense1.Backward(relu.DInput)
 
+		// Update parameters using the optimizer
+		optimizer.UpdateLearningRate(i)
 		optimizer.UpdateParameters(dense1)
 		optimizer.UpdateParameters(dense2)
 	}

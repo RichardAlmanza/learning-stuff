@@ -7,14 +7,27 @@ import (
 )
 
 type Optimizer[T vector.Real] struct {
-	LearningRate T
+	LearningRate        T
+	InitialLearningRate T
+	Decay               T
 }
 
 type StochasticGradientDescent[T vector.Real] Optimizer[T]
 
-func NewSGD[T vector.Real](learningRate T) *StochasticGradientDescent[T] {
-	return &StochasticGradientDescent[T]{LearningRate: learningRate}
+func NewSGD[T vector.Real](learningRate, decay T) *StochasticGradientDescent[T] {
+	return &StochasticGradientDescent[T]{
+		LearningRate:        learningRate,
+		InitialLearningRate: learningRate,
+		Decay:               decay,
+	}
 }
+
+func (oSGD *StochasticGradientDescent[T]) UpdateLearningRate(epoch int) {
+	if oSGD.Decay != 0 {
+		oSGD.LearningRate = oSGD.InitialLearningRate / (1 + oSGD.Decay*T(epoch))
+	}
+}
+
 func (oSGD *StochasticGradientDescent[T]) UpdateParameters(l *denselayer.Layer[T]) {
 	l.TWeights = l.DWeights.Scale(-float64(oSGD.LearningRate)).Add(l.TWeights)
 	l.Biases = vector.Map2Func(l.DBiases, l.Biases, func(_ int, dBias, bias T) T { return -oSGD.LearningRate*dBias + bias })
