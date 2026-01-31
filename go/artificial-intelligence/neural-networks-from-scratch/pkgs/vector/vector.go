@@ -59,8 +59,15 @@ func MapFunc[V Vector[T], T Number](vector V, f func(int, T) T) V {
 	return newVector
 }
 
-// Map2Func applies a function that receives two vectors and returns a new vector with
-// the results of applying the function to each pair of elements.
+// Map2Func iterates over two vectors simultaneously, applying a custom function.
+//
+// the function parameters are:
+//
+// index: The current index in both vectors.
+//
+// element1: The current element in the first vector
+//
+// element2: The current element in the second vector
 func Map2Func[V Vector[T], T Number](vector1, vector2 V, f func(int, T, T) T) V {
 	panicVectorSize(vector1, vector2)
 
