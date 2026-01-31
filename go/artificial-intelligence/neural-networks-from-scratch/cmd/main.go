@@ -23,7 +23,7 @@ func main() {
 	relu := denselayer.NewReLu[float64]()
 	softmax := denselayer.NewSoftMaxWithCrossEntropy[float64]()
 
-	optimizer := neuralnetwork.NewRMSProp[float64](2e-3, 1e-5, 1e-7, 0.9993)
+	optimizer := neuralnetwork.NewAdam[float64](5e-2, 5e-7, 1e-7, 0.9, 0.999)
 
 	fmt.Println(optimizer)
 
@@ -52,7 +52,7 @@ func main() {
 
 		// Update parameters using the optimizer
 		optimizer.UpdateLearningRate(i)
-		optimizer.UpdateParameters(dense1)
-		optimizer.UpdateParameters(dense2)
+		optimizer.UpdateParameters(dense1, i)
+		optimizer.UpdateParameters(dense2, i)
 	}
 }
