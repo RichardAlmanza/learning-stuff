@@ -121,6 +121,66 @@ func (oAG *AdaptiveGradientOptimizer[T]) UpdateParameters(l *denselayer.Layer[T]
 	l.Base.B = vector.AddVectors(l.Base.B, bUpdates)
 }
 
+type RootMeanSquarePropagation[T vector.Real] struct {
+	LearningRate        T
+	InitialLearningRate T
+	Decay               T
+	Epsilon             T
+	Rho                 T
+}
+
+func NewRMSProp[T vector.Real](learningRate, decay, epsilon, rho T) *RootMeanSquarePropagation[T] {
+	return &RootMeanSquarePropagation[T]{
+		LearningRate:        learningRate,
+		InitialLearningRate: learningRate,
+		Decay:               decay,
+		Epsilon:             epsilon,
+		Rho:                 rho,
+	}
+}
+
+func (oRMSP *RootMeanSquarePropagation[T]) UpdateLearningRate(epoch int) {
+	if oRMSP.Decay != 0 {
+		oRMSP.LearningRate = oRMSP.InitialLearningRate / (1 + oRMSP.Decay*T(epoch))
+	}
+}
+
+func (oRMSP *RootMeanSquarePropagation[T]) UpdateParameters(l *denselayer.Layer[T]) {
+	// cache = rho * cache + (1 - rho) * dWeights ^ 2
+	// l.weights += -CurrentLearningRate * dWeights / (epsilon + sqrt(weightsCache))
+	fADivB := func(_ int, a, b T) T { return a / b }
+	fCacheRhoPlusA2 := func(_ int, c, a T) T { return oRMSP.Rho*c + (1-oRMSP.Rho)*T(math.Pow(float64(a), 2)) }
+	fEpsilonPlusSqrtA := func(_ int, a T) T { return oRMSP.Epsilon + T(math.Sqrt(float64(a))) }
+
+	// Create layer cache if it doesn't exist.
+	if l.Cache.W == nil || l.Cache.B == nil {
+		l.Cache.W = matrix.NewMatrix[T](l.Base.W.Shape())
+		l.Cache.B = make([]T, len(l.Base.B))
+	}
+
+	// cache = rho * cache + (1 - rho) * dWeights ^ 2
+	l.Cache.W = matrix.WrapSlice(l.Cache.W.Shape(),
+		vector.Map2Func(l.Cache.W.Data, l.DBase.W.Data, fCacheRhoPlusA2))
+	l.Cache.B = vector.Map2Func(l.Cache.B, l.DBase.B, fCacheRhoPlusA2)
+
+	// A = -CurrentLearningRate * dWeights
+	wUpdates := l.DBase.W.Scale(-float64(oRMSP.LearningRate))
+	bUpdates := vector.MapFunc(l.DBase.B, func(_ int, dBias T) T { return -oRMSP.LearningRate * dBias })
+
+	// B = Epsilon + sqrt(weightsCache)
+	sqrtEpsilonW := l.Cache.W.MapFunc(fEpsilonPlusSqrtA)
+	sqrtEpsilonB := vector.MapFunc(l.Cache.B, fEpsilonPlusSqrtA)
+
+	// A /= B
+	wUpdates = matrix.WrapSlice(wUpdates.Shape(),
+		vector.Map2Func(wUpdates.Data, sqrtEpsilonW.Data, fADivB))
+	bUpdates = vector.Map2Func(bUpdates, sqrtEpsilonB, fADivB)
+
+	// Update weights and biases
+	l.Base.W = l.Base.W.Add(wUpdates)
+	l.Base.B = vector.AddVectors(l.Base.B, bUpdates)
+}
+
 type Batch[T vector.Real] struct {
 	Input          *matrix.Matrix[T]
 	ExpectedResult *matrix.Matrix[T]
