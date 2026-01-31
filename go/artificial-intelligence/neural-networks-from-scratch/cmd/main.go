@@ -23,7 +23,7 @@ func main() {
 	relu := denselayer.NewReLu[float64]()
 	softmax := denselayer.NewSoftMaxWithCrossEntropy[float64]()
 
-	optimizer := neuralnetwork.NewAdaGrad[float64](1.5, 1e-6, 1e-7)
+	optimizer := neuralnetwork.NewRMSProp[float64](2e-3, 1e-5, 1e-7, 0.9993)
 
 	fmt.Println(optimizer)
 
@@ -39,9 +39,9 @@ func main() {
 
 		if i%500 == 0 {
 			fmt.Print("Epoch: ", i)
-			fmt.Printf(", Current Learning Rate: %.3f", optimizer.LearningRate)
 			fmt.Printf(", Accuracy: %.3f", accuracy)
-			fmt.Printf(", Loss: %0.5f\n", loss)
+			fmt.Printf(", Loss: %0.5f", loss)
+			fmt.Printf(", Current Learning Rate: %.6f\n", optimizer.LearningRate)
 		}
 
 		// Backpropagation
