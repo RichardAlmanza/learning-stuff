@@ -23,7 +23,7 @@ func main() {
 	relu := denselayer.NewReLu[float64]()
 	softmax := denselayer.NewSoftMaxWithCrossEntropy[float64]()
 
-	optimizer := neuralnetwork.NewSGD[float64](1.8, 1e-4, 0.65)
+	optimizer := neuralnetwork.NewAdaGrad[float64](1.5, 1e-6, 1e-7)
 
 	fmt.Println(optimizer)
 
