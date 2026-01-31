@@ -181,6 +181,90 @@ func (oRMSP *RootMeanSquarePropagation[T]) UpdateParameters(l *denselayer.Layer[
 	l.Base.B = vector.AddVectors(l.Base.B, bUpdates)
 }
 
+type AdaptiveMomentum[T vector.Real] struct {
+	LearningRate        T
+	InitialLearningRate T
+	Decay               T
+	Epsilon             T
+	Beta1               T
+	Beta2               T
+}
+
+func NewAdam[T vector.Real](learningRate, decay, epsilon, beta1, beta2 T) *AdaptiveMomentum[T] {
+	return &AdaptiveMomentum[T]{
+		LearningRate:        learningRate,
+		InitialLearningRate: learningRate,
+		Decay:               decay,
+		Epsilon:             epsilon,
+		Beta1:               beta1,
+		Beta2:               beta2,
+	}
+}
+
+func (oAM *AdaptiveMomentum[T]) UpdateLearningRate(epoch int) {
+	if oAM.Decay != 0 {
+		oAM.LearningRate = oAM.InitialLearningRate / (1 + oAM.Decay*T(epoch))
+	}
+}
+
+func (oAM *AdaptiveMomentum[T]) UpdateParameters(l *denselayer.Layer[T], epoch int) {
+	// cache = beta2 * cache + (1 - beta2) * dWeights^2
+	// l.weights = -CurrentLearningRate * momentumCorrected / (epsilon + sqrt(cacheCorrected))
+	fADivB := func(_ int, a, b T) T { return a / b }
+	fCacheBeta2PlusA2 := func(_ int, c, a T) T { return oAM.Beta2*c + (1-oAM.Beta2)*T(math.Pow(float64(a), 2)) }
+	fCorrectCache := func(_ int, m T) T { return m / T(1-math.Pow(float64(oAM.Beta2), float64(epoch+1))) }
+	fMomentumDerivative := func(_ int, m, d T) T { return oAM.Beta1*m + (1-oAM.Beta1)*d }
+	fCorrectMomentum := func(_ int, m T) T { return m / T(1-math.Pow(float64(oAM.Beta1), float64(epoch+1))) }
+	fEpsilonPlusSqrtA := func(_ int, a T) T { return oAM.Epsilon + T(math.Sqrt(float64(a))) }
+
+	// Create layer cache if it doesn't exist.
+	if l.Cache.W == nil || l.Cache.B == nil {
+		l.Cache.W = matrix.NewMatrix[T](l.Base.W.Shape())
+		l.Cache.B = make([]T, len(l.Base.B))
+	}
+
+	// Create layer momentum if it doesn't exist.
+	if l.Momentum.W == nil || l.Momentum.B == nil {
+		l.Momentum.W = matrix.NewMatrix[T](l.Base.W.Shape())
+		l.Momentum.B = make([]T, len(l.Base.B))
+	}
+
+	// momentum = beta1 * weightMomentum + (1 - beta1) * dWeights
+	l.Momentum.W = matrix.WrapSlice(l.Momentum.W.Shape(),
+		vector.Map2Func(l.Momentum.W.Data, l.DBase.W.Data, fMomentumDerivative))
+	l.Momentum.B = vector.Map2Func(l.Momentum.B, l.DBase.B, fMomentumDerivative)
+
+	// momentumCorrected = momentum / (1 - beta1 ^ (epoch + 1))
+	momentumCorrectedW := l.Momentum.W.MapFunc(fCorrectMomentum)
+	momentumCorrectedB := vector.MapFunc(l.Momentum.B, fCorrectMomentum)
+
+	// cache = beta2 * cache + (1 - beta2) * dWeights^2
+	l.Cache.W = matrix.WrapSlice(l.Cache.W.Shape(),
+		vector.Map2Func(l.Cache.W.Data, l.DBase.W.Data, fCacheBeta2PlusA2))
+	l.Cache.B = vector.Map2Func(l.Cache.B, l.DBase.B, fCacheBeta2PlusA2)
+
+	// cacheCorrected = cache / (1 - beta2 ^ (epoch + 1))
+	cacheCorrectedW := l.Cache.W.MapFunc(fCorrectCache)
+	cacheCorrectedB := vector.MapFunc(l.Cache.B, fCorrectCache)
+
+	// A = -CurrentLearningRate * momentumCorrected
+	wUpdates := momentumCorrectedW.Scale(-float64(oAM.LearningRate))
+	bUpdates := vector.MapFunc(momentumCorrectedB, func(_ int, dBias T) T { return -oAM.LearningRate * dBias })
+
+	// B = Epsilon + sqrt(cacheCorrected)
+	sqrtEpsilonW := cacheCorrectedW.MapFunc(fEpsilonPlusSqrtA)
+	sqrtEpsilonB := vector.MapFunc(cacheCorrectedB, fEpsilonPlusSqrtA)
+
+	// A /= B
+	wUpdates = matrix.WrapSlice(wUpdates.Shape(),
+		vector.Map2Func(wUpdates.Data, sqrtEpsilonW.Data, fADivB))
+	bUpdates = vector.Map2Func(bUpdates, sqrtEpsilonB, fADivB)
+
+	// Update weights and biases
+	l.Base.W = l.Base.W.Add(wUpdates)
+	l.Base.B = vector.AddVectors(l.Base.B, bUpdates)
+}
+
 type Batch[T vector.Real] struct {
 	Input          *matrix.Matrix[T]
 	ExpectedResult *matrix.Matrix[T]
