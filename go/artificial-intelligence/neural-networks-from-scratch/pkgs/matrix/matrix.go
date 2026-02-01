@@ -197,11 +197,12 @@ func (m *Matrix[T]) Product(m2 *Matrix[T]) *Matrix[T] {
 	}
 
 	newMatrix := NewMatrix[T]([]int{m.shape[0], m2.shape[1]})
+	m2T := m2.Transpose()
 
 	for row := 0; row < m.shape[0]; row++ {
 		for col := 0; col < m2.shape[1]; col++ {
 			index := row*m2.shape[1] + col
-			newMatrix.Data[index] = vector.DotProduct(m.GetRow(row), m2.GetColumn(col))
+			newMatrix.Data[index] = vector.DotProduct(m.GetRow(row), m2T.GetRow(col))
 		}
 	}
 
