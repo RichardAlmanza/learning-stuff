@@ -155,7 +155,15 @@ func ConvertTo[V Vector[T], W Vector[K], T, K Number](vector V) W {
 
 // DotProduct returns the dot product of two vectors.
 func DotProduct[V Vector[T], T Number](vector1, vector2 V) T {
-	return Sum(Map2Func(vector1, vector2, func(i int, n1, n2 T) T { return n1 * n2 }))
+	panicVectorSize(vector1, vector2)
+
+	result := T(0)
+
+	for i := 0; i < len(vector1); i++ {
+		result += vector1[i] * vector2[i]
+	}
+
+	return result
 }
 
 // SoftMax returns the softmax of a vector.
