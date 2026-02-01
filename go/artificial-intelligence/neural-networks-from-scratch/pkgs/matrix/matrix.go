@@ -164,6 +164,21 @@ func (m *Matrix[T]) GetColumn(index int) []T {
 	return newSlice
 }
 
+// CopyColumn copies the values of a column from a matrix to a slice.
+func CopyColumn[T vector.Number](dest []T, source *Matrix[T], index int) {
+	panicOutOfBound(source.shape[1], index)
+
+	if source.Shape()[0] != len(dest) {
+		panic("Size mismatch!")
+	}
+	sliceIndex := 0
+
+	for i := index; i < len(source.Data); i += source.shape[1] {
+		dest[sliceIndex] = source.Data[i]
+		sliceIndex++
+	}
+}
+
 func (m *Matrix[T]) Randomize() {
 	var f func(float64) T
 
@@ -216,7 +231,7 @@ func (m *Matrix[T]) Transpose() *Matrix[T] {
 	for col := 0; col < m.shape[1]; col++ {
 		// Using the power of slices referencing to the original memory array
 		row := newMatrix.GetRow(col)
-		copy(row, m.GetColumn(col))
+		CopyColumn(row, m, col)
 	}
 
 	return newMatrix
