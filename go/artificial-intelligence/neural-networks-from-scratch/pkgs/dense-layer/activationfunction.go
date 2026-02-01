@@ -7,23 +7,6 @@ import (
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/vector"
 )
 
-var (
-	reLuFunctionFloat64 *ReLu[float64] = nil
-	reLuFunctionFloat32 *ReLu[float32] = nil
-
-	linearFunctionFloat64 *Linear[float64] = nil
-	linearFunctionFloat32 *Linear[float32] = nil
-
-	sigmoidFunctionFloat64 *Sigmoid[float64] = nil
-	sigmoidFunctionFloat32 *Sigmoid[float32] = nil
-
-	softMaxFunctionFloat64 *SoftMax[float64] = nil
-	softMaxFunctionFloat32 *SoftMax[float32] = nil
-
-	softMaxWithCrossEntropyFunctionFloat64 *SoftMaxWithCrossEntropy[float64] = nil
-	softMaxWithCrossEntropyFunctionFloat32 *SoftMaxWithCrossEntropy[float32] = nil
-)
-
 type ActivationFunction[T vector.Real] PeripheralStates[T]
 
 type AFConstraint[T vector.Real] interface {
