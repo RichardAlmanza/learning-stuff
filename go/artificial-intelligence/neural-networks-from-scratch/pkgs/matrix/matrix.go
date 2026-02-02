@@ -5,6 +5,7 @@ import (
 	"math"
 	"math/rand"
 	"strings"
+	"sync"
 
 	"github.com/RichardAlmanza/learning-stuff/go/artificial-intelligence/neural-networks-from-scratch/pkgs/vector"
 )
@@ -206,20 +207,66 @@ func (m *Matrix[T]) Dot(vector []T) *Matrix[T] {
 	return m.Product(WrapSlice([]int{1, len(vector)}, vector))
 }
 
+func _product[T vector.Number](m, m2T *Matrix[T], data []T, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	if len(data) != m.shape[0]*m2T.shape[0] {
+		panic("Size mismatch")
+	}
+
+	for row := 0; row < m.shape[0]; row++ {
+		for col := 0; col < m2T.shape[0]; col++ {
+			index := row*m2T.shape[0] + col
+			data[index] = vector.DotProduct(m.GetRow(row), m2T.GetRow(col))
+		}
+	}
+}
+
 func (m *Matrix[T]) Product(m2 *Matrix[T]) *Matrix[T] {
 	if m2.shape[0] != m.shape[1] {
 		panic("Size mismatch")
 	}
 
+	umbral := 10_000_000
+	operations := m.Shape().TotalSize() * m2.Shape().TotalSize()
+	maxSize := m.shape[0]
+	if operations > umbral {
+		maxSize = m.shape[0] * umbral / operations
+		maxSize++
+	}
+
 	newMatrix := NewMatrix[T]([]int{m.shape[0], m2.shape[1]})
 	m2T := m2.Transpose()
+	wg := &sync.WaitGroup{}
 
-	for row := 0; row < m.shape[0]; row++ {
-		for col := 0; col < m2.shape[1]; col++ {
-			index := row*m2.shape[1] + col
-			newMatrix.Data[index] = vector.DotProduct(m.GetRow(row), m2T.GetRow(col))
-		}
+	if maxSize >= m.shape[0] {
+		wg.Add(1)
+		_product(m, m2T, newMatrix.Data, wg)
+		wg.Wait()
+		return newMatrix
 	}
+
+	// Multithreading
+	for row := 0; row < m.shape[0]; row += maxSize {
+		if maxSize+row > m.shape[0] {
+			maxSize = m.shape[0] - row
+		}
+
+		start := row * m.shape[1]
+		end := start + maxSize*m.shape[1]
+
+		subM1Shape := []int{maxSize, m.shape[1]}
+		subM1 := WrapSlice(subM1Shape, m.Data[start:end])
+
+		startResult := row * m2.shape[1]
+		endResult := startResult + maxSize*m2.shape[1]
+		result := newMatrix.Data[startResult:endResult]
+
+		wg.Add(1)
+		go _product(subM1, m2T, result, wg)
+
+	}
+	wg.Wait()
 
 	return newMatrix
 }
