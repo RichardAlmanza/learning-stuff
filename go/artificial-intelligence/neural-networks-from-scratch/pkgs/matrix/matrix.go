@@ -38,7 +38,7 @@ func NewMatrix[T vector.Number](shape vector.Shape) *Matrix[T] {
 		panic("Invalid shape!")
 	}
 
-	data := make([]T, size)
+	data := vector.Make[T](size)
 
 	return &Matrix[T]{
 		shape: shape.Copy(),
@@ -154,7 +154,7 @@ func (m *Matrix[T]) GetColumn(index int) []T {
 	panicOutOfBound(m.shape[1], index)
 
 	sliceIndex := 0
-	newSlice := make([]T, m.shape[0])
+	newSlice := vector.Make[T](m.shape[0])
 
 	for i := index; i < len(m.Data); i += m.shape[1] {
 		newSlice[sliceIndex] = m.Data[i]
@@ -299,7 +299,7 @@ func SoftMax[T vector.Real](m *Matrix[T]) *Matrix[T] {
 func CrossEntropyLossPerRow[T vector.Real](m, targets *Matrix[T]) []float64 {
 	panicShapeMismatch(m, targets)
 
-	newVector := make([]float64, m.shape[0])
+	newVector := vector.Make[float64](m.shape[0])
 
 	for i := 0; i < m.shape[0]; i++ {
 		newVector[i] = vector.CrossEntropyLoss(m.GetRow(i), targets.GetRow(i))
@@ -329,7 +329,7 @@ func DerivativeCrossEntropyLossSoftMaxPerRow[T vector.Number](probabilities, tar
 }
 
 func (m *Matrix[T]) ToOneHot() []int {
-	onehot := make([]int, m.shape[0])
+	onehot := vector.Make[int](m.shape[0])
 
 	for row := 0; row < m.shape[0]; row++ {
 		index, _ := vector.Max(m.GetRow(row))

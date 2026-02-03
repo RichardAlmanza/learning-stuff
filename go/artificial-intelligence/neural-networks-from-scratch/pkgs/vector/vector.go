@@ -4,6 +4,11 @@ import (
 	"math"
 )
 
+var (
+	UseHelper   bool = true
+	PoolHelpers      = map[NumberType]any{}
+)
+
 // Vector is a generic type that represents a mathematical vector.
 type Vector[T Number] interface {
 	~[]T
@@ -13,6 +18,45 @@ func panicVectorSize[V Vector[T], T Number](vector1, vector2 V) {
 	if len(vector1) != len(vector2) {
 		panic("Size mismatch!")
 	}
+}
+
+func Clean[T Number]() {
+	typeNum := AssertNumber(T(0))
+	if typeNum&RealNumber != 0 {
+		typeNum -= RealNumber
+	} else {
+		typeNum -= IntegerNumber
+	}
+
+	pool, ok := PoolHelpers[typeNum]
+	if ok {
+		pool.(*VectorPool[T]).Clean()
+	}
+}
+
+func Make[T Number](size int) []T {
+	if !UseHelper {
+		return make([]T, size)
+	}
+
+	typeNum := AssertNumber(T(0))
+	if typeNum&RealNumber != 0 {
+		typeNum -= RealNumber
+	} else {
+		typeNum -= IntegerNumber
+	}
+
+	var ok bool
+	var pool any
+
+	pool, ok = PoolHelpers[typeNum]
+
+	if !ok {
+		pool = &VectorPool[T]{}
+		PoolHelpers[typeNum] = pool
+	}
+
+	return pool.(*VectorPool[T]).Make(size)
 }
 
 func NewCopy[V Vector[T], T Number](vector V) V {
@@ -50,7 +94,7 @@ func Reduce[V Vector[T], T Number](vector V, initialValue T, f func(index int, e
 
 // Map applies a function to each element of the vector and returns a new vector with the results.
 func MapFunc[V Vector[T], T Number](vector V, f func(int, T) T) V {
-	newVector := make(V, len(vector))
+	newVector := Make[T](len(vector))
 
 	for i := 0; i < len(vector); i++ {
 		newVector[i] = f(i, vector[i])
@@ -71,7 +115,7 @@ func MapFunc[V Vector[T], T Number](vector V, f func(int, T) T) V {
 func Map2Func[V Vector[T], T Number](vector1, vector2 V, f func(int, T, T) T) V {
 	panicVectorSize(vector1, vector2)
 
-	newVector := make(V, len(vector1))
+	newVector := Make[T](len(vector1))
 
 	for i := 0; i < len(vector1); i++ {
 		newVector[i] = f(i, vector1[i], vector2[i])
@@ -84,15 +128,17 @@ func Map2Func[V Vector[T], T Number](vector1, vector2 V, f func(int, T, T) T) V 
 // and returns a new vector with the elements for which
 // the function returns true.
 func FilterFunc[V Vector[T], T Number](vector V, f func(int, T) bool) V {
-	newVector := make(V, 0, len(vector)/2)
+	newVector := Make[T](len(vector))
+	counter := 0
 
 	for i := 0; i < len(vector); i++ {
 		if f(i, vector[i]) {
-			newVector = append(newVector, vector[i])
+			newVector[counter] = vector[i]
+			counter++
 		}
 	}
 
-	return newVector
+	return newVector[:counter]
 }
 
 // AddVectors returns a new vector that is the element-wise sum of two vectors.
@@ -144,7 +190,7 @@ func Max[V Vector[T], T Number](vector V) (int, T) {
 // Keep in mind the overflow cases when converting from a bigger type to a smaller one.
 // eg: int to float32 or float32 to int16
 func ConvertTo[V Vector[T], W Vector[K], T, K Number](vector V) W {
-	result := make(W, len(vector))
+	result := Make[K](len(vector))
 
 	for i := 0; i < len(vector); i++ {
 		result[i] = K(vector[i])

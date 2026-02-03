@@ -61,11 +61,13 @@ type Layer[T vector.Real] struct {
 
 // NewLayer creates a new layer with the specified number of neurons and input size.
 func NewLayer[T vector.Real](nNeurons, inputSize int) *Layer[T] {
+	defer vector.Clean[T]()
+
 	shape := []int{inputSize, nNeurons}
 
 	return &Layer[T]{
 		Base: &LayerBase[T]{
-			W: matrix.NewMatrixRand[T](shape).Scale(0.01),
+			W: matrix.NewMatrixRand[T](shape).Scale(0.01).Copy(),
 			B: make([]T, nNeurons),
 		},
 		DBase:    &LayerBase[T]{},
@@ -94,16 +96,18 @@ func NewLayerFrom[T vector.Real](tWeights *matrix.Matrix[T], biases []T) *Layer[
 }
 
 func (l *Layer[T]) Forward(input *matrix.Matrix[T]) *matrix.Matrix[T] {
+	defer vector.Clean[T]()
 	l.IOStates.Input = input.Copy()
-	l.IOStates.Output = input.Product(l.Base.W).AddVectorPerRow(l.Base.B)
+	l.IOStates.Output = input.Product(l.Base.W).AddVectorPerRow(l.Base.B).Copy()
 
 	return l.IOStates.Output
 }
 
 func (l *Layer[T]) Backward(dValues *matrix.Matrix[T]) *matrix.Matrix[T] {
+	defer vector.Clean[T]()
 	// Dinputs are the Gradients
-	l.IOStates.Gradient = dValues.Product(l.Base.W.Transpose())
-	l.DBase.W = l.IOStates.Input.Transpose().Product(dValues)
+	l.IOStates.Gradient = dValues.Product(l.Base.W.Transpose()).Copy()
+	l.DBase.W = l.IOStates.Input.Transpose().Product(dValues).Copy()
 	l.DBase.B = make([]T, len(l.Base.B))
 
 	for i := 0; i < len(l.Base.B); i++ {
