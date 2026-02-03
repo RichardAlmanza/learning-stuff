@@ -33,7 +33,6 @@ func (oSGD *StochasticGradientDescent[T]) UpdateLearningRate(epoch int) {
 }
 
 func (oSGD *StochasticGradientDescent[T]) UpdateParameters(l *denselayer.Layer[T]) {
-	defer vector.Clean[T]()
 	// l.weightsMomentum = momentum * l.weightsMomentum - LearningRate * dWeights
 	// l.Weights += l.weightsMomentum
 
@@ -53,15 +52,15 @@ func (oSGD *StochasticGradientDescent[T]) UpdateParameters(l *denselayer.Layer[T
 		// A += B
 		wUpdates = l.Momentum.W.Scale(float64(oSGD.Momentum)).Add(wUpdates)
 		// l.WeightsMomentum = A
-		l.Momentum.W = wUpdates.Copy()
+		l.Momentum.W = wUpdates
 
 		bUpdates = vector.Map2Func(bUpdates, l.Momentum.B, func(_ int, bUpdate, bMomentum T) T { return bUpdate + oSGD.Momentum*bMomentum })
-		l.Momentum.B = vector.NewCopy(bUpdates)
+		l.Momentum.B = bUpdates
 	}
 
 	// l.Weights += l.weightsMomentum
-	l.Base.W = l.Base.W.Add(wUpdates).Copy()
-	l.Base.B = vector.NewCopy(vector.AddVectors(l.Base.B, bUpdates))
+	l.Base.W = l.Base.W.Add(wUpdates)
+	l.Base.B = vector.AddVectors(l.Base.B, bUpdates)
 }
 
 type AdaptiveGradientOptimizer[T vector.Real] struct {
@@ -87,7 +86,6 @@ func (oAG *AdaptiveGradientOptimizer[T]) UpdateLearningRate(epoch int) {
 }
 
 func (oAG *AdaptiveGradientOptimizer[T]) UpdateParameters(l *denselayer.Layer[T]) {
-	defer vector.Clean[T]()
 	// weightsCache += dWeights^2 ; The power operation is element-wise, not matrix-wise
 	// l.weights += -CurrentLearningRate * dWeights / (epsilon + sqrt(weightsCache))
 	fADivB := func(_ int, a, b T) T { return a / b }
@@ -102,8 +100,8 @@ func (oAG *AdaptiveGradientOptimizer[T]) UpdateParameters(l *denselayer.Layer[T]
 
 	// weightsCache += dWeights^2
 	l.Cache.W = matrix.WrapSlice(l.Cache.W.Shape(),
-		vector.Map2Func(l.Cache.W.Data, l.DBase.W.Data, fAPlusB2)).Copy()
-	l.Cache.B = vector.NewCopy(vector.Map2Func(l.Cache.B, l.DBase.B, fAPlusB2))
+		vector.Map2Func(l.Cache.W.Data, l.DBase.W.Data, fAPlusB2))
+	l.Cache.B = vector.Map2Func(l.Cache.B, l.DBase.B, fAPlusB2)
 
 	// A = -CurrentLearningRate * dWeights
 	wUpdates := l.DBase.W.Scale(-float64(oAG.LearningRate))
@@ -119,8 +117,8 @@ func (oAG *AdaptiveGradientOptimizer[T]) UpdateParameters(l *denselayer.Layer[T]
 	bUpdates = vector.Map2Func(bUpdates, sqrtEpsilonB, fADivB)
 
 	// Update weights and biases
-	l.Base.W = l.Base.W.Add(wUpdates).Copy()
-	l.Base.B = vector.NewCopy(vector.AddVectors(l.Base.B, bUpdates))
+	l.Base.W = l.Base.W.Add(wUpdates)
+	l.Base.B = vector.AddVectors(l.Base.B, bUpdates)
 }
 
 type RootMeanSquarePropagation[T vector.Real] struct {
@@ -148,7 +146,6 @@ func (oRMSP *RootMeanSquarePropagation[T]) UpdateLearningRate(epoch int) {
 }
 
 func (oRMSP *RootMeanSquarePropagation[T]) UpdateParameters(l *denselayer.Layer[T]) {
-	defer vector.Clean[T]()
 	// cache = rho * cache + (1 - rho) * dWeights ^ 2
 	// l.weights += -CurrentLearningRate * dWeights / (epsilon + sqrt(weightsCache))
 	fADivB := func(_ int, a, b T) T { return a / b }
@@ -163,8 +160,8 @@ func (oRMSP *RootMeanSquarePropagation[T]) UpdateParameters(l *denselayer.Layer[
 
 	// cache = rho * cache + (1 - rho) * dWeights ^ 2
 	l.Cache.W = matrix.WrapSlice(l.Cache.W.Shape(),
-		vector.Map2Func(l.Cache.W.Data, l.DBase.W.Data, fCacheRhoPlusA2)).Copy()
-	l.Cache.B = vector.NewCopy(vector.Map2Func(l.Cache.B, l.DBase.B, fCacheRhoPlusA2))
+		vector.Map2Func(l.Cache.W.Data, l.DBase.W.Data, fCacheRhoPlusA2))
+	l.Cache.B = vector.Map2Func(l.Cache.B, l.DBase.B, fCacheRhoPlusA2)
 
 	// A = -CurrentLearningRate * dWeights
 	wUpdates := l.DBase.W.Scale(-float64(oRMSP.LearningRate))
@@ -180,8 +177,8 @@ func (oRMSP *RootMeanSquarePropagation[T]) UpdateParameters(l *denselayer.Layer[
 	bUpdates = vector.Map2Func(bUpdates, sqrtEpsilonB, fADivB)
 
 	// Update weights and biases
-	l.Base.W = l.Base.W.Add(wUpdates).Copy()
-	l.Base.B = vector.NewCopy(vector.AddVectors(l.Base.B, bUpdates))
+	l.Base.W = l.Base.W.Add(wUpdates)
+	l.Base.B = vector.AddVectors(l.Base.B, bUpdates)
 }
 
 type AdaptiveMomentum[T vector.Real] struct {
@@ -211,7 +208,6 @@ func (oAM *AdaptiveMomentum[T]) UpdateLearningRate(epoch int) {
 }
 
 func (oAM *AdaptiveMomentum[T]) UpdateParameters(l *denselayer.Layer[T], epoch int) {
-	defer vector.Clean[T]()
 	// cache = beta2 * cache + (1 - beta2) * dWeights^2
 	// l.weights = -CurrentLearningRate * momentumCorrected / (epsilon + sqrt(cacheCorrected))
 	fADivB := func(_ int, a, b T) T { return a / b }
@@ -235,8 +231,8 @@ func (oAM *AdaptiveMomentum[T]) UpdateParameters(l *denselayer.Layer[T], epoch i
 
 	// momentum = beta1 * weightMomentum + (1 - beta1) * dWeights
 	l.Momentum.W = matrix.WrapSlice(l.Momentum.W.Shape(),
-		vector.Map2Func(l.Momentum.W.Data, l.DBase.W.Data, fMomentumDerivative)).Copy()
-	l.Momentum.B = vector.NewCopy(vector.Map2Func(l.Momentum.B, l.DBase.B, fMomentumDerivative))
+		vector.Map2Func(l.Momentum.W.Data, l.DBase.W.Data, fMomentumDerivative))
+	l.Momentum.B = vector.Map2Func(l.Momentum.B, l.DBase.B, fMomentumDerivative)
 
 	// momentumCorrected = momentum / (1 - beta1 ^ (epoch + 1))
 	momentumCorrectedW := l.Momentum.W.MapFunc(fCorrectMomentum)
@@ -244,8 +240,8 @@ func (oAM *AdaptiveMomentum[T]) UpdateParameters(l *denselayer.Layer[T], epoch i
 
 	// cache = beta2 * cache + (1 - beta2) * dWeights^2
 	l.Cache.W = matrix.WrapSlice(l.Cache.W.Shape(),
-		vector.Map2Func(l.Cache.W.Data, l.DBase.W.Data, fCacheBeta2PlusA2)).Copy()
-	l.Cache.B = vector.NewCopy(vector.Map2Func(l.Cache.B, l.DBase.B, fCacheBeta2PlusA2))
+		vector.Map2Func(l.Cache.W.Data, l.DBase.W.Data, fCacheBeta2PlusA2))
+	l.Cache.B = vector.Map2Func(l.Cache.B, l.DBase.B, fCacheBeta2PlusA2)
 
 	// cacheCorrected = cache / (1 - beta2 ^ (epoch + 1))
 	cacheCorrectedW := l.Cache.W.MapFunc(fCorrectCache)
@@ -265,8 +261,8 @@ func (oAM *AdaptiveMomentum[T]) UpdateParameters(l *denselayer.Layer[T], epoch i
 	bUpdates = vector.Map2Func(bUpdates, sqrtEpsilonB, fADivB)
 
 	// Update weights and biases
-	l.Base.W = l.Base.W.Add(wUpdates).Copy()
-	l.Base.B = vector.NewCopy(vector.AddVectors(l.Base.B, bUpdates))
+	l.Base.W = l.Base.W.Add(wUpdates)
+	l.Base.B = vector.AddVectors(l.Base.B, bUpdates)
 }
 
 type Batch[T vector.Real] struct {

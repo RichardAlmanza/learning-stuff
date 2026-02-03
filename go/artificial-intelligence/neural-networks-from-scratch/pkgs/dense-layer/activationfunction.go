@@ -29,13 +29,11 @@ func NewSoftMaxWithCrossEntropy[T vector.Real]() *SoftMaxWithCrossEntropy[T] {
 }
 
 func (rl *ReLu[T]) Forward(input *matrix.Matrix[T]) {
-	defer vector.Clean[T]()
 	rl.Input = input.Copy()
-	rl.Output = input.MapFunc(func(_ int, f T) T { return T(math.Max(0, float64(f))) }).Copy()
+	rl.Output = input.MapFunc(func(_ int, f T) T { return T(math.Max(0, float64(f))) })
 }
 
 func (rl *ReLu[T]) Backward(dValues *matrix.Matrix[T]) {
-	defer vector.Clean[T]()
 	newVector := vector.Map2Func(dValues.Data, rl.Input.Data, func(_ int, dvalue, input T) T {
 		if input <= 0 {
 			return 0
@@ -43,17 +41,15 @@ func (rl *ReLu[T]) Backward(dValues *matrix.Matrix[T]) {
 		return dvalue
 	})
 
-	rl.Gradient = matrix.WrapSlice(dValues.Shape(), newVector).Copy()
+	rl.Gradient = matrix.WrapSlice(dValues.Shape(), newVector)
 }
 
 func (l *Linear[T]) Forward(input *matrix.Matrix[T]) {
-	defer vector.Clean[T]()
 	l.Input = input.Copy()
 	l.Output = input.Copy()
 }
 
 func (l *Linear[T]) Backward(dValues *matrix.Matrix[T]) {
-	defer vector.Clean[T]()
 	l.Gradient = dValues.Copy()
 }
 
@@ -62,25 +58,22 @@ func sigmoid[T vector.Real](r T) T {
 }
 
 func (s *Sigmoid[T]) Forward(input *matrix.Matrix[T]) {
-	defer vector.Clean[T]()
 	s.Input = input.Copy()
-	s.Output = input.MapFunc(func(_ int, f T) T { return sigmoid(f) }).Copy()
+	s.Output = input.MapFunc(func(_ int, f T) T { return sigmoid(f) })
 }
 
 func (s *Sigmoid[T]) Backward(dValues *matrix.Matrix[T]) {
-	defer vector.Clean[T]()
 	newVector := vector.Map2Func(dValues.Data, s.Output.Data, func(_ int, dvalue, output T) T {
 		sig := output // which is sigmoid(input)
 		return sig * (1 - sig) * dvalue
 	})
 
-	s.Gradient = matrix.WrapSlice(dValues.Shape(), newVector).Copy()
+	s.Gradient = matrix.WrapSlice(dValues.Shape(), newVector)
 }
 
 func (s *SoftMax[T]) Forward(input *matrix.Matrix[T]) {
-	defer vector.Clean[T]()
 	s.Input = input.Copy()
-	s.Output = matrix.SoftMax(input).Copy()
+	s.Output = matrix.SoftMax(input)
 }
 
 func (s *SoftMax[T]) Backward(dValues *matrix.Matrix[T]) {
@@ -101,17 +94,14 @@ func (s *SoftMax[T]) Backward(dValues *matrix.Matrix[T]) {
 }
 
 func (s *SoftMaxWithCrossEntropy[T]) Forward(input *matrix.Matrix[T]) {
-	defer vector.Clean[T]()
 	s.Input = input.Copy()
-	s.Output = matrix.SoftMax(input).Copy()
+	s.Output = matrix.SoftMax(input)
 }
 
 func (s *SoftMaxWithCrossEntropy[T]) Backward(dValues, targets *matrix.Matrix[T]) {
-	defer vector.Clean[T]()
-	s.Gradient = matrix.DerivativeCrossEntropyLossSoftMaxPerRow(dValues, targets).Scale(1 / float64(dValues.Shape()[0])).Copy()
+	s.Gradient = matrix.DerivativeCrossEntropyLossSoftMaxPerRow(dValues, targets).Scale(1 / float64(dValues.Shape()[0]))
 }
 
 func (s *SoftMaxWithCrossEntropy[T]) Loss(targets *matrix.Matrix[T]) float64 {
-	defer vector.Clean[T]()
 	return vector.Avg(matrix.CrossEntropyLossPerRow(s.Output, targets))
 }

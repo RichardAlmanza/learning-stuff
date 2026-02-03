@@ -12,10 +12,8 @@ import (
 
 func main() {
 	x, y := spiral.NewSpiralData(100, 3, 0)
-	xTest, _ := spiral.NewSpiralData(500, 3, 156)
-	x32 := matrix.NewMatrixFromSlice(x.Shape(), vector.ConvertTo[[]float64, []float64](x.Data)).Copy()
-	expectedLabels := matrix.NewMatrixOneHot[float64]([]int{300, 3}, y.Data).Copy()
-	// expectedLabelsTest := matrix.NewMatrixOneHot[float64]([]int{1500, 3}, yTest.Data)
+	x32 := matrix.NewMatrixFromSlice(x.Shape(), vector.ConvertTo[[]float64, []float64](x.Data))
+	expectedLabels := matrix.NewMatrixOneHot[float64]([]int{300, 3}, y.Data)
 
 	// original dynamic example
 
@@ -27,7 +25,7 @@ func main() {
 
 	optimizer := neuralnetwork.NewAdam[float64](5e-2, 5e-7, 1e-7, 0.9, 0.999)
 
-	// fmt.Println(optimizer)
+	fmt.Println(optimizer)
 
 	for i := 0; i < 10001; i++ {
 
@@ -57,19 +55,4 @@ func main() {
 		optimizer.UpdateParameters(dense1, i)
 		optimizer.UpdateParameters(dense2, i)
 	}
-
-	// Test Model
-
-	dense1.Forward(xTest)
-	relu.Forward(dense1.IOStates.Output)
-	dense2.Forward(relu.Output)
-	softmax.Forward(dense2.IOStates.Output)
-
-	// loss := softmax.Loss(expectedLabelsTest)
-	// accuracy := softmax.Output.Accuracy(expectedLabelsTest)
-
-// 	fmt.Printf("Test Accuracy: %.5f", accuracy)
-// 	fmt.Println()
-// 	fmt.Printf("Test Loss: %.5f", loss)
-// 	fmt.Println()
 }
