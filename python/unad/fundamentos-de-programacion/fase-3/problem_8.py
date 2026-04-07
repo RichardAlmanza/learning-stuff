@@ -184,20 +184,20 @@ if __name__ == "__main__":
 
         quantities[index] += quantity
 
-    # Resume
-    # • Cantidad total de helados comprados.
+    # Summary
+    # Total amount of ice cream purchased
     total = sum(quantities)
     print(f"Total de helados comprados: {total}")
-    # • Cantidad de helados por cada tipo.
+    # Total amount of ice cream per type.
     for ice_cream, quantity in zip(ice_cream_available, quantities):
         if quantity > 0:
             print(f"Se compraron {quantity} helados de {ice_cream}")
-    # • Valor total gastado.
+    # Total money spent
     bill = calculate_bill(ice_cream_prices, quantities)
     print(f"Se gasto en total: {format_price(bill)}")
-    # • Valor promedio por helado.
+    # Average price per ice cream.
     avg = bill / (total if total != 0 else 1)
     print(f"El valor promedio por helado es de {format_price(avg)}")
-    # • Dinero sobrante.
+    # Remaining money / Balance
     budget = ORIGINAL_BUDGET - bill
     print(f"El dinero sobrante es de {format_price(budget)}")
