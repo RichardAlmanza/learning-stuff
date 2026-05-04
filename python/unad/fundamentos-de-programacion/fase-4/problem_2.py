@@ -15,12 +15,16 @@
 # Podman Stack:     Podman para containerization sin root
 # Contenedor:       Podman con Dockerfile para despliegue
 
+# VENTAS_POR_MES: Diccionario anidado con estructura {mes: {nombre_vendedor: monto_ventas}}
+# - Clave principal: número de mes (1-12)
+# - Clave secundaria: nombre del vendedor
+# - Valor: monto de ventas del vendedor en ese mes
 VENTAS_POR_MES = {}  # Diccionario vacío para llenar durante el proceso
 LIMITE_BONO = 5000
 def solicitar_datos():
     """Solicita un nombre y una cantidad al usuario."""
     nombre_vendedor = input("Ingrese su nombre: ")
-    
+
     # Validar mes
     while True:
         mes = input("Ingrese el mes (1-12): ")
@@ -33,7 +37,7 @@ def solicitar_datos():
                 print("Mes inválido. Por favor ingrese un número entre 1 y 12.")
         except ValueError:
             print("Entrada inválida. Por favor ingrese un número entero.")
-    
+
     # Validar cantidad de ventas
     while True:
         try:
@@ -44,12 +48,17 @@ def solicitar_datos():
                 print("La cantidad debe ser 0 o un número positivo.")
         except ValueError:
             print("Entrada inválida. Por favor ingrese un número entero.")
-    
+
     return nombre_vendedor, mes_valido, cantidad_nueva
 
-def agregar_ventas(datos_actuales, mes, monto):
+def agregar_ventas(datos_actuales, mes, monto, nombre):
     """Agrega un nuevo mes de ventas al diccionario."""
-    datos_actuales[mes] = monto
+    # Initialize the month if it doesn't exist
+    if mes not in datos_actuales:
+        datos_actuales[mes] = {}
+
+    # Store salesman's sales for this month
+    datos_actuales[mes][nombre] = monto
     return datos_actuales
 
 def revisar_bono(ventas_totales, limite):
@@ -64,7 +73,7 @@ contador = 1
 while contador < 3:
     print(f"\n--- Iteración {contador} ---")
     vendedor, mes, nuevas_ventas = solicitar_datos()
-    VENTAS_POR_MES = agregar_ventas(VENTAS_POR_MES, mes, nuevas_ventas)
+    VENTAS_POR_MES = agregar_ventas(VENTAS_POR_MES, mes, nuevas_ventas, vendedor)
     total_anual = sum(VENTAS_POR_MES.values())
     try:
         revisar_bono(total_anual, LIMITE_BONO)
