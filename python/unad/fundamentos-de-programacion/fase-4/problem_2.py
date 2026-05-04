@@ -30,13 +30,14 @@ def solicitar_datos():
 def agregar_ventas(datos_actuales, mes, monto):
     """Agrega un nuevo mes de ventas al diccionario."""
     datos_actuales[mes] = monto
-    return list(datos_actuales.values())
+    return datos_actuales  # ← FIX: Return the dictionary, not a list
 
 def revisar_bono(ventas_totales, limite):
     """Verifica si el vendedor califica para un bono."""
     if ventas_totales > limite:
-        monto_bono = ventas_totales / limite
-        print(f"¡Felicidades! Gana un bono de: {monto_bono}")
+        # ← FIX: Calculate bonus as a percentage or fixed amount
+        monto_bono = ventas_totales * 0.10  # 10% of total sales as bonus
+        print(f"¡Felicidades! Gana un bono de: ${monto_bono:.2f}")
     else:
         print("Siga esforzándose para el bono.")
 
@@ -44,9 +45,8 @@ contador = 1
 while contador < 3:
     print(f"\n--- Iteración {contador} ---")
     vendedor, nuevas_ventas = solicitar_datos()
-    VENTAS_POR_MES_NUEVO = agregar_ventas(VENTAS_POR_MES,
-        "abril", nuevas_ventas)
-    total_anual = sum(VENTAS_POR_MES_NUEVO)
+    VENTAS_POR_MES = agregar_ventas(VENTAS_POR_MES, "abril", nuevas_ventas)  # ← FIX: Use returned dict
+    total_anual = sum(VENTAS_POR_MES.values())
     try:
         revisar_bono(total_anual, LIMITE_BONO)
         print(f"Ventas de {vendedor}: {total_anual}. Ventas de abril: {VENTAS_POR_MES['abril']}")
