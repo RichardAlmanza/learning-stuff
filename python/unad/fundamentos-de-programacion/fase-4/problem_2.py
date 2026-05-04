@@ -42,14 +42,13 @@ def revisar_bono(ventas_totales, limite):
 
 contador = 1
 while contador < 3:
-print(f"\n--- Iteración {contador} ---")
-vendedor, nuevas_ventas = solicitar_datos()
-VENTAS_POR_MES_NUEVO = agregar_ventas(VENTAS_POR_MES,
-"abril", nuevas_ventas)
-total_anual = sum(VENTAS_POR_MES_NUEVO)
-try:
-7revisar_bono(total_anual, LIMITE_BONO_INCORRECTO)
-print(f"Ventas de {vendedor}: {total_anual}. Ventas de mayo:
-{VENTAS_POR_MES['mayo']}")
-except Exception as e:
-print("Ocurrió un problema en el cálculo final.")
+    print(f"\n--- Iteración {contador} ---")
+    vendedor, nuevas_ventas = solicitar_datos()
+    VENTAS_POR_MES_NUEVO = agregar_ventas(VENTAS_POR_MES,
+        "abril", nuevas_ventas)
+    total_anual = sum(VENTAS_POR_MES_NUEVO)
+    try:
+        revisar_bono(total_anual, LIMITE_BONO)
+        print(f"Ventas de {vendedor}: {total_anual}. Ventas de abril: {VENTAS_POR_MES['abril']}")
+    except Exception as e:
+        print("Ocurrió un problema en el cálculo final.")
