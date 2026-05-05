@@ -110,7 +110,8 @@ def menu_principal():
             print(VENTAS_POR_MES)
             if VENTAS_POR_MES:
                 print(f"Total de ventas anuales: ${sum(sum(v.values()) for v in VENTAS_POR_MES.values()):.2f}")
-                print(f"Número de vendedores registrados: {sum(len(v) for v in VENTAS_POR_MES.values())}")
+                vendedores = {nombre for mes_vendedores in VENTAS_POR_MES.values() for nombre in mes_vendedores.keys()}
+                print(f"Número de vendedores registrados: {len(vendedores)}")
 
         elif opcion == "3":
             print("\n¡Gracias por usar el sistema de gestión de ventas!")
