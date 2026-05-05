@@ -84,6 +84,7 @@ def calcular_total_ventas(ventas_por_mes, nombre_vendedor):
 
 def menu_principal():
     """Menú principal que orquesta la ejecución del programa."""
+    global VENTAS_POR_MES
     print("=" * 50)
     print("Sistema de Gestión de Ventas y Bono")
     print("=" * 50)
