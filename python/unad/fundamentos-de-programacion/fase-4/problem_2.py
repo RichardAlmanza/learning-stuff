@@ -63,11 +63,7 @@ def agregar_ventas(datos_actuales, mes, monto, nombre):
 
 def revisar_bono(ventas_por_mes, limite, nombre_vendedor):
     """Verifica si el vendedor califica para un bono."""
-    # Calcular ventas totales del vendedor específico
-    total_ventas_vendedor = 0
-    for mes_vendedor in ventas_por_mes.values():
-        if nombre_vendedor in mes_vendedor:
-            total_ventas_vendedor += mes_vendedor[nombre_vendedor]
+    total_ventas_vendedor = calcular_total_ventas(ventas_por_mes, nombre_vendedor)
 
     if total_ventas_vendedor > limite:
         print(f"¡Felicidades {nombre_vendedor}! Ganas el bono por superar el límite.")
@@ -76,14 +72,49 @@ def revisar_bono(ventas_por_mes, limite, nombre_vendedor):
         print(f"Siga esforzándose {nombre_vendedor} para el bono.")
         return False
 
-contador = 1
-while contador < 3:
-    print(f"\n--- Iteración {contador} ---")
-    vendedor, mes, nuevas_ventas = solicitar_datos()
-    VENTAS_POR_MES = agregar_ventas(VENTAS_POR_MES, mes, nuevas_ventas, vendedor)
-    total_anual = sum(VENTAS_POR_MES.values())
-    try:
-        revisar_bono(total_anual, LIMITE_BONO)
-        print(f"Ventas de {vendedor}: {total_anual}. Ventas de {mes}: {VENTAS_POR_MES[mes]}")
-    except Exception as e:
-        print("Ocurrió un problema en el cálculo final.")
+
+def calcular_total_ventas(ventas_por_mes, nombre_vendedor):
+    """Calcula el total de ventas de un vendedor específico."""
+    total_ventas = 0
+    for mes_vendedor in ventas_por_mes.values():
+        if nombre_vendedor in mes_vendedor:
+            total_ventas += mes_vendedor[nombre_vendedor]
+    return total_ventas
+
+
+def menu_principal():
+    """Menú principal que orquesta la ejecución del programa."""
+    print("=" * 50)
+    print("Sistema de Gestión de Ventas y Bono")
+    print("=" * 50)
+
+    while True:
+        print("\n--- Menú Principal ---")
+        print("1. Registrar nuevas ventas")
+        print("2. Ver reportes de ventas")
+        print("3. Salir del programa")
+        opcion = input("Seleccione una opción (1-3): ")
+
+        if opcion == "1":
+            print("\n--- Registrar Nuevas Ventas ---")
+            vendedor, mes, nuevas_ventas = solicitar_datos()
+            VENTAS_POR_MES = agregar_ventas(VENTAS_POR_MES, mes, nuevas_ventas, vendedor)
+            total = calcular_total_ventas(VENTAS_POR_MES, vendedor)
+            revisar_bono(VENTAS_POR_MES, LIMITE_BONO, vendedor)
+            print(f"Ventas totales de {vendedor}: ${total:.2f}")
+            print(f"Ventas de {mes}: {VENTAS_POR_MES.get(mes, {})}")
+
+        elif opcion == "2":
+            print("\n--- Reportes de Ventas ---")
+            print(VENTAS_POR_MES)
+            if VENTAS_POR_MES:
+                print(f"Total de ventas anuales: ${sum(sum(v.values()) for v in VENTAS_POR_MES.values()):.2f}")
+                print(f"Número de vendedores registrados: {sum(len(v) for v in VENTAS_POR_MES.values())}")
+
+        elif opcion == "3":
+            print("\n¡Gracias por usar el sistema de gestión de ventas!")
+            break
+        else:
+            print("Opción inválida. Por favor seleccione 1, 2 o 3.")
+
+menu_principal()
