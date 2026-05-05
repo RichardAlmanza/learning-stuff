@@ -61,13 +61,20 @@ def agregar_ventas(datos_actuales, mes, monto, nombre):
     datos_actuales[mes][nombre] = monto
     return datos_actuales
 
-def revisar_bono(ventas_totales, limite):
+def revisar_bono(ventas_por_mes, limite, nombre_vendedor):
     """Verifica si el vendedor califica para un bono."""
-    if ventas_totales > limite:
-        monto_bono = ventas_totales * 0.10  # 10% of total sales as bonus
-        print(f"¡Felicidades! Gana un bono de: ${monto_bono:.2f}")
+    # Calcular ventas totales del vendedor específico
+    total_ventas_vendedor = 0
+    for mes_vendedor in ventas_por_mes.values():
+        if nombre_vendedor in mes_vendedor:
+            total_ventas_vendedor += mes_vendedor[nombre_vendedor]
+
+    if total_ventas_vendedor > limite:
+        print(f"¡Felicidades {nombre_vendedor}! Ganas el bono por superar el límite.")
+        return True
     else:
-        print("Siga esforzándose para el bono.")
+        print(f"Siga esforzándose {nombre_vendedor} para el bono.")
+        return False
 
 contador = 1
 while contador < 3:
