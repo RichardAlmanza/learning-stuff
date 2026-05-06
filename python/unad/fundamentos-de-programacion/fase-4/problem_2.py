@@ -21,6 +21,8 @@
 # - Valor: monto de ventas del vendedor en ese mes
 VENTAS_POR_MES = {}  # Diccionario vacío para llenar durante el proceso
 LIMITE_BONO = 5000
+MONTH_NAMES = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio",
+                7: "Julio", 8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"}
 def solicitar_datos():
     """Solicita un nombre y una cantidad al usuario."""
     nombre_vendedor = input("Ingrese su nombre: ")
@@ -38,10 +40,13 @@ def solicitar_datos():
         except ValueError:
             print("Entrada inválida. Por favor ingrese un número entero.")
 
+    # Convertir número de mes a nombre
+    mes_nombre = MONTH_NAMES[mes_valido]
+
     # Validar cantidad de ventas
     while True:
         try:
-            cantidad_nueva = int(input(f"Ingrese las ventas de {mes_valido}: "))
+            cantidad_nueva = int(input(f"Ingrese las ventas de {mes_nombre}: "))
             if cantidad_nueva >= 0:
                 break
             else:
@@ -49,7 +54,7 @@ def solicitar_datos():
         except ValueError:
             print("Entrada inválida. Por favor ingrese un número entero.")
 
-    return nombre_vendedor, mes_valido, cantidad_nueva
+    return nombre_vendedor, mes_nombre, cantidad_nueva
 
 def agregar_ventas(datos_actuales, mes, monto, nombre):
     """Agrega un nuevo mes de ventas al diccionario."""
@@ -98,12 +103,12 @@ def menu_principal():
 
         if opcion == "1":
             print("\n--- Registrar Nuevas Ventas ---")
-            vendedor, mes, nuevas_ventas = solicitar_datos()
-            VENTAS_POR_MES = agregar_ventas(VENTAS_POR_MES, mes, nuevas_ventas, vendedor)
+            vendedor, mes_nombre, nuevas_ventas = solicitar_datos()
+            VENTAS_POR_MES = agregar_ventas(VENTAS_POR_MES, mes_nombre, nuevas_ventas, vendedor)
             total = calcular_total_ventas(VENTAS_POR_MES, vendedor)
             revisar_bono(VENTAS_POR_MES, LIMITE_BONO, vendedor)
             print(f"Ventas totales de {vendedor}: ${total:.2f}")
-            print(f"Ventas de {mes}: {VENTAS_POR_MES.get(mes, {})}")
+            print(f"Ventas de {mes_nombre}: {VENTAS_POR_MES.get(mes_nombre, {})}")
 
         elif opcion == "2":
             print("\n--- Reportes de Ventas ---")
