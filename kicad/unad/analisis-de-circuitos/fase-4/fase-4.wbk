@@ -1,0 +1,109 @@
+{
+  "custom_cursors": 2,
+  "last_sch_text_sim_command": "",
+  "tabs": [
+    {
+      "analysis": "TRAN",
+      "commands": [
+        ".tran 1u 1m",
+        ".kicad adjustpaths",
+        ".save all",
+        ".probe alli",
+        ".probe allp"
+      ],
+      "dottedSecondary": true,
+      "margins": {
+        "bottom": 45,
+        "left": 70,
+        "right": 160,
+        "top": 30
+      },
+      "measurements": [
+        {
+          "expr": "RMS V(/Source-R1)",
+          "format": "5~V"
+        },
+        {
+          "expr": "RMS V(/R1-R2-R3)",
+          "format": "5~V"
+        },
+        {
+          "expr": "RMS V(/R2-L1)",
+          "format": "5~V"
+        },
+        {
+          "expr": "RMS V(/R3-C1)",
+          "format": "5~V"
+        },
+        {
+          "expr": "AVG P(R1)",
+          "format": "5~W"
+        },
+        {
+          "expr": "AVG P(R2)",
+          "format": "5~W"
+        },
+        {
+          "expr": "AVG P(R3)",
+          "format": "5~W"
+        },
+        {
+          "expr": "AVG P(L1)",
+          "format": "5~W"
+        },
+        {
+          "expr": "AVG P(C1)",
+          "format": "5~W"
+        }
+      ],
+      "showGrid": true,
+      "traces": [
+        {
+          "color": "rgb(231, 138, 195)",
+          "signal": "V(/R1-R2-R3)",
+          "trace_type": 257
+        },
+        {
+          "color": "rgb(141, 160, 203)",
+          "cursor2": {
+            "position": 0.0003047678081498531,
+            "x_format": "3~s",
+            "y_format": "5~V"
+          },
+          "cursorD": {
+            "x_format": "3~s",
+            "y_format": "5~V"
+          },
+          "signal": "V(/R2-L1)",
+          "trace_type": 257
+        },
+        {
+          "color": "rgb(252, 141, 98)",
+          "signal": "V(/R3-C1)",
+          "trace_type": 257
+        },
+        {
+          "color": "rgb(102, 194, 165)",
+          "cursor1": {
+            "position": 0.00031272656301988434,
+            "x_format": "3~s",
+            "y_format": "5~V"
+          },
+          "cursorD": {
+            "x_format": "3~s",
+            "y_format": "5~V"
+          },
+          "signal": "V(/Source-R1)",
+          "trace_type": 257
+        },
+        {
+          "color": "rgb(77, 175, 74)",
+          "signal": "V(0)",
+          "trace_type": 257
+        }
+      ]
+    }
+  ],
+  "user_defined_signals": [],
+  "version": 7
+}

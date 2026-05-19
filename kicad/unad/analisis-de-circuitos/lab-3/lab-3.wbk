@@ -1,0 +1,119 @@
+{
+  "custom_cursors": 2,
+  "last_sch_text_sim_command": "",
+  "tabs": [
+    {
+      "analysis": "AC",
+      "commands": [
+        ".ac dec 101 1 20k",
+        ".kicad adjustpaths",
+        ".save all",
+        ".probe alli",
+        ".probe allp"
+      ],
+      "dottedSecondary": true,
+      "margins": {
+        "bottom": 45,
+        "left": 70,
+        "right": 70,
+        "top": 30
+      },
+      "measurements": [],
+      "showGrid": true,
+      "traces": [
+        {
+          "color": "rgb(255, 127, 0)",
+          "signal": "V(/capacitor) (phase)",
+          "trace_type": 517
+        },
+        {
+          "color": "rgb(255, 255, 51)",
+          "signal": "V(/coil) (phase)",
+          "trace_type": 517
+        },
+        {
+          "color": "rgb(166, 86, 40)",
+          "signal": "V(/source) (phase)",
+          "trace_type": 517
+        }
+      ]
+    },
+    {
+      "analysis": "TRAN",
+      "commands": [
+        ".tran 1u 1m",
+        ".kicad adjustpaths",
+        ".save all",
+        ".probe alli",
+        ".probe allp"
+      ],
+      "dottedSecondary": true,
+      "margins": {
+        "bottom": 45,
+        "left": 70,
+        "right": 70,
+        "top": 30
+      },
+      "measurements": [
+        {
+          "expr": "RMS I(R1)",
+          "format": "3~A"
+        },
+        {
+          "expr": "RMS I(R2)",
+          "format": "3~A"
+        },
+        {
+          "expr": "RMS I(R3)",
+          "format": "3~A"
+        },
+        {
+          "expr": "RMS I(L1)",
+          "format": "3~A"
+        },
+        {
+          "expr": "RMS I(C1)",
+          "format": "3~A"
+        }
+      ],
+      "showGrid": true,
+      "traces": [
+        {
+          "color": "rgb(228, 26, 28)",
+          "cursor2": {
+            "position": 0.0008726378430006624,
+            "x_format": "3~s",
+            "y_format": "3~V"
+          },
+          "cursorD": {
+            "x_format": "3~s",
+            "y_format": "3~V"
+          },
+          "signal": "V(/capacitor)",
+          "trace_type": 257
+        },
+        {
+          "color": "rgb(77, 175, 74)",
+          "signal": "V(/coil)",
+          "trace_type": 257
+        },
+        {
+          "color": "rgb(55, 126, 184)",
+          "cursor1": {
+            "position": 0.0008626422199973606,
+            "x_format": "3~s",
+            "y_format": "3~V"
+          },
+          "cursorD": {
+            "x_format": "3~s",
+            "y_format": "3~V"
+          },
+          "signal": "V(/source)",
+          "trace_type": 257
+        }
+      ]
+    }
+  ],
+  "user_defined_signals": [],
+  "version": 7
+}
