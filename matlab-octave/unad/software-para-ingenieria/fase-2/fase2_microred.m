@@ -8,13 +8,13 @@
 clc; clear; close all;
 hours = 1:24;
 
-[solarEnergy, windEnergy] = generatePowerGenerationData()
+[solarEnergy, windEnergy] = generatePowerGenerationData();
 totalEnergy = solarEnergy + windEnergy;
 
-communityDemand = generateCommunityDemandData()
+communityDemand = generateCommunityDemandData();
 
-plotDay([...
+plotDay([
   PlotData(communityDemand, "r-*", 2, "Demanda de la comunidad"), ...
   PlotData(totalEnergy, "c-o", 2, "Generacion hibrida (solar y eolica)"), ...
-])
+]);
 

@@ -1,20 +1,20 @@
 % plotDay plots the PlotDataClass instances passed
 
 function plotDay(dataList)
-  hours = [1:24];
+  hours = 1:24;
 
-  hold on
   for i = 1:length(dataList)
     data = dataList(i);
     plot(hours, data.Data,...
         data.LineSpec, ...
         "DisplayName", data.Legend,...
         "LineWidth", data.LineWidth);
+    hold on
   end
 
   grid on;
   hold off;
-  legend()
+  legend();
 
   % Add labels
   xlabel("Tiempo en horas");

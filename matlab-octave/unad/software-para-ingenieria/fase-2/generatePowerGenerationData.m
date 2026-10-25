@@ -5,7 +5,7 @@
 %   wind vector have random generated values within range (0,15)
 
 function [solar, wind] = generatePowerGenerationData()
-  hours = 1:24
+  hours = 1:24;
 
   % Solar energy definition
   solar = zeros(1, 24);
