@@ -181,6 +181,25 @@ classdef fase4_app_hmi < matlab.apps.App
         function SliderDemandValueChanging(app, event)
             [app.DemandPlot.YData, app.DemandValueLabel.Text] = UpdatePlot(app, event.Value, app.DemandMax, app.DemandRecords);
         end
+
+        % Value changed function: EditFieldSeed
+        function EditFieldSeedValueChanged(app, event)
+            seed = app.EditFieldSeed.Value;
+
+            % Update records
+            [app.SolarRecords, app.WindRecords] = generatePowerGenerationData(seed);
+            app.DemandRecords = generateCommunityDemandData(seed);
+
+            % Update Max values
+            app.SolarMax = max(app.SolarRecords);
+            app.WindMax = max(app.WindRecords);
+            app.DemandMax = max(app.DemandRecords);
+
+            % Update sliders and plot
+            app.SliderSolarValueChanging(app.SliderSolar);
+            app.SliderWindValueChanging(app.SliderWind);
+            app.SliderDemandValueChanging(app.SliderDemand);
+        end
     end
 
     % App creation
