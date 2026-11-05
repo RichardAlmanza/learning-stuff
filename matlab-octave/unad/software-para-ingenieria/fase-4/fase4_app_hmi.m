@@ -67,9 +67,6 @@ classdef fase4_app_hmi < matlab.apps.App
 
     
     properties (Access = private)
-        ScaleDemand = 1
-        ScaleWind = 1
-        ScaleSolar = 1
         GrayColor = [0.30, 0.30, 0.30]
         GreeColor = [0, 1, 0]
         DemandRecords
@@ -83,7 +80,19 @@ classdef fase4_app_hmi < matlab.apps.App
         DemandPlot
         SolarPlot
         WindPlot
+        DemandMax
+        SolarMax
+        WindMax
         
+    end
+    
+    methods (Access = private)
+        
+        function [YData, valueText] = UpdatePlot(~, value, maxRecord, records)
+            scalePlot = value / maxRecord;
+            YData = records .* scalePlot;
+            valueText = num2str(value);
+        end
     end
     
 
@@ -99,13 +108,17 @@ classdef fase4_app_hmi < matlab.apps.App
             [app.SolarRecords, app.WindRecords] = generatePowerGenerationData(seed);
             app.DemandRecords = generateCommunityDemandData(seed);
             % Set Sliders information
-            app.SliderSolar.Value = max(app.SolarRecords);
-            app.SliderWind.Value = max(app.WindRecords);
-            app.SliderDemand.Value = max(app.DemandRecords);
+            app.SolarMax = max(app.SolarRecords);
+            app.WindMax = max(app.WindRecords);
+            app.DemandMax = max(app.DemandRecords);
+
+            app.SliderSolar.Value = app.SolarMax;
+            app.SliderWind.Value = app.WindMax;
+            app.SliderDemand.Value = app.DemandMax;
             % Set text value of sliders
-            app.SolarValueLabel.Text = num2str(app.SliderSolar.Value);
-            app.WindValueLabel.Text = num2str(app.SliderWind.Value);
-            app.DemandValueLabel.Text = num2str(app.SliderDemand.Value);
+            app.SolarValueLabel.Text = num2str(app.SolarMax);
+            app.WindValueLabel.Text = num2str(app.WindMax);
+            app.DemandValueLabel.Text = num2str(app.DemandMax);
 
             % Load SOC
             app.Soc = StateOfCharge(100,50,0,100);
@@ -152,6 +165,21 @@ classdef fase4_app_hmi < matlab.apps.App
             % Set cursor
             app.CursorLine = xline(app.UIAxes, 1, "Color", "r", "LineWidth", 2, "LineStyle", "--", "DisplayName", "Hora");
 
+        end
+
+        % Value changing function: SliderSolar
+        function SliderSolarValueChanging(app, event)
+            [app.SolarPlot.YData, app.SolarValueLabel.Text] = UpdatePlot(app, event.Value, app.SolarMax, app.SolarRecords);
+        end
+
+        % Value changing function: SliderWind
+        function SliderWindValueChanging(app, event)
+            [app.WindPlot.YData, app.WindValueLabel.Text] = UpdatePlot(app, event.Value, app.WindMax, app.WindRecords);
+        end
+
+        % Value changing function: SliderDemand
+        function SliderDemandValueChanging(app, event)
+            [app.DemandPlot.YData, app.DemandValueLabel.Text] = UpdatePlot(app, event.Value, app.DemandMax, app.DemandRecords);
         end
     end
 

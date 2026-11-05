@@ -37,6 +37,7 @@
                                                 </Layout>
                                                 <Limits>[0 150]</Limits>
                                                 <MajorTicks>[0 25 50 75 100 125 150]</MajorTicks>
+                                                <ValueChangingFcn>SliderSolarValueChanging</ValueChangingFcn>
                                             </Slider>
                                             <Slider name='SliderWind'>
                                                 <FontSize>14</FontSize>
@@ -45,6 +46,7 @@
                                                     <Row>4</Row>
                                                 </Layout>
                                                 <MajorTicksMode>'manual'</MajorTicksMode>
+                                                <ValueChangingFcn>SliderWindValueChanging</ValueChangingFcn>
                                             </Slider>
                                             <Slider name='SliderDemand'>
                                                 <FontSize>14</FontSize>
@@ -54,6 +56,7 @@
                                                 </Layout>
                                                 <Limits>[0 200]</Limits>
                                                 <MajorTicks>[0 40 80 120 160 200]</MajorTicks>
+                                                <ValueChangingFcn>SliderDemandValueChanging</ValueChangingFcn>
                                             </Slider>
                                             <GridLayout name='GridLayoutSolarHeader'>
                                                 <ColumnSpacing>5</ColumnSpacing>
