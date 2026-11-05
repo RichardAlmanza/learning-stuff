@@ -4,7 +4,12 @@
 %   - [6, 17] indices have values within range (6, 10)
 %   - [18, 21] indices have the 15 number
 
-function communityDemand = generateCommunityDemandData()
+function communityDemand = generateCommunityDemandData(seed)
+  arguments
+      seed (1,1) int32 = 0
+  end
+
+  rng(seed);
   % Apply minimum demand (2 ~ 4)
   communityDemand = randFloatVector(2, 4, 24);
 

@@ -4,7 +4,12 @@
 %     function described is y = -(25/49) * (x - 12)^2 + 25
 %   wind vector have random generated values within range (0,15)
 
-function [solar, wind] = generatePowerGenerationData()
+function [solar, wind] = generatePowerGenerationData(seed)
+  arguments
+      seed (1,1) int32 = 0
+  end
+
+  rng(seed);
   hours = 1:24;
 
   % Solar energy definition

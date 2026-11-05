@@ -36,8 +36,8 @@ classdef fase4_app_hmi < matlab.apps.App
         GridLayoutSchoolState           matlab.ui.container.GridLayout
         EscuelaLabel                    matlab.ui.control.Label
         SchoolLamp                      matlab.ui.control.Lamp
-        BateriaGauge                    matlab.ui.control.SemicircularGauge
-        BateriaGaugeLabel               matlab.ui.control.Label
+        GaugeBattery                    matlab.ui.control.SemicircularGauge
+        GaugeBatteryLabel               matlab.ui.control.Label
         ControldelSimuladorPanel        matlab.ui.container.Panel
         GridLayoutSimulationControlPanel  matlab.ui.container.GridLayout
         ReproducirButton                matlab.ui.control.StateButton
@@ -46,7 +46,7 @@ classdef fase4_app_hmi < matlab.apps.App
         VariablesdeEntradaPanel         matlab.ui.container.Panel
         GridLayoutInputVariablePanel    matlab.ui.container.GridLayout
         GridLayoutSeedControl           matlab.ui.container.GridLayout
-        EditField                       matlab.ui.control.NumericEditField
+        EditFieldSeed                   matlab.ui.control.NumericEditField
         GenerarsemillaButton            matlab.ui.control.Button
         GridLayoutDemandHeader          matlab.ui.container.GridLayout
         kWLabel_3                       matlab.ui.control.Label
@@ -70,9 +70,15 @@ classdef fase4_app_hmi < matlab.apps.App
         ScaleDemand = 1
         ScaleWind = 1
         ScaleSolar = 1
+        GrayColor = [0.30, 0.30, 0.30]
+        GreeColor = [0, 1, 0]
         DemandRecords
         SolarRecords
         WindRecords
+        Soc
+        Sm
+        LampColorsArray
+        Hours
         
     end
     
@@ -82,9 +88,63 @@ classdef fase4_app_hmi < matlab.apps.App
 
         % Code that executes after component creation
         function startupFcn(app)
-            [a, b] = generatePowerGenerationData;
-            app.SolarRecords = [];
+            % Load default data
+            app.Hours = 1:24;
+            seed = 0;
+            app.EditFieldSeed.Value = seed;
+            [app.SolarRecords, app.WindRecords] = generatePowerGenerationData(seed);
+            app.DemandRecords = generateCommunityDemandData(seed);
+            % Set Sliders information
             app.SliderSolar.Value = max(app.SolarRecords);
+            app.SliderWind.Value = max(app.WindRecords);
+            app.SliderDemand.Value = max(app.DemandRecords);
+            % Set text value of sliders
+            app.SolarValueLabel.Text = num2str(app.SliderSolar.Value);
+            app.WindValueLabel.Text = num2str(app.SliderWind.Value);
+            app.DemandValueLabel.Text = num2str(app.SliderDemand.Value);
+
+            % Load SOC
+            app.Soc = StateOfCharge(100,50,0,100);
+            app.GaugeBattery.Value = app.Soc.State;
+
+            % Load StateManager
+            app.Sm = StateManager( ...
+                ["School", "WaterPump", "PublicLighting"], ...
+                [0, 20, 40] ...
+                );
+            app.Sm = app.Sm.Evaluate(app.Soc.State);
+
+            % Set Lamps, it is important to keep the same order as defined
+            % at StateManager construction
+            app.LampColorsArray = [
+                app.SchoolLamp, ...
+                app.WaterPumpLamp, ...
+                app.PublicLightingLamp
+                ];
+
+            for index = 1:length(app.Sm.States)
+                lamp = app.LampColorsArray(index);
+                state = app.Sm.States(index);
+                
+                if state
+                    lamp.Color = app.GreeColor;
+                else
+                    lamp.Color = app.GrayColor;
+                end
+            end
+            
+            % Set chart
+            hold(app.UIAxes, "on");
+            xticks(app.UIAxes, app.Hours);
+            xlim(app.UIAxes, [1,24]);
+
+            plot(app.UIAxes, app.Hours, app.SolarRecords, "DisplayName", "Solar");
+            plot(app.UIAxes, app.Hours, app.WindRecords, "DisplayName", "Eolica");
+            plot(app.UIAxes, app.Hours, app.DemandRecords, "DisplayName", "Demanda");
+
+            hold(app.UIAxes, "off");
+            legend(app.UIAxes);
+
         end
     end
 
