@@ -160,6 +160,7 @@ classdef fase4_app_hmi < matlab.apps.App
             
             % Set chart
             hold(app.UIAxes, "on");
+            grid(app.UIAxes, "on");
             xticks(app.UIAxes, app.Hours);
             xlim(app.UIAxes, [1,24]);
 
@@ -211,6 +212,15 @@ classdef fase4_app_hmi < matlab.apps.App
             app.SliderSolarValueChanging(app.SliderSolar);
             app.SliderWindValueChanging(app.SliderWind);
             app.SliderDemandValueChanging(app.SliderDemand);
+        end
+
+        % Button pushed function: GenerarsemillaButton
+        function GenerarsemillaButtonPushed(app, event)
+            rng("shuffle");
+            % 2^31 = 2147483648
+            app.EditFieldSeed.Value = randi([0, 2147483648], 1, 1, "double");
+
+            app.EditFieldSeedValueChanged(app.EditFieldSeed);
         end
     end
 
