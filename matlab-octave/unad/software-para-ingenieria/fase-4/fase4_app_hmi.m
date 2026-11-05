@@ -90,8 +90,21 @@ classdef fase4_app_hmi < matlab.apps.App
         
         function [YData, valueText] = UpdatePlot(~, value, maxRecord, records)
             scalePlot = value / maxRecord;
+            % Update plot
             YData = records .* scalePlot;
+            % Update value label
             valueText = num2str(value);
+        end
+        
+        function UpdateRecords(app, seed)
+            % Update records
+            [app.SolarRecords, app.WindRecords] = generatePowerGenerationData(seed);
+            app.DemandRecords = generateCommunityDemandData(seed);
+
+            % Update Max values
+            app.SolarMax = max(app.SolarRecords);
+            app.WindMax = max(app.WindRecords);
+            app.DemandMax = max(app.DemandRecords);
         end
     end
     
@@ -105,13 +118,8 @@ classdef fase4_app_hmi < matlab.apps.App
             app.Hours = 1:24;
             seed = 0;
             app.EditFieldSeed.Value = seed;
-            [app.SolarRecords, app.WindRecords] = generatePowerGenerationData(seed);
-            app.DemandRecords = generateCommunityDemandData(seed);
+            UpdateRecords(app, seed);
             % Set Sliders information
-            app.SolarMax = max(app.SolarRecords);
-            app.WindMax = max(app.WindRecords);
-            app.DemandMax = max(app.DemandRecords);
-
             app.SliderSolar.Value = app.SolarMax;
             app.SliderWind.Value = app.WindMax;
             app.SliderDemand.Value = app.DemandMax;
@@ -155,15 +163,28 @@ classdef fase4_app_hmi < matlab.apps.App
             xticks(app.UIAxes, app.Hours);
             xlim(app.UIAxes, [1,24]);
 
-            app.SolarPlot = plot(app.UIAxes, app.Hours, app.SolarRecords, "DisplayName", "Solar");
-            app.WindPlot = plot(app.UIAxes, app.Hours, app.WindRecords, "DisplayName", "Eolica");
-            app.DemandPlot = plot(app.UIAxes, app.Hours, app.DemandRecords, "DisplayName", "Demanda");
+            app.SolarPlot = plot(app.UIAxes, ...
+                app.Hours, app.SolarRecords, ...
+                "DisplayName", "Solar", ...
+                "Color", "#FFB300");
+            app.WindPlot = plot(app.UIAxes, ...
+                app.Hours, app.WindRecords, ...
+                "DisplayName", "Eolica", ...
+                "Color", "#4DA3FF");
+            app.DemandPlot = plot(app.UIAxes, ...
+                app.Hours, app.DemandRecords, ...
+                "DisplayName", "Demanda", ...
+                "Color", "#FF6B52");
 
             hold(app.UIAxes, "off");
             legend(app.UIAxes);
 
             % Set cursor
-            app.CursorLine = xline(app.UIAxes, 1, "Color", "r", "LineWidth", 2, "LineStyle", "--", "DisplayName", "Hora");
+            app.CursorLine = xline(app.UIAxes, 1, ...
+                "Color", "r", ...
+                "LineWidth", 2, ...
+                "LineStyle", "--", ...
+                "DisplayName", "Hora");
 
         end
 
@@ -184,16 +205,7 @@ classdef fase4_app_hmi < matlab.apps.App
 
         % Value changed function: EditFieldSeed
         function EditFieldSeedValueChanged(app, event)
-            seed = app.EditFieldSeed.Value;
-
-            % Update records
-            [app.SolarRecords, app.WindRecords] = generatePowerGenerationData(seed);
-            app.DemandRecords = generateCommunityDemandData(seed);
-
-            % Update Max values
-            app.SolarMax = max(app.SolarRecords);
-            app.WindMax = max(app.WindRecords);
-            app.DemandMax = max(app.DemandRecords);
+            UpdateRecords(app, event.Value);
 
             % Update sliders and plot
             app.SliderSolarValueChanging(app.SliderSolar);
