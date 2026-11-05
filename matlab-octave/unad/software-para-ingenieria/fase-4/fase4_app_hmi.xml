@@ -1,0 +1,501 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<MATLABApp schemaVersion='1.0.0' release='R2026b.1' minRelease='R2026b'>
+    <UIFigure name='UIFigure'>
+        <Name>'MATLAB App'</Name>
+        <Position>[100 100 1531 878]</Position>
+        <WindowStyle>'modal'</WindowStyle>
+        <Children>
+            <GridLayout name='GridLayout'>
+                <ColumnWidth>{'1x'}</ColumnWidth>
+                <RowHeight>{'1x', '5x', '5x'}</RowHeight>
+                <Children>
+                    <GridLayout name='GridLayoutTopSection'>
+                        <ColumnWidth>{'1x', '1x', '1x'}</ColumnWidth>
+                        <Layout>
+                            <Column>1</Column>
+                            <Row>2</Row>
+                        </Layout>
+                        <RowHeight>{'1x'}</RowHeight>
+                        <Children>
+                            <Panel name='VariablesdeEntradaPanel'>
+                                <Layout>
+                                    <Column>1</Column>
+                                    <Row>1</Row>
+                                </Layout>
+                                <Title>'1. Variables de Entrada'</Title>
+                                <Children>
+                                    <GridLayout name='GridLayoutInputVariablePanel'>
+                                        <ColumnWidth>{'1x'}</ColumnWidth>
+                                        <RowHeight>{'1x', '2x', '1x', '2x', '1x', '2x', '2x'}</RowHeight>
+                                        <RowSpacing>5</RowSpacing>
+                                        <Children>
+                                            <Slider name='SliderSolar'>
+                                                <FontSize>14</FontSize>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>2</Row>
+                                                </Layout>
+                                                <Limits>[0 150]</Limits>
+                                                <MajorTicks>[0 25 50 75 100 125 150]</MajorTicks>
+                                            </Slider>
+                                            <Slider name='SliderWind'>
+                                                <FontSize>14</FontSize>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>4</Row>
+                                                </Layout>
+                                                <MajorTicksMode>'manual'</MajorTicksMode>
+                                            </Slider>
+                                            <Slider name='SliderDemand'>
+                                                <FontSize>14</FontSize>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>6</Row>
+                                                </Layout>
+                                                <Limits>[0 200]</Limits>
+                                                <MajorTicks>[0 40 80 120 160 200]</MajorTicks>
+                                            </Slider>
+                                            <GridLayout name='GridLayoutSolarHeader'>
+                                                <ColumnSpacing>5</ColumnSpacing>
+                                                <ColumnWidth>{'10x', '10x', '1x'}</ColumnWidth>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>1</Row>
+                                                </Layout>
+                                                <Padding>[0 0 0 10]</Padding>
+                                                <RowHeight>{'1x'}</RowHeight>
+                                                <Children>
+                                                    <Label name='EnergiaSolarLabel'>
+                                                        <FontSize>14</FontSize>
+                                                        <Layout>
+                                                            <Column>1</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                        <Text>'Energia Solar'</Text>
+                                                    </Label>
+                                                    <Label name='SolarValueLabel'>
+                                                        <FontSize>14</FontSize>
+                                                        <HorizontalAlignment>'right'</HorizontalAlignment>
+                                                        <Layout>
+                                                            <Column>2</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                        <Text>'SolarValue'</Text>
+                                                    </Label>
+                                                    <Label name='kWLabel'>
+                                                        <FontSize>14</FontSize>
+                                                        <HorizontalAlignment>'right'</HorizontalAlignment>
+                                                        <Layout>
+                                                            <Column>3</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                        <Text>'kW'</Text>
+                                                    </Label>
+                                                </Children>
+                                            </GridLayout>
+                                            <GridLayout name='GridLayoutWindHeader'>
+                                                <ColumnSpacing>5</ColumnSpacing>
+                                                <ColumnWidth>{'10x', '10x', '1x'}</ColumnWidth>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>3</Row>
+                                                </Layout>
+                                                <Padding>[0 0 0 10]</Padding>
+                                                <RowHeight>{'1x'}</RowHeight>
+                                                <Children>
+                                                    <Label name='EnergiaEolicaLabel'>
+                                                        <FontSize>14</FontSize>
+                                                        <Layout>
+                                                            <Column>1</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                        <Text>'Energia Eolica'</Text>
+                                                    </Label>
+                                                    <Label name='WindValueLabel'>
+                                                        <FontSize>14</FontSize>
+                                                        <HorizontalAlignment>'right'</HorizontalAlignment>
+                                                        <Layout>
+                                                            <Column>2</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                        <Text>'WindValue'</Text>
+                                                    </Label>
+                                                    <Label name='kWLabel_4'>
+                                                        <FontSize>14</FontSize>
+                                                        <HorizontalAlignment>'right'</HorizontalAlignment>
+                                                        <Layout>
+                                                            <Column>3</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                        <Text>'kW'</Text>
+                                                    </Label>
+                                                </Children>
+                                            </GridLayout>
+                                            <GridLayout name='GridLayoutDemandHeader'>
+                                                <ColumnSpacing>5</ColumnSpacing>
+                                                <ColumnWidth>{'10x', '10x', '1x'}</ColumnWidth>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>5</Row>
+                                                </Layout>
+                                                <Padding>[0 0 0 10]</Padding>
+                                                <RowHeight>{'1x'}</RowHeight>
+                                                <Children>
+                                                    <Label name='DemandadelaComunidadLabel'>
+                                                        <FontSize>14</FontSize>
+                                                        <Layout>
+                                                            <Column>1</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                        <Text>'Demanda de la Comunidad'</Text>
+                                                    </Label>
+                                                    <Label name='DemandValueLabel'>
+                                                        <FontSize>14</FontSize>
+                                                        <HorizontalAlignment>'right'</HorizontalAlignment>
+                                                        <Layout>
+                                                            <Column>2</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                        <Text>'DemandValue'</Text>
+                                                    </Label>
+                                                    <Label name='kWLabel_3'>
+                                                        <FontSize>14</FontSize>
+                                                        <HorizontalAlignment>'right'</HorizontalAlignment>
+                                                        <Layout>
+                                                            <Column>3</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                        <Text>'kW'</Text>
+                                                    </Label>
+                                                </Children>
+                                            </GridLayout>
+                                            <GridLayout name='GridLayoutSeedControl'>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>7</Row>
+                                                </Layout>
+                                                <Padding>[0 0 0 0]</Padding>
+                                                <RowHeight>{'1x'}</RowHeight>
+                                                <Children>
+                                                    <Button name='GenerarsemillaButton'>
+                                                        <FontSize>14</FontSize>
+                                                        <Layout>
+                                                            <Column>2</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                        <Text>'Generar semilla'</Text>
+                                                    </Button>
+                                                    <NumericEditField name='EditField'>
+                                                        <FontSize>14</FontSize>
+                                                        <Layout>
+                                                            <Column>1</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                        <Limits>[0 4294967295]</Limits>
+                                                        <RoundFractionalValues>'on'</RoundFractionalValues>
+                                                        <ValueDisplayFormat>'%.0f'</ValueDisplayFormat>
+                                                    </NumericEditField>
+                                                </Children>
+                                            </GridLayout>
+                                        </Children>
+                                    </GridLayout>
+                                </Children>
+                            </Panel>
+                            <Panel name='ControldelSimuladorPanel'>
+                                <Layout>
+                                    <Column>2</Column>
+                                    <Row>1</Row>
+                                </Layout>
+                                <Title>'2. Control del Simulador'</Title>
+                                <Children>
+                                    <GridLayout name='GridLayoutSimulationControlPanel'>
+                                        <ColumnWidth>{'1x'}</ColumnWidth>
+                                        <RowHeight>{'1x', '1x', '1x', '1x', '1x'}</RowHeight>
+                                        <Children>
+                                            <Button name='ReiniciarButton'>
+                                                <FontSize>14</FontSize>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>2</Row>
+                                                </Layout>
+                                                <Text>'Reiniciar'</Text>
+                                            </Button>
+                                            <Slider name='SliderTime'>
+                                                <FontSize>14</FontSize>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>5</Row>
+                                                </Layout>
+                                                <Limits>[1 24]</Limits>
+                                                <MajorTicks>[1 4 8 12 16 20 24]</MajorTicks>
+                                                <Step>1</Step>
+                                                <Value>1</Value>
+                                            </Slider>
+                                            <StateButton name='ReproducirButton'>
+                                                <FontSize>14</FontSize>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>1</Row>
+                                                </Layout>
+                                                <Text>'Reproducir'</Text>
+                                            </StateButton>
+                                        </Children>
+                                    </GridLayout>
+                                </Children>
+                            </Panel>
+                            <Panel name='EstadodelSistemaPanel'>
+                                <Layout>
+                                    <Column>3</Column>
+                                    <Row>1</Row>
+                                </Layout>
+                                <Title>'3. Estado del Sistema'</Title>
+                                <Children>
+                                    <GridLayout name='GridLayoutSystemStatePanel'>
+                                        <ColumnWidth>{'1x'}</ColumnWidth>
+                                        <RowHeight>{'6x', '1x', '1x', '1x', '1x'}</RowHeight>
+                                        <Children>
+                                            <Label name='BateriaGaugeLabel'>
+                                                <FontSize>14</FontSize>
+                                                <HorizontalAlignment>'center'</HorizontalAlignment>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>2</Row>
+                                                </Layout>
+                                                <Text>'Bateria'</Text>
+                                            </Label>
+                                            <SemicircularGauge name='BateriaGauge' label='BateriaGaugeLabel'>
+                                                <FontSize>14</FontSize>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>1</Row>
+                                                </Layout>
+                                                <ScaleColorLimits>[0 20;20 40]</ScaleColorLimits>
+                                                <ScaleColors>[1 0 0;1 1 0]</ScaleColors>
+                                            </SemicircularGauge>
+                                            <GridLayout name='GridLayoutSchoolState'>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>3</Row>
+                                                </Layout>
+                                                <Padding>[80 0 0 0]</Padding>
+                                                <RowHeight>{'1x'}</RowHeight>
+                                                <Children>
+                                                    <Lamp name='SchoolLamp'>
+                                                        <Color>[0.302 0.302 0.302]</Color>
+                                                        <Layout>
+                                                            <Column>2</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                    </Lamp>
+                                                    <Label name='EscuelaLabel'>
+                                                        <FontSize>18</FontSize>
+                                                        <Layout>
+                                                            <Column>1</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                        <Text>'Escuela'</Text>
+                                                    </Label>
+                                                </Children>
+                                            </GridLayout>
+                                            <GridLayout name='GridLayoutPublicLightingState'>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>4</Row>
+                                                </Layout>
+                                                <Padding>[80 0 0 0]</Padding>
+                                                <RowHeight>{'1x'}</RowHeight>
+                                                <Children>
+                                                    <Lamp name='PublicLightingLamp'>
+                                                        <Color>[0.302 0.302 0.302]</Color>
+                                                        <Layout>
+                                                            <Column>2</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                    </Lamp>
+                                                    <Label name='AlumbradoLabel'>
+                                                        <FontSize>18</FontSize>
+                                                        <Layout>
+                                                            <Column>1</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                        <Text>'Alumbrado'</Text>
+                                                    </Label>
+                                                </Children>
+                                            </GridLayout>
+                                            <GridLayout name='GridLayoutWaterPump'>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>5</Row>
+                                                </Layout>
+                                                <Padding>[80 0 0 0]</Padding>
+                                                <RowHeight>{'1x'}</RowHeight>
+                                                <Children>
+                                                    <Lamp name='WaterPumpLamp'>
+                                                        <Color>[0.302 0.302 0.302]</Color>
+                                                        <Layout>
+                                                            <Column>2</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                    </Lamp>
+                                                    <Label name='BombaLabel'>
+                                                        <FontSize>18</FontSize>
+                                                        <Layout>
+                                                            <Column>1</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                        <Text>'Bomba'</Text>
+                                                    </Label>
+                                                </Children>
+                                            </GridLayout>
+                                        </Children>
+                                    </GridLayout>
+                                </Children>
+                            </Panel>
+                        </Children>
+                    </GridLayout>
+                    <GridLayout name='GridLayoutBottomSection'>
+                        <ColumnWidth>{'4x', '3x'}</ColumnWidth>
+                        <Layout>
+                            <Column>1</Column>
+                            <Row>3</Row>
+                        </Layout>
+                        <RowHeight>{'1x'}</RowHeight>
+                        <Children>
+                            <Panel name='GeneracionvsDemandaPanel'>
+                                <Layout>
+                                    <Column>1</Column>
+                                    <Row>1</Row>
+                                </Layout>
+                                <Title>'4. Generacion vs Demanda'</Title>
+                                <Children>
+                                    <UIAxes name='UIAxes'>
+                                        <FontSize>14</FontSize>
+                                        <Position>[5 12 830 312]</Position>
+                                        <XLabel>
+                                            <String>'Hora del dia (h)'</String>
+                                        </XLabel>
+                                        <YLabel>
+                                            <String>'Potencia (kW)'</String>
+                                        </YLabel>
+                                        <ZLabel>
+                                            <String>'Z'</String>
+                                        </ZLabel>
+                                    </UIAxes>
+                                </Children>
+                            </Panel>
+                            <Panel name='RegistroPanel'>
+                                <Layout>
+                                    <Column>2</Column>
+                                    <Row>1</Row>
+                                </Layout>
+                                <Title>'5. Registro'</Title>
+                                <Children>
+                                    <GridLayout name='GridLayout7'>
+                                        <ColumnWidth>{'1x'}</ColumnWidth>
+                                        <RowHeight>{'2x', '1x', '4x'}</RowHeight>
+                                        <Children>
+                                            <Table name='UITable'>
+                                                <ColumnName>{'Hora'; 'T. Generado (kW)'; 'T. Demanda (kW)'; 'Bateria'}</ColumnName>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>3</Row>
+                                                </Layout>
+                                                <RowName>{}</RowName>
+                                            </Table>
+                                            <GridLayout name='GridLayout8'>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>1</Row>
+                                                </Layout>
+                                                <RowHeight>{'1x'}</RowHeight>
+                                                <Children>
+                                                    <Panel name='BalancePanel'>
+                                                        <BorderType>'none'</BorderType>
+                                                        <Layout>
+                                                            <Column>1</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                        <Title>'Balance'</Title>
+                                                        <Children>
+                                                            <Label name='LabelBalance'>
+                                                                <FontSize>14</FontSize>
+                                                                <Position>[16 2 275 43]</Position>
+                                                                <Text>'BalanceValue'</Text>
+                                                            </Label>
+                                                        </Children>
+                                                    </Panel>
+                                                    <Panel name='GeneraciontotalPanel'>
+                                                        <BorderType>'none'</BorderType>
+                                                        <Layout>
+                                                            <Column>2</Column>
+                                                            <Row>1</Row>
+                                                        </Layout>
+                                                        <Title>'Generacion total'</Title>
+                                                        <Children>
+                                                            <Label name='LabelTotalBalance'>
+                                                                <FontSize>14</FontSize>
+                                                                <Position>[17 2 274 43]</Position>
+                                                                <Text>'BalanceTotal'</Text>
+                                                            </Label>
+                                                        </Children>
+                                                    </Panel>
+                                                </Children>
+                                            </GridLayout>
+                                            <Label name='BatteryStateLabel'>
+                                                <FontSize>14</FontSize>
+                                                <Layout>
+                                                    <Column>1</Column>
+                                                    <Row>2</Row>
+                                                </Layout>
+                                                <Text>'BatteryState'</Text>
+                                            </Label>
+                                        </Children>
+                                    </GridLayout>
+                                </Children>
+                            </Panel>
+                        </Children>
+                    </GridLayout>
+                    <GridLayout name='GridLayoutTitle'>
+                        <ColumnWidth>{'1x', '8x'}</ColumnWidth>
+                        <Layout>
+                            <Column>1</Column>
+                            <Row>1</Row>
+                        </Layout>
+                        <Padding>[0 0 0 0]</Padding>
+                        <RowHeight>{'1x'}</RowHeight>
+                        <Children>
+                            <Label name='AppTitle'>
+                                <FontSize>24</FontSize>
+                                <FontWeight>'bold'</FontWeight>
+                                <Layout>
+                                    <Column>2</Column>
+                                    <Row>1</Row>
+                                </Layout>
+                                <Text>'SIGE - Sistema Integrado de Gestion de Energia'</Text>
+                            </Label>
+                            <Image name='Image'>
+                                <ImageSource>'./app.png'</ImageSource>
+                                <Layout>
+                                    <Column>1</Column>
+                                    <Row>1</Row>
+                                </Layout>
+                            </Image>
+                        </Children>
+                    </GridLayout>
+                </Children>
+            </GridLayout>
+        </Children>
+    </UIFigure>
+    <RunConfiguration>
+        <StartupFcn>startupFcn</StartupFcn>
+    </RunConfiguration>
+    <AppDetails>
+        <Name>fase4_app_hmi</Name>
+        <Version>1.0</Version>
+    </AppDetails>
+    <InternalData>
+        <AppId>0cc08de3-862c-4978-b51f-4ca4b28075f7</AppId>
+    </InternalData>
+    <!-- Thumbnail is used by file previewers. To change how the thumbnail is captured or stored, use the App Details dialog box in App Designer. -->
+    <Thumbnail autoCapture='true'>data:image/jpg;base64,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</Thumbnail>
+</MATLABApp>
