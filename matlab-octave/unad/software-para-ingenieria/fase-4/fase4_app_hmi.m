@@ -79,6 +79,10 @@ classdef fase4_app_hmi < matlab.apps.App
         Sm
         LampColorsArray
         Hours
+        CursorLine
+        DemandPlot
+        SolarPlot
+        WindPlot
         
     end
     
@@ -138,12 +142,15 @@ classdef fase4_app_hmi < matlab.apps.App
             xticks(app.UIAxes, app.Hours);
             xlim(app.UIAxes, [1,24]);
 
-            plot(app.UIAxes, app.Hours, app.SolarRecords, "DisplayName", "Solar");
-            plot(app.UIAxes, app.Hours, app.WindRecords, "DisplayName", "Eolica");
-            plot(app.UIAxes, app.Hours, app.DemandRecords, "DisplayName", "Demanda");
+            app.SolarPlot = plot(app.UIAxes, app.Hours, app.SolarRecords, "DisplayName", "Solar");
+            app.WindPlot = plot(app.UIAxes, app.Hours, app.WindRecords, "DisplayName", "Eolica");
+            app.DemandPlot = plot(app.UIAxes, app.Hours, app.DemandRecords, "DisplayName", "Demanda");
 
             hold(app.UIAxes, "off");
             legend(app.UIAxes);
+
+            % Set cursor
+            app.CursorLine = xline(app.UIAxes, 1, "Color", "r", "LineWidth", 2, "LineStyle", "--", "DisplayName", "Hora");
 
         end
     end
