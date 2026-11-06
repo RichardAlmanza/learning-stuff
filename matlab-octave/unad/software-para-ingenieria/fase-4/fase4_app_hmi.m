@@ -222,6 +222,11 @@ classdef fase4_app_hmi < matlab.apps.App
 
             app.EditFieldSeedValueChanged(app.EditFieldSeed);
         end
+
+        % Value changing function: SliderTime
+        function SliderTimeValueChanging(app, event)
+            app.CursorLine.Value = event.Value;
+        end
     end
 
     % App creation
