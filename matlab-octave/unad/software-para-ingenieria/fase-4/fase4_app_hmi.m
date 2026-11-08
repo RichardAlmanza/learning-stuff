@@ -72,6 +72,9 @@ classdef fase4_app_hmi < matlab.apps.App
         DemandRecords
         SolarRecords
         WindRecords
+        DeltaRecordsScaled
+        SocRecordsScaled
+        StatesRecords
         Soc
         Sm
         LampColorsArray
@@ -115,10 +118,46 @@ classdef fase4_app_hmi < matlab.apps.App
             end
 
             slider.Value = newValue;
-            disp("Hola!!!!");
-
             callbkfnc(slider);
 
+        end
+        
+        function UpdateDeltaSocAndStatesRecords(app)
+            app.DeltaRecordsScaled = app.SolarPlot.YData + ...
+                app.WindPlot.YData - app.DemandPlot.YData;
+            [~, app.SocRecordsScaled] = app.Soc.ChargeRecords(app.DeltaRecordsScaled);
+            [~, app.StatesRecords] = app.Sm.EvaluateRecords(app.SocRecordsScaled);
+
+        end
+
+        function UpdateLamps(app, hour)
+            len = length(app.LampColorsArray);
+
+            for index = 1:len
+                lamp = app.LampColorsArray(index);
+                state = app.StatesRecords(hour, index);
+
+                if state
+                    lamp.Color = app.GreeColor;
+                else
+                    lamp.Color = app.GrayColor;
+                end
+            end
+        end
+
+        function UpdateBatteryGauge(app, hour)
+            app.GaugeBattery.Value = app.SocRecordsScaled(hour);
+        end
+
+        function UpdateSystemStateUIPanel(app, hour)
+            if isstring(hour)
+                if hour == "current"
+                    hour = app.SliderTime.Value;
+                end
+            end
+
+            app.UpdateLamps(hour);
+            app.UpdateBatteryGauge(hour);
         end
     end
     
@@ -160,17 +199,6 @@ classdef fase4_app_hmi < matlab.apps.App
                 app.WaterPumpLamp, ...
                 app.PublicLightingLamp
                 ];
-
-            for index = 1:length(app.Sm.States)
-                lamp = app.LampColorsArray(index);
-                state = app.Sm.States(index);
-                
-                if state
-                    lamp.Color = app.GreeColor;
-                else
-                    lamp.Color = app.GrayColor;
-                end
-            end
             
             % Set chart
             hold(app.UIAxes, "on");
@@ -194,6 +222,11 @@ classdef fase4_app_hmi < matlab.apps.App
             hold(app.UIAxes, "off");
             legend(app.UIAxes);
 
+            % Update delta and soc records, they depend on the YData of
+            % plot objects
+            app.UpdateDeltaSocAndStatesRecords();
+            app.UpdateSystemStateUIPanel(1);
+
             % Set cursor
             app.CursorLine = xline(app.UIAxes, 1, ...
                 "Color", "r", ...
@@ -214,16 +247,22 @@ classdef fase4_app_hmi < matlab.apps.App
         % Value changing function: SliderSolar
         function SliderSolarValueChanging(app, event)
             [app.SolarPlot.YData, app.SolarValueLabel.Text] = UpdatePlot(app, event.Value, app.SolarMax, app.SolarRecords);
+            app.UpdateDeltaSocAndStatesRecords();
+            app.UpdateSystemStateUIPanel("current");
         end
 
         % Value changing function: SliderWind
         function SliderWindValueChanging(app, event)
             [app.WindPlot.YData, app.WindValueLabel.Text] = UpdatePlot(app, event.Value, app.WindMax, app.WindRecords);
+            app.UpdateDeltaSocAndStatesRecords();
+            app.UpdateSystemStateUIPanel("current");
         end
 
         % Value changing function: SliderDemand
         function SliderDemandValueChanging(app, event)
             [app.DemandPlot.YData, app.DemandValueLabel.Text] = UpdatePlot(app, event.Value, app.DemandMax, app.DemandRecords);
+            app.UpdateDeltaSocAndStatesRecords();
+            app.UpdateSystemStateUIPanel("current");
         end
 
         % Value changed function: EditFieldSeed
@@ -247,7 +286,9 @@ classdef fase4_app_hmi < matlab.apps.App
 
         % Value changing function: SliderTime
         function SliderTimeValueChanging(app, event)
-            app.CursorLine.Value = event.Value;
+            hour = event.Value;
+            app.CursorLine.Value = hour;
+            app.UpdateSystemStateUIPanel(hour);
         end
 
         % Value changed function: ButtonRunSimulation
