@@ -40,9 +40,9 @@ classdef fase4_app_hmi < matlab.apps.App
         GaugeBatteryLabel               matlab.ui.control.Label
         ControldelSimuladorPanel        matlab.ui.container.Panel
         GridLayoutSimulationControlPanel  matlab.ui.container.GridLayout
-        ButtonRunSimulation             matlab.ui.control.StateButton
         SliderTime                      matlab.ui.control.Slider
         ButtonResetSimulation           matlab.ui.control.Button
+        ButtonRunSimulation             matlab.ui.control.StateButton
         VariablesdeEntradaPanel         matlab.ui.container.Panel
         GridLayoutInputVariablePanel    matlab.ui.container.GridLayout
         GridLayoutSeedControl           matlab.ui.container.GridLayout
