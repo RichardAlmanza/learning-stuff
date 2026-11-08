@@ -40,9 +40,9 @@ classdef fase4_app_hmi < matlab.apps.App
         GaugeBatteryLabel               matlab.ui.control.Label
         ControldelSimuladorPanel        matlab.ui.container.Panel
         GridLayoutSimulationControlPanel  matlab.ui.container.GridLayout
-        ReproducirButton                matlab.ui.control.StateButton
+        ButtonRunSimulation             matlab.ui.control.StateButton
         SliderTime                      matlab.ui.control.Slider
-        ReiniciarButton                 matlab.ui.control.Button
+        ButtonResetSimulation           matlab.ui.control.Button
         VariablesdeEntradaPanel         matlab.ui.container.Panel
         GridLayoutInputVariablePanel    matlab.ui.container.GridLayout
         GridLayoutSeedControl           matlab.ui.container.GridLayout
@@ -83,6 +83,7 @@ classdef fase4_app_hmi < matlab.apps.App
         DemandMax
         SolarMax
         WindMax
+        Timer1S
         
     end
     
@@ -105,6 +106,19 @@ classdef fase4_app_hmi < matlab.apps.App
             app.SolarMax = max(app.SolarRecords);
             app.WindMax = max(app.WindRecords);
             app.DemandMax = max(app.DemandRecords);
+        end
+        
+        function UpdateHour(~, slider, callbkfnc, min, max)
+            newValue = slider.Value + 1;
+            if newValue > max
+                newValue = min;
+            end
+
+            slider.Value = newValue;
+            disp("Hola!!!!");
+
+            callbkfnc(slider);
+
         end
     end
     
@@ -187,6 +201,14 @@ classdef fase4_app_hmi < matlab.apps.App
                 "LineStyle", "--", ...
                 "DisplayName", "Hora");
 
+            % Set timer
+            app.Timer1S = timer( ...
+                "StartDelay", 1, ...
+                "Period", 1, ...
+                "ExecutionMode","fixedRate" ...
+                );
+            app.Timer1S.TimerFcn = @(~, ~) app.UpdateHour(app.SliderTime, @app.SliderTimeValueChanging, 1, 24);
+
         end
 
         % Value changing function: SliderSolar
@@ -226,6 +248,22 @@ classdef fase4_app_hmi < matlab.apps.App
         % Value changing function: SliderTime
         function SliderTimeValueChanging(app, event)
             app.CursorLine.Value = event.Value;
+        end
+
+        % Value changed function: ButtonRunSimulation
+        function ButtonRunSimulationValueChanged(app, event)
+            if event.Value
+                start(app.Timer1S);
+            else
+                stop(app.Timer1S);
+            end
+
+        end
+
+        % Button pushed function: ButtonResetSimulation
+        function ButtonResetSimulationPushed(app, event)
+            app.SliderTime.Value = 1;
+            app.SliderTimeValueChanging(app.SliderTime);
         end
     end
 
