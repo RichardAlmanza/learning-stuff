@@ -17,10 +17,14 @@ classdef fase4_app_hmi < matlab.apps.App
         GridLayout7                     matlab.ui.container.GridLayout
         BatteryStateLabel               matlab.ui.control.Label
         GridLayout8                     matlab.ui.container.GridLayout
-        GeneraciontotalPanel            matlab.ui.container.Panel
+        BalanceTotalPanel               matlab.ui.container.Panel
+        GridLayoutBalance_2             matlab.ui.container.GridLayout
         LabelTotalBalance               matlab.ui.control.Label
+        kWLabel_6                       matlab.ui.control.Label
         BalancePanel                    matlab.ui.container.Panel
+        GridLayoutBalance               matlab.ui.container.GridLayout
         LabelBalance                    matlab.ui.control.Label
+        kWLabel_5                       matlab.ui.control.Label
         UITable                         matlab.ui.control.Table
         GeneracionvsDemandaPanel        matlab.ui.container.Panel
         UIAxes                          matlab.ui.control.UIAxes
@@ -130,6 +134,7 @@ classdef fase4_app_hmi < matlab.apps.App
                 app.WindPlot.YData - app.DemandPlot.YData;
             [~, app.SocRecordsScaled] = app.Soc.ChargeRecords(app.DeltaRecordsScaled);
             [~, app.StatesRecords] = app.Sm.EvaluateRecords(app.SocRecordsScaled);
+            app.LabelTotalBalance.Text = num2str(sum(app.DeltaRecordsScaled), 5);
 
         end
 
@@ -170,6 +175,7 @@ classdef fase4_app_hmi < matlab.apps.App
 
             app.UpdateLamps(hour);
             app.UpdateBatteryGauge(hour);
+            app.LabelBalance.Text = num2str(app.DeltaRecordsScaled(hour), 3);
         end
     end
     
@@ -241,6 +247,7 @@ classdef fase4_app_hmi < matlab.apps.App
             app.UpdateSystemStateUIPanel(1);
             app.UITable.SelectionType = "row";
             app.UITable.Selection = 1;
+            app.LabelBalance.Text = num2str(app.DeltaRecordsScaled(1), 3);
 
             % Set cursor
             app.CursorLine = xline(app.UIAxes, 1, ...
@@ -306,7 +313,9 @@ classdef fase4_app_hmi < matlab.apps.App
         function SliderTimeValueChanging(app, event)
             hour = event.Value;
             app.CursorLine.Value = hour;
+
             app.UpdateSystemStateUIPanel(hour);
+
             scroll(app.UITable, "row", hour);
             app.UITable.Selection = hour;
         end
@@ -324,6 +333,13 @@ classdef fase4_app_hmi < matlab.apps.App
         % Button pushed function: ButtonResetSimulation
         function ButtonResetSimulationPushed(app, event)
             app.SliderTime.Value = 1;
+            app.SliderTimeValueChanging(app.SliderTime);
+        end
+
+        % Selection changed function: UITable
+        function UITableSelectionChanged(app, event)
+            selection = app.UITable.Selection;
+            app.SliderTime.Value = selection;
             app.SliderTimeValueChanging(app.SliderTime);
         end
     end
