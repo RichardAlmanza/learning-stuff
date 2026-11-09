@@ -133,6 +133,13 @@ classdef fase4_app_hmi < matlab.apps.App
 
         end
 
+        function UpdateTable(app)
+            totalGen = app.SolarPlot.YData + app.WindPlot.YData;
+            newTable = table((1:24)', totalGen', app.DemandPlot.YData', ...
+                app.SocRecordsScaled');
+            app.UITable.Data = newTable;
+        end
+
         function UpdateLamps(app, hour)
             len = length(app.LampColorsArray);
 
@@ -230,7 +237,10 @@ classdef fase4_app_hmi < matlab.apps.App
             % Update delta and soc records, they depend on the YData of
             % plot objects
             app.UpdateDeltaSocAndStatesRecords();
+            app.UpdateTable();
             app.UpdateSystemStateUIPanel(1);
+            app.UITable.SelectionType = "row";
+            app.UITable.Selection = 1;
 
             % Set cursor
             app.CursorLine = xline(app.UIAxes, 1, ...
@@ -253,6 +263,7 @@ classdef fase4_app_hmi < matlab.apps.App
         function SliderSolarValueChanging(app, event)
             [app.SolarPlot.YData, app.SolarValueLabel.Text] = UpdatePlot(app, event.Value, app.SolarMax, app.SolarRecords);
             app.UpdateDeltaSocAndStatesRecords();
+            app.UpdateTable();
             app.UpdateSystemStateUIPanel("current");
         end
 
@@ -260,6 +271,7 @@ classdef fase4_app_hmi < matlab.apps.App
         function SliderWindValueChanging(app, event)
             [app.WindPlot.YData, app.WindValueLabel.Text] = UpdatePlot(app, event.Value, app.WindMax, app.WindRecords);
             app.UpdateDeltaSocAndStatesRecords();
+            app.UpdateTable();
             app.UpdateSystemStateUIPanel("current");
         end
 
@@ -267,6 +279,7 @@ classdef fase4_app_hmi < matlab.apps.App
         function SliderDemandValueChanging(app, event)
             [app.DemandPlot.YData, app.DemandValueLabel.Text] = UpdatePlot(app, event.Value, app.DemandMax, app.DemandRecords);
             app.UpdateDeltaSocAndStatesRecords();
+            app.UpdateTable();
             app.UpdateSystemStateUIPanel("current");
         end
 
@@ -294,6 +307,8 @@ classdef fase4_app_hmi < matlab.apps.App
             hour = event.Value;
             app.CursorLine.Value = hour;
             app.UpdateSystemStateUIPanel(hour);
+            scroll(app.UITable, "row", hour);
+            app.UITable.Selection = hour;
         end
 
         % Value changed function: ButtonRunSimulation
