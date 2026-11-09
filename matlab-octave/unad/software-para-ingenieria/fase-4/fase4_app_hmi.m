@@ -30,6 +30,10 @@ classdef fase4_app_hmi < matlab.apps.App
         GridLayoutWaterPump             matlab.ui.container.GridLayout
         BombaLabel                      matlab.ui.control.Label
         WaterPumpLamp                   matlab.ui.control.Lamp
+        GridLayoutBatteryLabel          matlab.ui.container.GridLayout
+        PercentageLabel                 matlab.ui.control.Label
+        LabelBattery                    matlab.ui.control.Label
+        LabelBatteryValue               matlab.ui.control.Label
         GridLayoutPublicLightingState   matlab.ui.container.GridLayout
         AlumbradoLabel                  matlab.ui.control.Label
         PublicLightingLamp              matlab.ui.control.Lamp
@@ -37,7 +41,6 @@ classdef fase4_app_hmi < matlab.apps.App
         EscuelaLabel                    matlab.ui.control.Label
         SchoolLamp                      matlab.ui.control.Lamp
         GaugeBattery                    matlab.ui.control.SemicircularGauge
-        GaugeBatteryLabel               matlab.ui.control.Label
         ControldelSimuladorPanel        matlab.ui.container.Panel
         GridLayoutSimulationControlPanel  matlab.ui.container.GridLayout
         SliderTime                      matlab.ui.control.Slider
@@ -146,7 +149,9 @@ classdef fase4_app_hmi < matlab.apps.App
         end
 
         function UpdateBatteryGauge(app, hour)
-            app.GaugeBattery.Value = app.SocRecordsScaled(hour);
+            chargePercentage = app.SocRecordsScaled(hour);
+            app.GaugeBattery.Value = chargePercentage;
+            app.LabelBatteryValue.Text = num2str(chargePercentage, 3);
         end
 
         function UpdateSystemStateUIPanel(app, hour)
