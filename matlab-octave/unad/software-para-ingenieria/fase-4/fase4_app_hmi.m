@@ -94,6 +94,8 @@ classdef fase4_app_hmi < matlab.apps.App
         SolarMax
         WindMax
         Timer1S
+        ImgDarkThemePath
+        ImgLightThemePath
         
     end
     
@@ -264,6 +266,10 @@ classdef fase4_app_hmi < matlab.apps.App
                 );
             app.Timer1S.TimerFcn = @(~, ~) app.UpdateHour(app.SliderTime, @app.SliderTimeValueChanging, 1, 24);
 
+            % Set Images Path for Themes
+            app.ImgDarkThemePath = "./dark.png";
+            app.ImgLightThemePath = "./light.png";
+
         end
 
         % Value changing function: SliderSolar
@@ -341,6 +347,28 @@ classdef fase4_app_hmi < matlab.apps.App
             selection = app.UITable.Selection;
             app.SliderTime.Value = selection;
             app.SliderTimeValueChanging(app.SliderTime);
+        end
+
+        % Image clicked function: Image
+        function ImageClicked(app, event)
+            theme = app.UIFigure.Theme.BaseColorStyle;
+
+            if theme == "dark"
+                app.Image.ImageSource = app.ImgDarkThemePath;
+                app.UIFigure.Theme = "light";
+                app.GaugeBattery.ScaleColors = [
+                    1, 0.42, 0.32;
+                    1, 0.7, 0
+                    ];
+
+            else
+                app.Image.ImageSource = app.ImgLightThemePath;
+                app.UIFigure.Theme = "dark";
+                app.GaugeBattery.ScaleColors = [
+                    1, 0, 0;
+                    1, 1, 0
+                    ];
+            end
         end
     end
 
